@@ -73,7 +73,30 @@ Skills provide specialized knowledge that's auto-loaded based on your task. Loca
 | `deploy` | Deploying to PyPI |
 | `code-review` | Reviewing code for correctness |
 
-Skills are automatically detected - just work on the task and the relevant skill will load.
+**How skills work**: Skills are automatically detected based on your task description. When you're working on something that matches a skill's description, Claude will load the skill's instructions automatically.
+
+**To explicitly use a skill**: Just mention what you're doing. For example:
+- "I'm designing astronomy units" → loads `units-design` skill
+- "Deploy to PyPI" → loads `deploy` skill
+- "Review the new module" → loads `code-review` skill
+
+---
+
+## Spawning Specialized Agents
+
+For complex sub-tasks, you can spawn specialized agents using the Task tool:
+
+```
+Use the Task tool with subagent_type="general-purpose" and a prompt like:
+"Use the code-reviewer agent to review src/dimtensor/domains/astronomy.py.
+Read .claude/agents/code-reviewer.md for instructions."
+```
+
+Available agents in `.claude/agents/`:
+- `code-reviewer` - Detailed code review with dimtensor patterns
+- `test-writer` - Write tests following dimtensor conventions
+
+Agents run in separate contexts and return results when done.
 
 ---
 
