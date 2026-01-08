@@ -214,6 +214,107 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 
 ---
 
+### v2.0.0 - Rust Backend
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 63 | 🗺️ Research PyO3 for Python-Rust bindings | PENDING | PLAN REQUIRED |
+| 64 | 🗺️ Design Rust core architecture | PENDING | PLAN REQUIRED: What to move to Rust |
+| 65 | Set up Rust workspace in rust/ folder | PENDING | Cargo.toml, maturin |
+| 66 | 🗺️ Implement Dimension in Rust | PENDING | PLAN REQUIRED |
+| 67 | 🗺️ Implement Unit in Rust | PENDING | |
+| 68 | 🗺️ Implement core array operations in Rust | PENDING | add, mul, div with dimension checks |
+| 69 | Create Python bindings via PyO3 | PENDING | |
+| 70 | Implement lazy evaluation system | PENDING | Defer computation until needed |
+| 71 | Implement operator fusion | PENDING | Combine operations for efficiency |
+| 72 | Add memory optimization (zero-copy where possible) | PENDING | |
+| 73 | Benchmark: target <10% overhead vs raw numpy | PENDING | |
+| 74 | Add fallback to pure Python when Rust unavailable | PENDING | |
+| 75 | Add tests for Rust backend | PENDING | |
+| 76 | Update pyproject.toml for Rust build | PENDING | |
+| 77 | Deploy v2.0.0 to PyPI | PENDING | |
+
+---
+
+### v2.1.0 - Dimensional Inference
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 78 | 🗺️ Design inference system architecture | PENDING | PLAN REQUIRED |
+| 79 | 🗺️ Implement variable name heuristics | PENDING | "velocity" → L/T, "force" → MLT⁻² |
+| 80 | Build equation pattern database | PENDING | Common physics equations |
+| 81 | Implement equation pattern matching | PENDING | Recognize F=ma, E=mc², etc. |
+| 82 | 🗺️ Create IDE plugin architecture | PENDING | PLAN REQUIRED: VS Code, PyCharm |
+| 83 | Implement VS Code extension | PENDING | Unit hints, error highlighting |
+| 84 | Implement dimensional linting | PENDING | dimtensor lint command |
+| 85 | Add configuration for inference strictness | PENDING | |
+| 86 | Add tests for inference | PENDING | |
+| 87 | Deploy v2.1.0 to PyPI | PENDING | |
+
+---
+
+### v2.2.0 - Physics-Aware ML
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 88 | 🗺️ Research physics-informed neural networks | PENDING | PLAN REQUIRED |
+| 89 | 🗺️ Design DimLayer base class | PENDING | PLAN REQUIRED: PyTorch nn.Module with units |
+| 90 | Implement DimLinear layer | PENDING | Linear layer that tracks dimensions |
+| 91 | Implement DimConv layers | PENDING | Conv1d, Conv2d with dimension tracking |
+| 92 | 🗺️ Design dimensional loss functions | PENDING | PLAN REQUIRED |
+| 93 | Implement MSELoss with unit checking | PENDING | |
+| 94 | Implement PhysicsLoss (conservation laws) | PENDING | |
+| 95 | 🗺️ Design unit-aware normalization | PENDING | PLAN REQUIRED |
+| 96 | Implement DimBatchNorm | PENDING | |
+| 97 | Implement DimLayerNorm | PENDING | |
+| 98 | 🗺️ Design automatic non-dimensionalization | PENDING | PLAN REQUIRED |
+| 99 | Implement Scaler for physics ML | PENDING | Scale to dimensionless for training |
+| 100 | Add tests for physics ML | PENDING | |
+| 101 | Deploy v2.2.0 to PyPI | PENDING | |
+
+---
+
+### v3.0.0 - Physics ML Platform
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 102 | 🗺️ Design model hub architecture | PENDING | PLAN REQUIRED: Pre-trained physics models |
+| 103 | Create model registry system | PENDING | |
+| 104 | Implement model download/upload | PENDING | |
+| 105 | 🗺️ Design equation database | PENDING | PLAN REQUIRED |
+| 106 | Populate equation database (mechanics) | PENDING | F=ma, E=½mv², etc. |
+| 107 | Populate equation database (E&M) | PENDING | Maxwell's equations |
+| 108 | Populate equation database (thermo) | PENDING | PV=nRT, etc. |
+| 109 | 🗺️ Design dataset registry | PENDING | PLAN REQUIRED: Datasets with unit metadata |
+| 110 | Implement dataset registry | PENDING | |
+| 111 | Create sample physics datasets | PENDING | |
+| 112 | 🗺️ Design CLI tools | PENDING | PLAN REQUIRED |
+| 113 | Implement `dimtensor check` command | PENDING | Validate units in code |
+| 114 | Implement `dimtensor convert` command | PENDING | Convert between units |
+| 115 | Implement `dimtensor info` command | PENDING | Show unit info |
+| 116 | 🗺️ Research symbolic computing bridge | PENDING | PLAN REQUIRED: SymPy integration |
+| 117 | Implement SymPy integration | PENDING | |
+| 118 | Add tests for platform features | PENDING | |
+| 119 | Deploy v3.0.0 to PyPI | PENDING | |
+
+---
+
+### v3.1.0 - Ecosystem Integration
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 120 | 🗺️ SciPy integration | PENDING | PLAN REQUIRED: optimize, integrate with units |
+| 121 | Implement scipy.optimize wrappers | PENDING | |
+| 122 | Implement scipy.integrate wrappers | PENDING | |
+| 123 | 🗺️ Scikit-learn integration | PENDING | PLAN REQUIRED |
+| 124 | Implement sklearn transformers with units | PENDING | |
+| 125 | 🗺️ Polars integration | PENDING | PLAN REQUIRED: Alternative to pandas |
+| 126 | Implement polars DataFrame support | PENDING | |
+| 127 | Add tests for ecosystem integrations | PENDING | |
+| 128 | Deploy v3.1.0 to PyPI | PENDING | |
+
+---
+
 ## CODE REVIEW TEMPLATE
 
 When reviewing each file, check and document:
