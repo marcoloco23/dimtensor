@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dimtensor"
-version = "0.8.0"
+version = "0.9.0"
 description = "Unit-aware tensors for physics and scientific machine learning"
 readme = "README.md"
 license = "MIT"

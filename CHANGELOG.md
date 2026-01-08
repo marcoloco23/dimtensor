@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.9.0] - 2026-01-08
+
+### Added
+- **Serialization module**: `dimtensor.io` for saving/loading with units
+  - **JSON serialization**: `to_json()`, `from_json()`, `save_json()`, `load_json()`
+  - **Pandas integration**: `to_dataframe()`, `from_dataframe()`, `to_series()`, `from_series()`
+  - **HDF5 support**: `save_hdf5()`, `load_hdf5()` (requires h5py)
+- Unit metadata preserved through all serialization formats
+- Uncertainty data preserved through serialization
+- 19 new tests for serialization
+
+### Example
+```python
+from dimtensor import DimArray, units
+from dimtensor.io import to_json, from_json, to_dataframe, save_hdf5
+
+# JSON serialization
+arr = DimArray([1.0, 2.0, 3.0], units.m)
+json_str = to_json(arr)
+restored = from_json(json_str)
+
+# Pandas DataFrame with units
+distance = DimArray([1.0, 2.0], units.m)
+time = DimArray([0.1, 0.2], units.s)
+df = to_dataframe({"distance": distance, "time": time})
+
+# HDF5 for large arrays
+save_hdf5(arr, "data.h5", compression="gzip")
+```
+
 ## [0.8.0] - 2026-01-08
 
 ### Added
