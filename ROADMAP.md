@@ -8,7 +8,7 @@
 
 ---
 
-## Current Status (v0.1.x) ✅
+## Current Status (v0.2.x) ✅
 
 What we have shipped:
 - `DimArray` wrapping numpy arrays with unit metadata
@@ -19,7 +19,11 @@ What we have shipped:
 - Unit conversion between compatible units
 - Dimensional error catching at operation time
 - `sqrt()` method
+- **Unit simplification** (`kg·m/s²` → `N`, `m/s·s` → `m`)
+- **Format string support** (`f"{distance:.2f}"`)
+- **NumPy ufunc integration** (`np.sin`, `np.sqrt`, `np.exp`, etc.)
 - Published on PyPI, GitHub repo live
+- 73 tests, 77% coverage
 
 ---
 
@@ -27,8 +31,8 @@ What we have shipped:
 
 ```
 v0.1.x  ✅ Foundation      - Basic DimArray, units, PyPI
-v0.2.x  🔜 Usability       - Better printing, numpy ufuncs, docs
-v0.3.x     NumPy Parity    - Full numpy function coverage
+v0.2.x  ✅ Usability       - Unit simplification, format strings, numpy ufuncs
+v0.3.x  🔜 NumPy Parity    - Full numpy function coverage
 v0.4.x     Constants       - Physical constants library
 v0.5.x     Uncertainty     - Error propagation
 v0.6.x     PyTorch         - torch.Tensor integration
@@ -46,15 +50,15 @@ v3.x       Platform        - Full physics ML toolkit
 
 ## Phase 1: Foundation & Usability (v0.2 - v0.5)
 
-### v0.2.0 - Better Usability
+### v0.2.0 - Better Usability ✅
 **Theme**: Make it pleasant to use daily
 
-- [ ] **Unit simplification**: `m/s·s` → `m`, `kg·m/s²` → `N`
-- [ ] **NumPy ufunc integration**: `np.sin(angle)`, `np.exp(dimensionless)`
-- [ ] **Format strings**: `f"{distance:.2f}"` works naturally
+- [x] **Unit simplification**: `m/s·s` → `m`, `kg·m/s²` → `N`
+- [x] **NumPy ufunc integration**: `np.sin(angle)`, `np.exp(dimensionless)`
+- [x] **Format strings**: `f"{distance:.2f}"` works naturally
+- [x] **Changelog**: Maintain CHANGELOG.md
 - [ ] **Repr improvements**: Configurable display precision
 - [ ] **Documentation site**: mkdocs with examples and API reference
-- [ ] **Changelog**: Maintain CHANGELOG.md
 
 ### v0.3.0 - NumPy Function Parity
 **Theme**: Drop-in replacement for unit-aware calculations
@@ -425,10 +429,13 @@ dimtensor/
 
 ## Next Immediate Steps
 
-**For v0.2.0:**
-1. Unit simplification algorithm
-2. NumPy ufunc integration (`np.sin`, `np.exp`)
-3. Better `__format__` support
-4. Documentation site (mkdocs)
+**For v0.3.0:**
+1. Array functions: `concatenate`, `stack`, `split` (enforce same units)
+2. Reshaping: `reshape`, `transpose`, `flatten` (preserve units)
+3. Linear algebra: `dot`, `matmul`, `norm` with correct unit handling
+4. Statistics: `var`, `std` (preserve units correctly)
+5. Searching: `argmin`, `argmax` (return indices)
 
-Ready to start on v0.2.0?
+**Deferred to later:**
+- Documentation site (mkdocs) - v0.2.x patch
+- Repr improvements - v0.2.x patch
