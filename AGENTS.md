@@ -2,88 +2,169 @@
 
 Instructions for AI coding agents working on this repository.
 
+---
+
+## FIRST: Read CONTINUITY.md
+
+**Before doing anything else**, read `CONTINUITY.md` in the project root.
+
+It contains:
+- Current task queue (what to work on)
+- Session log (what's been done)
+- Workflow rules (how to work)
+
+**Your job**: Work through the TASK QUEUE in CONTINUITY.md until it's empty.
+
+---
+
+## Workflow
+
+```
+1. Read CONTINUITY.md
+2. Update AGENT CHECKIN section
+3. Check for 🗺️ PLAN REQUIRED markers in task queue
+4. CREATE PLAN BEFORE CODING (if required)
+5. Work through TASK QUEUE
+6. Update CONTINUITY.md after each task
+7. KEEP GOING - don't stop to ask for approval
+8. Only stop if: tests fail, blocked, or queue empty
+```
+
+---
+
+## Planning (MANDATORY FOR NEW FILES)
+
+⚠️ **BEFORE creating any new .py file, you MUST create a plan first.**
+
+```bash
+# Step 1: Copy template
+cp .plans/_TEMPLATE.md .plans/$(date +%Y-%m-%d)_feature-name.md
+
+# Step 2: Fill out the plan
+# - Goal: What are we building?
+# - Approach: How will we build it?
+# - Implementation Steps: Ordered list of steps
+# - Files to Modify: What files will be created/changed?
+
+# Step 3: THEN start coding
+```
+
+**PLAN REQUIRED when**:
+- Creating a new file (any .py file)
+- Task has 🗺️ marker in CONTINUITY.md
+- Adding a new module or feature
+
+**Plan NOT required when**:
+- Editing existing files only
+- Running tests/deploys
+- Updating docs
+
+**Why?** Your context WILL be compacted. Plans survive. Your working memory doesn't.
+
+---
+
 ## Build & Test
 
 ```bash
 # Setup
 pip install -e ".[dev]"
 
-# Test (always run after changes)
+# Test (REQUIRED before any commit)
 pytest
 
-# Single test
-pytest tests/test_dimarray.py::test_name -v
-
 # Type check
-mypy src/dimtensor
+mypy src/dimtensor --ignore-missing-imports
+
+# Coverage
+pytest --cov=dimtensor --cov-report=term-missing
 
 # Lint
 ruff check src/dimtensor
 ```
+
+---
+
+## Deploy
+
+```bash
+# Update version in BOTH:
+# - pyproject.toml (line ~7)
+# - src/dimtensor/__init__.py (line ~35)
+
+# Build and deploy
+rm -rf dist/ build/
+python -m build
+twine upload dist/*
+
+# Commit
+git add -A
+git commit -m "Release vX.Y.Z: Description"
+git push origin main
+```
+
+---
 
 ## Project Structure
 
 ```
 src/dimtensor/
 ├── core/
-│   ├── dimensions.py   # Dimension: 7-tuple of SI exponents (L,M,T,I,Θ,N,J)
-│   ├── units.py        # Unit: dimension + scale; all unit definitions
-│   └── dimarray.py     # DimArray: numpy wrapper with unit tracking
-├── functions.py        # Array functions: concatenate, stack, dot, matmul, norm
-├── errors.py           # DimensionError, UnitConversionError
+│   ├── dimensions.py   # Dimension: 7-tuple SI exponents
+│   ├── units.py        # Unit: dimension + scale
+│   └── dimarray.py     # DimArray: numpy wrapper
+├── torch/
+│   └── dimtensor.py    # DimTensor: PyTorch wrapper
+├── jax/
+│   └── dimarray.py     # JAX DimArray with pytree
+├── io/
+│   ├── json.py         # JSON serialization
+│   ├── pandas.py       # Pandas integration
+│   └── hdf5.py         # HDF5 support
+├── constants/          # Physical constants (CODATA 2022)
+├── benchmarks.py       # Performance measurement
+├── functions.py        # Array functions
+├── errors.py           # Custom exceptions
 └── config.py           # Display options
-tests/
-├── test_dimensions.py
-├── test_dimarray.py
-├── test_functions.py
-└── test_config.py
+
+tests/                  # pytest tests for each module
+.plans/                 # Planning documents
+CONTINUITY.md           # Task queue and session log
+ROADMAP.md              # Long-term vision
 ```
 
-## How It Works
+---
 
-1. **Dimension** - Immutable dataclass with 7 `Fraction` exponents for SI base dimensions. Multiply adds exponents, divide subtracts, power multiplies.
-
-2. **Unit** - Combines `Dimension` with a `scale` factor (float relative to SI base). Example: `km` has dimension L, scale 1000.
-
-3. **DimArray** - Wraps `numpy.ndarray` with a `Unit`. All arithmetic checks/propagates dimensions:
-   - `+`/`-`: require same dimension (auto-converts units)
-   - `*`/`/`: multiply/divide dimensions
-   - `**`: requires dimensionless exponent
-   - NumPy ufuncs (`np.sin`, `np.exp`): require dimensionless; `np.sqrt` halves exponents
-
-## Code Conventions
+## Code Patterns
 
 - Use `DimArray._from_data_and_unit(data, unit)` internally (no copy)
-- Operations return new DimArray instances (immutable style)
-- Scalars are wrapped in 1D arrays for consistency
-- Add new units to `_DIMENSION_TO_SYMBOL` dict in `units.py` for simplification
+- Operations return new instances (immutable style)
+- Follow existing patterns in core/dimarray.py
+- All new functionality needs tests
+- Run `pytest` before any commit
+
+---
 
 ## Adding Features
 
-**New unit:**
+**New serialization format** (io/):
 ```python
-# In src/dimtensor/core/units.py
-new_unit = Unit("symbol", Dimension(...), scale)
+# Follow pattern from io/hdf5.py
+def save_format(arr: DimArray, path: str) -> None:
+    # Store data + unit metadata
+
+def load_format(path: str) -> DimArray:
+    # Reconstruct with unit
 ```
 
-**New array function:**
+**New unit domain** (e.g., astronomy):
 ```python
-# In src/dimtensor/functions.py
-def new_func(array: DimArray) -> DimArray:
-    result = np.some_func(array._data)
-    return DimArray._from_data_and_unit(result, array._unit)
+# Create new file in domains/ or add to units.py
+parsec = Unit("pc", Dimension(length=1), 3.0857e16)
 ```
 
-**New ufunc support:**
-Add to the appropriate set in `DimArray.__array_ufunc__` in `dimarray.py`.
-
-## Testing Requirements
-
-- All new functionality needs tests
-- Test dimensional error cases (operations on incompatible dimensions should raise `DimensionError`)
-- Test unit conversion cases
-- Run full test suite before committing: `pytest`
+---
 
 ## Current Status
 
-Version 0.3.x - NumPy parity phase complete. Next: physical constants (v0.4). See ROADMAP.md for full plan.
+See CONTINUITY.md for current version and task queue.
+See ROADMAP.md for long-term plans.

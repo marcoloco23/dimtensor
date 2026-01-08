@@ -503,3 +503,7 @@ def register_pytree() -> None:
         _dimarray_flatten,
         _dimarray_unflatten,
     )
+
+
+# Register pytree automatically on import
+register_pytree()

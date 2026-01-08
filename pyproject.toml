@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dimtensor"
-version = "1.0.0"
+version = "1.1.0"
 description = "Unit-aware tensors for physics and scientific machine learning"
 readme = "README.md"
 license = "MIT"
@@ -56,8 +56,17 @@ jax = [
     "jax>=0.4.0",
     "jaxlib>=0.4.0",
 ]
+netcdf = [
+    "netCDF4>=1.6.0",
+]
+parquet = [
+    "pyarrow>=12.0.0",
+]
+xarray = [
+    "xarray>=2023.1.0",
+]
 all = [
-    "dimtensor[torch,jax]",
+    "dimtensor[torch,jax,netcdf,parquet,xarray]",
 ]
 
 [project.urls]

@@ -591,3 +591,159 @@ class TestDimArraySearching:
         result = arr.argmax()
         # Flattened: [3, 1, 2, 4], max at index 3
         assert result == 3
+
+
+class TestDimArrayCreationEdgeCases:
+    """Test DimArray creation edge cases for improved coverage."""
+
+    def test_from_dimarray_with_uncertainty(self):
+        """Create DimArray from another DimArray with uncertainty."""
+        original = DimArray([1.0, 2.0], units.m, uncertainty=[0.1, 0.2])
+        copy = DimArray(original)
+        np.testing.assert_array_equal(copy.data, [1.0, 2.0])
+        assert copy.unit == units.m
+        # Uncertainty should be inherited
+        assert copy.has_uncertainty
+        np.testing.assert_array_equal(copy.uncertainty, [0.1, 0.2])
+
+    def test_from_dimarray_override_unit(self):
+        """Create DimArray from another with different unit."""
+        original = DimArray([1.0, 2.0], units.m)
+        copy = DimArray(original, unit=units.km)
+        assert copy.unit == units.km
+        np.testing.assert_array_equal(copy.data, [1.0, 2.0])
+
+
+class TestDimArrayScalarArithmetic:
+    """Test scalar arithmetic with dimensionless DimArrays."""
+
+    def test_add_scalar_to_dimensionless(self):
+        """Add scalar to dimensionless DimArray."""
+        arr = DimArray([1.0, 2.0])  # dimensionless
+        result = arr + 5
+        np.testing.assert_array_equal(result.data, [6.0, 7.0])
+        assert result.is_dimensionless
+
+    def test_radd_scalar_to_dimensionless(self):
+        """Right-add scalar to dimensionless DimArray."""
+        arr = DimArray([1.0, 2.0])
+        result = 5 + arr
+        np.testing.assert_array_equal(result.data, [6.0, 7.0])
+
+    def test_add_scalar_to_dimensional_raises(self):
+        """Adding scalar to dimensional quantity raises error."""
+        arr = DimArray([1.0, 2.0], units.m)
+        with pytest.raises(DimensionError):
+            arr + 5
+
+    def test_sub_scalar_from_dimensionless(self):
+        """Subtract scalar from dimensionless DimArray."""
+        arr = DimArray([5.0, 10.0])
+        result = arr - 3
+        np.testing.assert_array_equal(result.data, [2.0, 7.0])
+
+    def test_rsub_scalar_from_dimensionless(self):
+        """Right-subtract: scalar - dimensionless DimArray."""
+        arr = DimArray([1.0, 2.0])
+        result = 10 - arr
+        np.testing.assert_array_equal(result.data, [9.0, 8.0])
+
+    def test_rsub_scalar_from_dimensional_raises(self):
+        """Right-subtract from dimensional raises error."""
+        arr = DimArray([1.0, 2.0], units.m)
+        with pytest.raises(DimensionError):
+            10 - arr
+
+    def test_sub_scalar_from_dimensional_raises(self):
+        """Subtract scalar from dimensional raises error."""
+        arr = DimArray([1.0, 2.0], units.m)
+        with pytest.raises(DimensionError):
+            arr - 5
+
+
+class TestNumpyUfuncsExtended:
+    """Extended numpy ufunc tests for coverage."""
+
+    def test_divide_via_ufunc(self):
+        """np.divide works with DimArrays."""
+        a = DimArray([10.0, 20.0], units.m)
+        b = DimArray([2.0, 5.0], units.s)
+        result = np.divide(a, b)
+        np.testing.assert_array_equal(result.data, [5.0, 4.0])
+        assert result.dimension == (units.m / units.s).dimension
+
+    def test_true_divide_via_ufunc(self):
+        """np.true_divide works with DimArrays."""
+        a = DimArray([10.0, 20.0], units.m)
+        b = DimArray([2.0, 5.0], units.s)
+        result = np.true_divide(a, b)
+        np.testing.assert_array_equal(result.data, [5.0, 4.0])
+
+    def test_power_via_ufunc(self):
+        """np.power works with DimArray and scalar exponent."""
+        arr = DimArray([2.0, 3.0], units.m)
+        result = np.power(arr, 2)
+        np.testing.assert_array_equal(result.data, [4.0, 9.0])
+        assert result.dimension.length == 2
+
+    def test_power_with_dimensionless_exponent(self):
+        """Power with dimensionless DimArray exponent."""
+        base = DimArray([2.0, 3.0], units.m)
+        exp = DimArray([2, 2])  # dimensionless
+        result = np.power(base, exp)
+        np.testing.assert_array_equal(result.data, [4.0, 9.0])
+
+    def test_power_rejects_dimensional_exponent(self):
+        """Power rejects dimensional exponent."""
+        base = DimArray([2.0], units.m)
+        exp = DimArray([2.0], units.s)  # dimensional
+        with pytest.raises(DimensionError):
+            np.power(base, exp)
+
+    def test_power_rejects_varying_exponent_array(self):
+        """Power rejects array with different exponent values."""
+        base = DimArray([2.0, 3.0], units.m)
+        exp = np.array([2, 3])  # different values
+        with pytest.raises(DimensionError):
+            np.power(base, exp)
+
+    def test_subtract_via_ufunc(self):
+        """np.subtract works with same dimensions."""
+        a = DimArray([5.0, 10.0], units.m)
+        b = DimArray([1.0, 3.0], units.m)
+        result = np.subtract(a, b)
+        np.testing.assert_array_equal(result.data, [4.0, 7.0])
+
+
+class TestRightDivide:
+    """Test right division operations."""
+
+    def test_scalar_divide_by_dimarray(self):
+        """scalar / DimArray inverts the unit."""
+        arr = DimArray([2.0, 4.0], units.m)
+        result = 10 / arr
+        np.testing.assert_array_equal(result.data, [5.0, 2.5])
+        # Unit should be 1/m
+        assert result.dimension.length == -1
+
+
+class TestDimArrayWithUncertaintyArithmetic:
+    """Test arithmetic preserves uncertainty correctly."""
+
+    def test_add_with_uncertainty(self):
+        """Addition propagates uncertainty."""
+        a = DimArray([10.0], units.m, uncertainty=[0.1])
+        b = DimArray([5.0], units.m, uncertainty=[0.2])
+        result = a + b
+        assert result.has_uncertainty
+        # Uncertainty adds in quadrature: sqrt(0.1^2 + 0.2^2) ≈ 0.2236
+        np.testing.assert_array_almost_equal(result.uncertainty, [np.sqrt(0.01 + 0.04)], decimal=4)
+
+    def test_sub_with_uncertainty(self):
+        """Subtraction propagates uncertainty."""
+        a = DimArray([10.0], units.m, uncertainty=[0.3])
+        b = DimArray([5.0], units.m, uncertainty=[0.4])
+        result = a - b
+        assert result.has_uncertainty
+        # Uncertainty adds in quadrature
+        np.testing.assert_array_almost_equal(result.uncertainty, [0.5], decimal=4)

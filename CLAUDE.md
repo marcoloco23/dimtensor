@@ -1,68 +1,130 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guidance for Claude Code when working with this repository.
+
+---
+
+## Quick Start
+
+1. **Read CONTINUITY.md first** - Contains current task queue and workflow
+2. **Read AGENTS.md** - Contains detailed instructions for agents
+3. **Work through the TASK QUEUE** - Don't stop to ask for approval
+
+---
 
 ## Project Overview
 
-**dimtensor** is a Python library providing unit-aware tensors for physics and scientific machine learning. It wraps NumPy arrays with physical unit tracking, catching dimensional errors at operation time.
+**dimtensor** is a Python library providing unit-aware tensors for physics and scientific machine learning.
+
+Features:
+- NumPy DimArray with unit tracking
+- PyTorch DimTensor with autograd
+- JAX DimArray with JIT/vmap/grad
+- Physical constants (CODATA 2022)
+- Uncertainty propagation
+- Serialization (JSON, Pandas, HDF5)
+
+---
 
 ## Commands
 
 ```bash
-# Install in development mode
+# Install
 pip install -e ".[dev]"
 
-# Run all tests with coverage
+# Test (REQUIRED before commits)
 pytest
 
-# Run a single test file
-pytest tests/test_dimarray.py
+# Type check
+mypy src/dimtensor --ignore-missing-imports
 
-# Run a specific test
-pytest tests/test_dimarray.py::test_add_same_dimension -v
+# Coverage
+pytest --cov=dimtensor --cov-report=term-missing
 
-# Type checking
-mypy src/dimtensor
-
-# Linting
-ruff check src/dimtensor
-
-# Build documentation (requires docs extras)
-pip install -e ".[docs]"
-mkdocs serve
+# Deploy
+python -m build && twine upload dist/*
 ```
+
+---
 
 ## Architecture
 
 ```
 src/dimtensor/
 ├── core/
-│   ├── dimensions.py   # Dimension class: 7-tuple of SI base dimension exponents (L,M,T,I,Θ,N,J)
-│   ├── units.py        # Unit class: dimension + scale factor; all SI and common units defined here
-│   └── dimarray.py     # DimArray: numpy wrapper that enforces dimensional correctness
-├── functions.py        # Module-level array functions (concatenate, stack, dot, matmul, norm)
+│   ├── dimensions.py   # Dimension: 7-tuple SI exponents (L,M,T,I,Θ,N,J)
+│   ├── units.py        # Unit: dimension + scale factor
+│   └── dimarray.py     # DimArray: numpy wrapper with units
+├── torch/
+│   └── dimtensor.py    # DimTensor: PyTorch integration
+├── jax/
+│   └── dimarray.py     # JAX DimArray with pytree registration
+├── io/
+│   ├── json.py         # JSON serialization
+│   ├── pandas.py       # Pandas DataFrame integration
+│   └── hdf5.py         # HDF5 support
+├── constants/          # Physical constants (CODATA 2022)
+│   ├── universal.py    # c, G, h, hbar
+│   ├── electromagnetic.py
+│   ├── atomic.py
+│   └── physico_chemical.py
+├── benchmarks.py       # Performance measurement
+├── functions.py        # Array functions (concatenate, dot, matmul)
 ├── errors.py           # DimensionError, UnitConversionError
-└── config.py           # Display options (precision, threshold)
+└── config.py           # Display options
 ```
 
-**Core Design:**
-- `Dimension` is a frozen dataclass storing `Fraction` exponents for 7 SI base dimensions. Algebra: multiply adds exponents, divide subtracts, power multiplies.
-- `Unit` combines a `Dimension` with a scale factor (relative to SI base units). Example: kilometer has dimension L and scale 1000.0.
-- `DimArray` wraps `numpy.ndarray` + `Unit`. Operations check dimensional compatibility and propagate units correctly:
-  - Addition/subtraction require same dimension (auto-converts compatible units)
-  - Multiplication/division multiply dimensions
-  - Power operations require dimensionless exponents
-  - NumPy ufuncs like `np.sin`, `np.exp` require dimensionless input; `np.sqrt` halves dimension exponents
+---
 
-**Unit Simplification:** The `_DIMENSION_TO_SYMBOL` dict in `units.py` maps dimensions to canonical symbols (e.g., `kg·m/s²` → `N`).
+## Key Files
+
+| File | Purpose |
+|------|---------|
+| CONTINUITY.md | **Task queue and session log** - Read first |
+| AGENTS.md | Detailed agent instructions |
+| ROADMAP.md | Long-term vision |
+| .plans/ | Planning documents for complex tasks |
+
+---
+
+## Core Design
+
+- `Dimension`: Frozen dataclass with 7 `Fraction` exponents
+- `Unit`: Dimension + scale factor (e.g., km = L with scale 1000)
+- `DimArray`: numpy.ndarray + Unit, enforces dimensional correctness
+
+**Operations:**
+- `+`/`-`: Require same dimension
+- `*`/`/`: Multiply dimensions
+- `**`: Requires dimensionless exponent
+- `np.sin`, `np.exp`: Require dimensionless input
+- `np.sqrt`: Halves dimension exponents
+
+---
 
 ## Key Patterns
 
-- Internal constructor `DimArray._from_data_and_unit(data, unit)` avoids copying for performance
-- All operations return new DimArray instances (immutable-style)
-- `__array_ufunc__` handles NumPy function calls on DimArrays
-- Scalars are always wrapped in 1D arrays for API consistency
+```python
+# Internal constructor (no copy)
+DimArray._from_data_and_unit(data, unit)
 
-## Testing
+# All operations return new instances (immutable)
+result = a + b  # new DimArray
 
-Tests are in `tests/` using pytest. Each core module has a corresponding test file. Run `pytest -v --cov=dimtensor` for coverage report.
+# Unit simplification
+# kg·m/s² automatically displays as N
+```
+
+---
+
+## Workflow
+
+See CONTINUITY.md for the current task queue.
+
+```
+1. Read CONTINUITY.md
+2. Update AGENT CHECKIN
+3. Work through TASK QUEUE
+4. Update CONTINUITY.md after each task
+5. KEEP GOING until queue empty or blocked
+```

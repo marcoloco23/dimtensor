@@ -20,7 +20,6 @@ Example:
 
 from .dimarray import DimArray, register_pytree
 
-# Register the pytree node on import
-register_pytree()
+# Note: register_pytree() is called automatically when dimarray.py is imported
 
-__all__ = ["DimArray"]
+__all__ = ["DimArray", "register_pytree"]

@@ -5,6 +5,53 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-08
+
+### Added
+- **NetCDF support** (`pip install dimtensor[netcdf]`)
+  - `save_netcdf()`, `load_netcdf()` - single array
+  - `save_multiple_netcdf()`, `load_multiple_netcdf()` - multiple arrays
+  - Compression support via zlib
+  - Requires netCDF4 library
+
+- **Parquet support** (`pip install dimtensor[parquet]`)
+  - `save_parquet()`, `load_parquet()` - single array
+  - `save_multiple_parquet()`, `load_multiple_parquet()` - multiple arrays
+  - Compression options: snappy, gzip, lz4, zstd
+  - Requires pyarrow library
+
+- **xarray integration** (`pip install dimtensor[xarray]`)
+  - `to_xarray()`, `from_xarray()` - DataArray conversion
+  - `to_dataset()`, `from_dataset()` - Dataset conversion
+  - Unit metadata preserved in attrs
+  - Requires xarray library
+
+- 20 new tests for serialization formats
+- Optional dependency groups in pyproject.toml
+
+### Changed
+- Updated README with new I/O format examples
+- `pip install dimtensor[all]` now includes all optional dependencies
+
+## [1.0.1] - 2026-01-08
+
+### Fixed
+- **Critical**: JAX pytree registration now called automatically on import
+  - Previously `register_pytree()` was defined but never executed at module level
+  - JAX DimArray now works correctly with `jax.jit`, `jax.vmap`, and `jax.grad`
+
+### Added
+- 19 new tests for improved code coverage
+  - Scalar arithmetic with dimensionless DimArrays
+  - Right-subtract operations
+  - NumPy ufuncs: `np.divide`, `np.power` edge cases
+  - DimArray construction from other DimArrays with uncertainty
+
+### Changed
+- Code coverage improved: 72% → 74% overall, 85% excluding JAX module
+- Core `dimarray.py` coverage: 74% → 82%
+- README updated with comprehensive documentation of all features
+
 ## [1.0.0] - 2026-01-08
 
 ### Added

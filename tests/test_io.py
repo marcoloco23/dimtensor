@@ -257,3 +257,344 @@ class TestHDF5Serialization:
             assert np.allclose(arr.data, loaded.data)
         finally:
             Path(path).unlink(missing_ok=True)
+
+
+class TestNetCDFSerialization:
+    """Tests for NetCDF serialization."""
+
+    @pytest.fixture
+    def skip_if_no_netcdf4(self):
+        """Skip test if netCDF4 not available."""
+        pytest.importorskip("netCDF4")
+
+    def test_save_load_basic(self, skip_if_no_netcdf4):
+        """Save and load DimArray to NetCDF."""
+        from dimtensor.io import save_netcdf, load_netcdf
+
+        arr = DimArray([1.0, 2.0, 3.0], units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_netcdf(arr, path)
+            loaded = load_netcdf(path)
+
+            assert np.allclose(arr.data, loaded.data)
+            assert arr.dimension == loaded.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_save_load_with_uncertainty(self, skip_if_no_netcdf4):
+        """NetCDF roundtrip preserves uncertainty."""
+        from dimtensor.io import save_netcdf, load_netcdf
+
+        arr = DimArray([10.0, 20.0], units.kg, uncertainty=[0.5, 1.0])
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_netcdf(arr, path)
+            loaded = load_netcdf(path)
+
+            assert loaded.has_uncertainty
+            assert np.allclose(loaded.uncertainty, arr.uncertainty)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_save_load_multiple(self, skip_if_no_netcdf4):
+        """Save and load multiple arrays."""
+        from dimtensor.io.netcdf import save_multiple_netcdf, load_multiple_netcdf
+
+        distance = DimArray([1.0, 2.0, 3.0], units.m)
+        time = DimArray([0.1, 0.2, 0.3], units.s)
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_multiple_netcdf({"distance": distance, "time": time}, path)
+            loaded = load_multiple_netcdf(path)
+
+            assert "distance" in loaded
+            assert "time" in loaded
+            assert np.allclose(loaded["distance"].data, distance.data)
+            assert loaded["time"].dimension == time.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_compression(self, skip_if_no_netcdf4):
+        """Test compression option."""
+        from dimtensor.io import save_netcdf, load_netcdf
+
+        arr = DimArray(np.random.randn(1000), units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_netcdf(arr, path, compression=True)
+            loaded = load_netcdf(path)
+            assert np.allclose(arr.data, loaded.data)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_multidimensional(self, skip_if_no_netcdf4):
+        """Test with multidimensional array."""
+        from dimtensor.io import save_netcdf, load_netcdf
+
+        arr = DimArray([[1.0, 2.0], [3.0, 4.0]], units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_netcdf(arr, path)
+            loaded = load_netcdf(path)
+            assert loaded.shape == (2, 2)
+            assert np.allclose(arr.data, loaded.data)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_derived_unit(self, skip_if_no_netcdf4):
+        """Test with derived unit."""
+        from dimtensor.io import save_netcdf, load_netcdf
+
+        arr = DimArray([9.8], units.m / units.s**2)
+
+        with tempfile.NamedTemporaryFile(suffix=".nc", delete=False) as f:
+            path = f.name
+
+        try:
+            save_netcdf(arr, path)
+            loaded = load_netcdf(path)
+            assert loaded.dimension == arr.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+
+class TestParquetSerialization:
+    """Tests for Parquet serialization."""
+
+    @pytest.fixture
+    def skip_if_no_pyarrow(self):
+        """Skip test if pyarrow not available."""
+        pytest.importorskip("pyarrow")
+
+    def test_save_load_basic(self, skip_if_no_pyarrow):
+        """Save and load DimArray to Parquet."""
+        from dimtensor.io import save_parquet, load_parquet
+
+        arr = DimArray([1.0, 2.0, 3.0], units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            save_parquet(arr, path)
+            loaded = load_parquet(path)
+
+            assert np.allclose(arr.data, loaded.data)
+            assert arr.dimension == loaded.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_save_load_with_uncertainty(self, skip_if_no_pyarrow):
+        """Parquet roundtrip preserves uncertainty."""
+        from dimtensor.io import save_parquet, load_parquet
+
+        arr = DimArray([10.0, 20.0], units.kg, uncertainty=[0.5, 1.0])
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            save_parquet(arr, path)
+            loaded = load_parquet(path)
+
+            assert loaded.has_uncertainty
+            assert np.allclose(loaded.uncertainty, arr.uncertainty)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_save_load_multiple(self, skip_if_no_pyarrow):
+        """Save and load multiple arrays."""
+        from dimtensor.io.parquet import save_multiple_parquet, load_multiple_parquet
+
+        distance = DimArray([1.0, 2.0, 3.0], units.m)
+        time = DimArray([0.1, 0.2, 0.3], units.s)
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            save_multiple_parquet({"distance": distance, "time": time}, path)
+            loaded = load_multiple_parquet(path)
+
+            assert "distance" in loaded
+            assert "time" in loaded
+            assert np.allclose(loaded["distance"].data, distance.data)
+            assert loaded["time"].dimension == time.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_multidimensional(self, skip_if_no_pyarrow):
+        """Test with multidimensional array."""
+        from dimtensor.io import save_parquet, load_parquet
+
+        arr = DimArray([[1.0, 2.0], [3.0, 4.0]], units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            save_parquet(arr, path)
+            loaded = load_parquet(path)
+            assert loaded.shape == (2, 2)
+            assert np.allclose(arr.data, loaded.data)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_compression_options(self, skip_if_no_pyarrow):
+        """Test different compression options."""
+        from dimtensor.io import save_parquet, load_parquet
+
+        arr = DimArray(np.random.randn(1000), units.m)
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            # Test with gzip compression
+            save_parquet(arr, path, compression="gzip")
+            loaded = load_parquet(path)
+            assert np.allclose(arr.data, loaded.data)
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+    def test_derived_unit(self, skip_if_no_pyarrow):
+        """Test with derived unit."""
+        from dimtensor.io import save_parquet, load_parquet
+
+        arr = DimArray([9.8], units.m / units.s**2)
+
+        with tempfile.NamedTemporaryFile(suffix=".parquet", delete=False) as f:
+            path = f.name
+
+        try:
+            save_parquet(arr, path)
+            loaded = load_parquet(path)
+            assert loaded.dimension == arr.dimension
+        finally:
+            Path(path).unlink(missing_ok=True)
+
+
+class TestXarrayIntegration:
+    """Tests for xarray integration."""
+
+    @pytest.fixture
+    def skip_if_no_xarray(self):
+        """Skip test if xarray not available."""
+        pytest.importorskip("xarray")
+
+    def test_to_xarray_basic(self, skip_if_no_xarray):
+        """Convert DimArray to xarray DataArray."""
+        from dimtensor.io import to_xarray
+
+        arr = DimArray([1.0, 2.0, 3.0], units.m)
+        da = to_xarray(arr, name="distance")
+
+        assert da.name == "distance"
+        assert np.allclose(da.values, [1.0, 2.0, 3.0])
+        assert da.attrs["units"] == "m"
+        assert "dimtensor_unit_symbol" in da.attrs
+
+    def test_from_xarray_basic(self, skip_if_no_xarray):
+        """Convert xarray DataArray back to DimArray."""
+        from dimtensor.io import to_xarray, from_xarray
+
+        original = DimArray([1.0, 2.0, 3.0], units.m)
+        da = to_xarray(original, name="distance")
+        restored = from_xarray(da)
+
+        assert np.allclose(original.data, restored.data)
+        assert original.dimension == restored.dimension
+
+    def test_roundtrip(self, skip_if_no_xarray):
+        """Full roundtrip preserves units."""
+        from dimtensor.io import to_xarray, from_xarray
+
+        original = DimArray([9.8], units.m / units.s**2)
+        da = to_xarray(original)
+        restored = from_xarray(da)
+
+        assert np.allclose(original.data, restored.data)
+        assert original.dimension == restored.dimension
+        assert original.unit.scale == pytest.approx(restored.unit.scale)
+
+    def test_to_dataset(self, skip_if_no_xarray):
+        """Convert multiple DimArrays to xarray Dataset."""
+        from dimtensor.io import to_dataset
+
+        distance = DimArray([1.0, 2.0, 3.0], units.m)
+        time = DimArray([0.1, 0.2, 0.3], units.s)
+
+        ds = to_dataset({"distance": distance, "time": time})
+
+        assert "distance" in ds.data_vars
+        assert "time" in ds.data_vars
+        assert ds["distance"].attrs["units"] == "m"
+        assert ds["time"].attrs["units"] == "s"
+
+    def test_from_dataset(self, skip_if_no_xarray):
+        """Convert xarray Dataset back to DimArrays."""
+        from dimtensor.io import to_dataset, from_dataset
+
+        distance = DimArray([1.0, 2.0, 3.0], units.m)
+        time = DimArray([0.1, 0.2, 0.3], units.s)
+
+        ds = to_dataset({"distance": distance, "time": time})
+        arrays = from_dataset(ds)
+
+        assert "distance" in arrays
+        assert "time" in arrays
+        assert np.allclose(arrays["distance"].data, distance.data)
+        assert arrays["time"].dimension == time.dimension
+
+    def test_multidimensional(self, skip_if_no_xarray):
+        """Test with multidimensional array."""
+        from dimtensor.io import to_xarray, from_xarray
+
+        arr = DimArray([[1.0, 2.0], [3.0, 4.0]], units.m)
+        da = to_xarray(arr)
+        restored = from_xarray(da)
+
+        assert restored.shape == (2, 2)
+        assert np.allclose(arr.data, restored.data)
+
+    def test_with_coords(self, skip_if_no_xarray):
+        """Test with custom coordinates."""
+        from dimtensor.io import to_xarray
+
+        arr = DimArray([1.0, 2.0, 3.0], units.m)
+        da = to_xarray(
+            arr,
+            name="temperature",
+            dims=("x",),
+            coords={"x": [0, 1, 2]},
+        )
+
+        assert "x" in da.coords
+        assert list(da.coords["x"].values) == [0, 1, 2]
+
+    def test_from_xarray_without_metadata(self, skip_if_no_xarray):
+        """DataArray without dimtensor metadata becomes dimensionless."""
+        import xarray as xr
+        from dimtensor.io import from_xarray
+
+        da = xr.DataArray([1.0, 2.0, 3.0])
+        arr = from_xarray(da)
+
+        assert np.allclose(arr.data, [1.0, 2.0, 3.0])
+        assert arr.is_dimensionless
