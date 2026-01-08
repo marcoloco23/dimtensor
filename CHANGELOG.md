@@ -5,6 +5,37 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.8.0] - 2026-01-08
+
+### Added
+- **Benchmarks module**: `dimtensor.benchmarks` for performance measurement
+  - `benchmark_suite()` - run full benchmark suite
+  - `quick_benchmark()` - quick overhead check
+  - `print_results()` - formatted output
+  - Individual benchmarks for creation, arithmetic, reductions, indexing
+- **Performance metrics**:
+  - Measure overhead vs raw numpy operations
+  - Track performance across different array sizes
+  - Document performance characteristics
+
+### Example
+```python
+from dimtensor.benchmarks import quick_benchmark, benchmark_suite, print_results
+
+# Quick overhead check
+overheads = quick_benchmark()
+print(f"Addition overhead: {overheads['addition']:.1f}x")
+
+# Full benchmark suite
+results = benchmark_suite(sizes=[1000, 10000])
+print_results(results)
+```
+
+### Performance Notes
+- Typical overhead is 2-5x for arithmetic operations
+- Overhead is dominated by unit checking and object creation
+- For computation-heavy workloads, overhead becomes negligible
+
 ## [0.7.0] - 2026-01-08
 
 ### Added
