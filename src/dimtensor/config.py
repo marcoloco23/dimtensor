@@ -81,13 +81,11 @@ def options(
         >>> with config.options(precision=2, threshold=5):
         ...     print(arr)
     """
-    old_values = {
-        "precision": display.precision,
-        "threshold": display.threshold,
-        "edgeitems": display.edgeitems,
-        "linewidth": display.linewidth,
-        "suppress_small": display.suppress_small,
-    }
+    old_precision = display.precision
+    old_threshold = display.threshold
+    old_edgeitems = display.edgeitems
+    old_linewidth = display.linewidth
+    old_suppress_small = display.suppress_small
 
     if precision is not None:
         display.precision = precision
@@ -103,11 +101,11 @@ def options(
     try:
         yield
     finally:
-        display.precision = old_values["precision"]
-        display.threshold = old_values["threshold"]
-        display.edgeitems = old_values["edgeitems"]
-        display.linewidth = old_values["linewidth"]
-        display.suppress_small = old_values["suppress_small"]
+        display.precision = old_precision
+        display.threshold = old_threshold
+        display.edgeitems = old_edgeitems
+        display.linewidth = old_linewidth
+        display.suppress_small = old_suppress_small
 
 
 def set_display(

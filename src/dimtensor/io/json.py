@@ -42,7 +42,7 @@ def to_dict(arr: DimArray) -> dict[str, Any]:
         "dtype": str(arr.dtype),
     }
 
-    if arr.has_uncertainty:
+    if arr.has_uncertainty and arr._uncertainty is not None:
         result["uncertainty"] = arr._uncertainty.tolist()
 
     return result

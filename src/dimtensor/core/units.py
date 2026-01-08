@@ -46,13 +46,13 @@ class Unit:
                 dimension=self.dimension,
                 scale=self.scale * other,
             )
-        return NotImplemented  # type: ignore[return-value]
+        return NotImplemented
 
     def __rmul__(self, other: object) -> Unit:
         """Multiply by scalar from left."""
         if isinstance(other, (int, float)):
             return self * other
-        return NotImplemented  # type: ignore[return-value]
+        return NotImplemented
 
     def __truediv__(self, other: object) -> Unit:
         """Divide units."""
@@ -68,7 +68,7 @@ class Unit:
                 dimension=self.dimension,
                 scale=self.scale / other,
             )
-        return NotImplemented  # type: ignore[return-value]
+        return NotImplemented
 
     def __rtruediv__(self, other: object) -> Unit:
         """Divide scalar by unit (gives inverse unit)."""
@@ -78,7 +78,7 @@ class Unit:
                 dimension=self.dimension ** -1,
                 scale=other / self.scale,
             )
-        return NotImplemented  # type: ignore[return-value]
+        return NotImplemented
 
     def __pow__(self, power: int | float | Fraction) -> Unit:
         """Raise unit to a power."""

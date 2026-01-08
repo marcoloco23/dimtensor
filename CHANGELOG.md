@@ -5,6 +5,27 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-01-08
+
+### Added
+- **Production release**: API is now stable
+- **Full type safety**: 100% mypy compliance with strict mode
+- 316 tests with 72% code coverage
+
+### Changed
+- Development status upgraded to "Production/Stable"
+- All public APIs are now frozen for backward compatibility
+
+### Features Summary
+- **Core**: DimArray with unit-aware arithmetic, comparison, indexing, reductions
+- **Units**: Full SI system + derived units with automatic simplification
+- **Constants**: CODATA 2022 physical constants with uncertainties
+- **Uncertainty**: Error propagation through all operations
+- **PyTorch**: DimTensor with autograd support
+- **JAX**: DimArray with pytree registration for JIT/vmap/grad
+- **Benchmarks**: Performance measurement utilities
+- **Serialization**: JSON, Pandas, HDF5 support
+
 ## [0.9.0] - 2026-01-08
 
 ### Added

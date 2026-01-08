@@ -50,7 +50,7 @@ def to_series(arr: DimArray, name: str | None = None) -> Any:
         "luminosity": float(arr.dimension.luminosity),
     }
 
-    if arr.has_uncertainty:
+    if arr.has_uncertainty and arr._uncertainty is not None:
         series.attrs["uncertainty"] = arr._uncertainty.tolist()
 
     return series
@@ -150,7 +150,7 @@ def to_dataframe(
                 "luminosity": float(arr.dimension.luminosity),
             },
         }
-        if arr.has_uncertainty:
+        if arr.has_uncertainty and arr._uncertainty is not None:
             units_meta[name]["uncertainty"] = arr._uncertainty.tolist()
 
     df = pd.DataFrame(data, index=index)

@@ -6,7 +6,7 @@ catching dimensional errors at operation time rather than after hours of computa
 
 from __future__ import annotations
 
-from typing import Any, overload
+from typing import Any, Iterator, overload
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -233,6 +233,7 @@ class DimArray:
         if unc_a is None and unc_b is None:
             return None
         if unc_a is None:
+            assert unc_b is not None  # for mypy
             return unc_b.copy()
         if unc_b is None:
             return unc_a.copy()
@@ -260,7 +261,7 @@ class DimArray:
             rel_combined = np.sqrt(rel_a_sq + rel_b_sq)
             unc_result = np.abs(result) * rel_combined
             # Handle NaN from 0/0 cases
-            unc_result = np.nan_to_num(unc_result, nan=0.0, posinf=np.inf, neginf=np.inf)
+            unc_result = np.asarray(np.nan_to_num(unc_result, nan=0.0, posinf=np.inf, neginf=np.inf))
 
         return unc_result
 
@@ -282,7 +283,7 @@ class DimArray:
         with np.errstate(divide="ignore", invalid="ignore"):
             rel_unc = unc / np.abs(val)
             unc_result = np.abs(result) * np.abs(power) * rel_unc
-            unc_result = np.nan_to_num(unc_result, nan=0.0, posinf=np.inf, neginf=np.inf)
+            unc_result = np.asarray(np.nan_to_num(unc_result, nan=0.0, posinf=np.inf, neginf=np.inf))
 
         return unc_result
 
@@ -464,9 +465,11 @@ class DimArray:
             if self.dimension != other.dimension:
                 return False
             other_converted = other.to(self._unit)
-            return self._data == other_converted._data  # type: ignore[return-value]
+            result: NDArray[np.bool_] = self._data == other_converted._data
+            return result
         elif self.is_dimensionless:
-            return self._data == np.asarray(other)  # type: ignore[return-value]
+            result = self._data == np.asarray(other)
+            return result
         return False
 
     def __ne__(self, other: object) -> NDArray[np.bool_] | bool:  # type: ignore[override]
@@ -484,9 +487,9 @@ class DimArray:
                     self.dimension, other.dimension, "compare"
                 )
             other_converted = other.to(self._unit)
-            return self._data < other_converted._data  # type: ignore[return-value]
+            return self._data < other_converted._data
         elif self.is_dimensionless:
-            return self._data < np.asarray(other)  # type: ignore[return-value]
+            return self._data < np.asarray(other)
         raise DimensionError(
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
@@ -499,9 +502,9 @@ class DimArray:
                     self.dimension, other.dimension, "compare"
                 )
             other_converted = other.to(self._unit)
-            return self._data <= other_converted._data  # type: ignore[return-value]
+            return self._data <= other_converted._data
         elif self.is_dimensionless:
-            return self._data <= np.asarray(other)  # type: ignore[return-value]
+            return self._data <= np.asarray(other)
         raise DimensionError(
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
@@ -514,9 +517,9 @@ class DimArray:
                     self.dimension, other.dimension, "compare"
                 )
             other_converted = other.to(self._unit)
-            return self._data > other_converted._data  # type: ignore[return-value]
+            return self._data > other_converted._data
         elif self.is_dimensionless:
-            return self._data > np.asarray(other)  # type: ignore[return-value]
+            return self._data > np.asarray(other)
         raise DimensionError(
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
@@ -529,9 +532,9 @@ class DimArray:
                     self.dimension, other.dimension, "compare"
                 )
             other_converted = other.to(self._unit)
-            return self._data >= other_converted._data  # type: ignore[return-value]
+            return self._data >= other_converted._data
         elif self.is_dimensionless:
-            return self._data >= np.asarray(other)  # type: ignore[return-value]
+            return self._data >= np.asarray(other)
         raise DimensionError(
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
@@ -567,7 +570,7 @@ class DimArray:
         """Length of first dimension."""
         return len(self._data)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[DimArray]:
         """Iterate over first dimension."""
         for i in range(len(self)):
             yield self[i]
@@ -714,7 +717,7 @@ class DimArray:
         Returns:
             Index or array of indices (dimensionless integers).
         """
-        return self._data.argmin(axis=axis)  # type: ignore[return-value]
+        return self._data.argmin(axis=axis)
 
     def argmax(self, axis: int | None = None) -> np.intp | NDArray[np.intp]:
         """Return indices of maximum values.
@@ -726,7 +729,7 @@ class DimArray:
         Returns:
             Index or array of indices (dimensionless integers).
         """
-        return self._data.argmax(axis=axis)  # type: ignore[return-value]
+        return self._data.argmax(axis=axis)
 
     # =========================================================================
     # Reshaping operations

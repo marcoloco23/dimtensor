@@ -110,7 +110,7 @@ class DimArray:
         return self._data.size
 
     @property
-    def dtype(self) -> jnp.dtype:
+    def dtype(self) -> Any:
         """Data type of the underlying array."""
         return self._data.dtype
 

@@ -69,10 +69,10 @@ def benchmark_creation(size: int = 10000, iterations: int = 1000) -> BenchmarkRe
     """Benchmark array creation."""
     data = list(range(size))
 
-    def numpy_create():
+    def numpy_create() -> None:
         np.array(data)
 
-    def dimarray_create():
+    def dimarray_create() -> None:
         DimArray(data, m)
 
     numpy_time = time_operation(numpy_create, iterations)
@@ -88,10 +88,10 @@ def benchmark_addition(size: int = 10000, iterations: int = 1000) -> BenchmarkRe
     da_a = DimArray(np_a, m)
     da_b = DimArray(np_b, m)
 
-    def numpy_add():
+    def numpy_add() -> None:
         np_a + np_b
 
-    def dimarray_add():
+    def dimarray_add() -> None:
         da_a + da_b
 
     numpy_time = time_operation(numpy_add, iterations)
@@ -107,10 +107,10 @@ def benchmark_multiplication(size: int = 10000, iterations: int = 1000) -> Bench
     da_a = DimArray(np_a, m)
     da_b = DimArray(np_b, s)
 
-    def numpy_mul():
+    def numpy_mul() -> None:
         np_a * np_b
 
-    def dimarray_mul():
+    def dimarray_mul() -> None:
         da_a * da_b
 
     numpy_time = time_operation(numpy_mul, iterations)
@@ -126,10 +126,10 @@ def benchmark_division(size: int = 10000, iterations: int = 1000) -> BenchmarkRe
     da_a = DimArray(np_a, m)
     da_b = DimArray(np_b, s)
 
-    def numpy_div():
+    def numpy_div() -> None:
         np_a / np_b
 
-    def dimarray_div():
+    def dimarray_div() -> None:
         da_a / da_b
 
     numpy_time = time_operation(numpy_div, iterations)
@@ -143,10 +143,10 @@ def benchmark_power(size: int = 10000, iterations: int = 1000) -> BenchmarkResul
     np_a = np.abs(np.random.randn(size)) + 0.1
     da_a = DimArray(np_a, m)
 
-    def numpy_pow():
+    def numpy_pow() -> None:
         np_a ** 2
 
-    def dimarray_pow():
+    def dimarray_pow() -> None:
         da_a ** 2
 
     numpy_time = time_operation(numpy_pow, iterations)
@@ -160,10 +160,10 @@ def benchmark_reduction(size: int = 10000, iterations: int = 1000) -> BenchmarkR
     np_a = np.random.randn(size)
     da_a = DimArray(np_a, m)
 
-    def numpy_sum():
+    def numpy_sum() -> None:
         np_a.sum()
 
-    def dimarray_sum():
+    def dimarray_sum() -> None:
         da_a.sum()
 
     numpy_time = time_operation(numpy_sum, iterations)
@@ -179,10 +179,10 @@ def benchmark_matmul(size: int = 100, iterations: int = 100) -> BenchmarkResult:
     da_a = DimArray(np_a, m)
     da_b = DimArray(np_b, s)
 
-    def numpy_matmul():
+    def numpy_matmul() -> None:
         np_a @ np_b
 
-    def dimarray_matmul():
+    def dimarray_matmul() -> None:
         # Use functions module
         from .functions import matmul
         matmul(da_a, da_b)
@@ -199,10 +199,10 @@ def benchmark_indexing(size: int = 10000, iterations: int = 1000) -> BenchmarkRe
     da_a = DimArray(np_a, m)
     indices = np.random.randint(0, size, 100)
 
-    def numpy_index():
+    def numpy_index() -> None:
         np_a[indices]
 
-    def dimarray_index():
+    def dimarray_index() -> None:
         da_a[indices]
 
     numpy_time = time_operation(numpy_index, iterations)
@@ -220,10 +220,10 @@ def benchmark_chained_ops(size: int = 10000, iterations: int = 1000) -> Benchmar
     da_b = DimArray(np_b, m)
     da_c = DimArray(np_c, s)
 
-    def numpy_chain():
+    def numpy_chain() -> None:
         ((np_a + np_b) * 2.0) / np_c
 
-    def dimarray_chain():
+    def dimarray_chain() -> None:
         ((da_a + da_b) * 2.0) / da_c
 
     numpy_time = time_operation(numpy_chain, iterations)

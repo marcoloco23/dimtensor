@@ -6,6 +6,7 @@ catching dimensional errors while preserving autograd functionality.
 
 from __future__ import annotations
 
+import builtins
 from typing import Any, Sequence
 
 import torch
@@ -210,7 +211,7 @@ class DimTensor:
         create_graph: bool = False,
     ) -> None:
         """Compute gradients."""
-        self._data.backward(gradient, retain_graph, create_graph)
+        self._data.backward(gradient, retain_graph, create_graph)  # type: ignore[no-untyped-call]
 
     # =========================================================================
     # Unit conversion
@@ -246,7 +247,7 @@ class DimTensor:
     # Arithmetic operations
     # =========================================================================
 
-    def __add__(self, other: DimTensor | Tensor | float) -> DimTensor:
+    def __add__(self, other: DimTensor | Tensor | builtins.float) -> DimTensor:
         """Add tensors (must have same dimension)."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -265,11 +266,11 @@ class DimTensor:
             new_tensor = self._data + other_tensor
             return DimTensor._from_tensor_and_unit(new_tensor, self._unit)
 
-    def __radd__(self, other: Tensor | float) -> DimTensor:
+    def __radd__(self, other: Tensor | builtins.float) -> DimTensor:
         """Right add."""
         return self.__add__(other)
 
-    def __sub__(self, other: DimTensor | Tensor | float) -> DimTensor:
+    def __sub__(self, other: DimTensor | Tensor | builtins.float) -> DimTensor:
         """Subtract tensors (must have same dimension)."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -288,7 +289,7 @@ class DimTensor:
             new_tensor = self._data - other_tensor
             return DimTensor._from_tensor_and_unit(new_tensor, self._unit)
 
-    def __rsub__(self, other: Tensor | float) -> DimTensor:
+    def __rsub__(self, other: Tensor | builtins.float) -> DimTensor:
         """Right subtract."""
         if not self.is_dimensionless:
             raise DimensionError(
@@ -298,7 +299,7 @@ class DimTensor:
         new_tensor = other_tensor - self._data
         return DimTensor._from_tensor_and_unit(new_tensor, self._unit)
 
-    def __mul__(self, other: DimTensor | Tensor | float) -> DimTensor:
+    def __mul__(self, other: DimTensor | Tensor | builtins.float) -> DimTensor:
         """Multiply tensors (dimensions multiply)."""
         if isinstance(other, DimTensor):
             new_unit = self._unit * other._unit
@@ -309,11 +310,11 @@ class DimTensor:
             new_tensor = self._data * other_tensor
             return DimTensor._from_tensor_and_unit(new_tensor, self._unit)
 
-    def __rmul__(self, other: Tensor | float) -> DimTensor:
+    def __rmul__(self, other: Tensor | builtins.float) -> DimTensor:
         """Right multiply."""
         return self.__mul__(other)
 
-    def __truediv__(self, other: DimTensor | Tensor | float) -> DimTensor:
+    def __truediv__(self, other: DimTensor | Tensor | builtins.float) -> DimTensor:
         """Divide tensors (dimensions divide)."""
         if isinstance(other, DimTensor):
             new_unit = self._unit / other._unit
@@ -324,7 +325,7 @@ class DimTensor:
             new_tensor = self._data / other_tensor
             return DimTensor._from_tensor_and_unit(new_tensor, self._unit)
 
-    def __rtruediv__(self, other: Tensor | float) -> DimTensor:
+    def __rtruediv__(self, other: Tensor | builtins.float) -> DimTensor:
         """Right divide."""
         new_unit = Unit(
             f"1/{self._unit.symbol}",
@@ -335,7 +336,7 @@ class DimTensor:
         new_tensor = other_tensor / self._data
         return DimTensor._from_tensor_and_unit(new_tensor, new_unit)
 
-    def __pow__(self, power: int | float) -> DimTensor:
+    def __pow__(self, power: int | builtins.float) -> DimTensor:
         """Raise to a power."""
         new_unit = self._unit ** power
         new_tensor = self._data ** power
@@ -373,7 +374,7 @@ class DimTensor:
             return self._data == other_tensor
         return False
 
-    def __lt__(self, other: DimTensor | Tensor | float) -> Tensor:
+    def __lt__(self, other: DimTensor | Tensor | builtins.float) -> Tensor:
         """Element-wise less than."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -389,7 +390,7 @@ class DimTensor:
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
 
-    def __le__(self, other: DimTensor | Tensor | float) -> Tensor:
+    def __le__(self, other: DimTensor | Tensor | builtins.float) -> Tensor:
         """Element-wise less than or equal."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -405,7 +406,7 @@ class DimTensor:
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
 
-    def __gt__(self, other: DimTensor | Tensor | float) -> Tensor:
+    def __gt__(self, other: DimTensor | Tensor | builtins.float) -> Tensor:
         """Element-wise greater than."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -421,7 +422,7 @@ class DimTensor:
             f"Cannot compare quantity with dimension {self.dimension} to dimensionless number"
         )
 
-    def __ge__(self, other: DimTensor | Tensor | float) -> Tensor:
+    def __ge__(self, other: DimTensor | Tensor | builtins.float) -> Tensor:
         """Element-wise greater than or equal."""
         if isinstance(other, DimTensor):
             if self.dimension != other.dimension:
@@ -493,7 +494,7 @@ class DimTensor:
 
     def norm(
         self,
-        p: float | str = 2,
+        p: builtins.float | str = 2,
         dim: int | tuple[int, ...] | None = None,
         keepdim: bool = False,
     ) -> DimTensor:
@@ -588,6 +589,6 @@ class DimTensor:
         """Convert to numpy array (loses unit information)."""
         return self._data.detach().cpu().numpy()
 
-    def item(self) -> float:
+    def item(self) -> builtins.float:
         """Get single-element tensor as Python scalar."""
         return self._data.item()

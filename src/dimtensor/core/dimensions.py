@@ -122,7 +122,7 @@ class Dimension:
     def __mul__(self, other: object) -> Dimension:
         """Multiply dimensions (add exponents)."""
         if not isinstance(other, Dimension):
-            return NotImplemented  # type: ignore[return-value]
+            return NotImplemented
         new_exponents = tuple(
             a + b for a, b in zip(self._exponents, other._exponents)
         )
@@ -131,7 +131,7 @@ class Dimension:
     def __truediv__(self, other: object) -> Dimension:
         """Divide dimensions (subtract exponents)."""
         if not isinstance(other, Dimension):
-            return NotImplemented  # type: ignore[return-value]
+            return NotImplemented
         new_exponents = tuple(
             a - b for a, b in zip(self._exponents, other._exponents)
         )
