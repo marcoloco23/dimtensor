@@ -1,18 +1,11 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
-
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
-and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+All notable changes to dimtensor.
 
 ## [0.3.1] - 2026-01-08
 
 ### Added
 - **Documentation site**: Full mkdocs documentation with Material theme
-  - Getting started guide
-  - API reference with mkdocstrings
-  - Examples for physics calculations
-  - Unit reference tables
 - **Display configuration**: New `config` module for controlling output
   - `config.set_display(precision=N)` - set display precision
   - `config.precision(N)` - context manager for temporary precision
@@ -48,13 +41,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - **Unit simplification**: Compound units now display as their SI derived equivalents
-  - `kg·m/s²` → `N` (newton)
-  - `kg·m²/s²` → `J` (joule)
-  - `kg·m²/s³` → `W` (watt)
-  - `m/s·s` → `m` (cancellation)
+  - `kg*m/s^2` -> `N` (newton)
+  - `kg*m^2/s^2` -> `J` (joule)
+  - `kg*m^2/s^3` -> `W` (watt)
+  - `m/s*s` -> `m` (cancellation)
 - **Format string support**: Use f-strings with DimArray
-  - `f"{distance:.2f}"` → `"1234.57 m"`
-  - `f"{energy:.2e}"` → `"1.23e+03 J"`
+  - `f"{distance:.2f}"` -> `"1234.57 m"`
+  - `f"{energy:.2e}"` -> `"1.23e+03 J"`
 - **NumPy ufunc integration**: Use numpy functions directly
   - `np.sin(angle)`, `np.cos(angle)` - require dimensionless input
   - `np.exp(x)`, `np.log(x)` - require dimensionless input

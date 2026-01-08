@@ -11,6 +11,7 @@ from typing import Any, overload
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
 
+from ..config import display as _display
 from ..errors import DimensionError, UnitConversionError
 from .dimensions import Dimension
 from .units import Unit, dimensionless
@@ -513,20 +514,26 @@ class DimArray:
 
     def __str__(self) -> str:
         """Human-readable string."""
-        # Format the array nicely
+        # Format the array nicely using global display options
         if self._data.ndim == 0:
-            value_str = str(self._data.item())
-        elif self._data.size <= 10:
+            value_str = f"{self._data.item():.{_display.precision}g}"
+        elif self._data.size <= _display.threshold:
             value_str = np.array2string(
-                self._data, separator=", ", precision=4, suppress_small=True
+                self._data,
+                separator=", ",
+                precision=_display.precision,
+                suppress_small=_display.suppress_small,
+                max_line_width=_display.linewidth,
             )
         else:
             value_str = np.array2string(
                 self._data,
                 separator=", ",
-                precision=4,
-                suppress_small=True,
-                threshold=6,
+                precision=_display.precision,
+                suppress_small=_display.suppress_small,
+                threshold=_display.threshold,
+                edgeitems=_display.edgeitems,
+                max_line_width=_display.linewidth,
             )
 
         if self.is_dimensionless:

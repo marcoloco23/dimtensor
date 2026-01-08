@@ -28,7 +28,7 @@ What we have shipped:
 - **Statistics**: `var` (with squared units)
 - **Searching**: `argmin`, `argmax`
 - Published on PyPI, GitHub repo live
-- 120 tests, 80% coverage
+- 128 tests, 81% coverage
 
 ---
 
@@ -62,8 +62,8 @@ v3.x       Platform        - Full physics ML toolkit
 - [x] **NumPy ufunc integration**: `np.sin(angle)`, `np.exp(dimensionless)`
 - [x] **Format strings**: `f"{distance:.2f}"` works naturally
 - [x] **Changelog**: Maintain CHANGELOG.md
-- [ ] **Repr improvements**: Configurable display precision
-- [ ] **Documentation site**: mkdocs with examples and API reference
+- [x] **Repr improvements**: Configurable display precision via `config` module
+- [x] **Documentation site**: mkdocs with examples and API reference
 
 ### v0.3.0 - NumPy Function Parity ✅
 **Theme**: Drop-in replacement for unit-aware calculations
@@ -440,6 +440,6 @@ dimtensor/
 3. Domain packs: `constants.electromagnetic`, `constants.atomic`
 4. Uncertainty values: `c.uncertainty`, `G.uncertainty`
 
-**Deferred to later:**
-- Documentation site (mkdocs) - v0.3.x patch
-- Repr improvements - v0.3.x patch
+**Recently completed (v0.3.x patches):**
+- [x] Documentation site (mkdocs) with API reference
+- [x] Repr improvements with configurable precision via `config` module

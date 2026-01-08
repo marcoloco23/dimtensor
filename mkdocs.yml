@@ -1,0 +1,65 @@
+site_name: dimtensor
+site_description: Unit-aware tensors for physics and scientific machine learning
+site_url: https://marcoloco23.github.io/dimtensor
+repo_url: https://github.com/marcoloco23/dimtensor
+repo_name: marcoloco23/dimtensor
+
+theme:
+  name: material
+  palette:
+    - scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: Switch to light mode
+  features:
+    - navigation.instant
+    - navigation.sections
+    - navigation.expand
+    - content.code.copy
+    - content.code.annotate
+
+markdown_extensions:
+  - pymdownx.highlight:
+      anchor_linenums: true
+  - pymdownx.superfences
+  - pymdownx.inlinehilite
+  - admonition
+  - pymdownx.details
+  - attr_list
+  - md_in_html
+  - tables
+
+plugins:
+  - search
+  - mkdocstrings:
+      handlers:
+        python:
+          paths: [src]
+          options:
+            show_source: false
+            show_root_heading: true
+            show_root_full_path: false
+            heading_level: 2
+            members_order: source
+            docstring_style: google
+
+nav:
+  - Home: index.md
+  - Getting Started: getting-started.md
+  - User Guide:
+    - Working with Units: guide/units.md
+    - Array Operations: guide/operations.md
+    - Examples: guide/examples.md
+  - API Reference:
+    - DimArray: api/dimarray.md
+    - Units: api/units.md
+    - Functions: api/functions.md
+  - Changelog: changelog.md
