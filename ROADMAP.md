@@ -8,7 +8,7 @@
 
 ---
 
-## Current Status (v0.3.x) ✅
+## Current Status (v0.5.x) ✅
 
 What we have shipped:
 - `DimArray` wrapping numpy arrays with unit metadata
@@ -27,8 +27,10 @@ What we have shipped:
 - **Reshaping**: `reshape`, `transpose`, `flatten`
 - **Statistics**: `var` (with squared units)
 - **Searching**: `argmin`, `argmax`
+- **Physical constants**: CODATA 2022 values with uncertainties
+- **Uncertainty propagation**: Track errors through calculations
 - Published on PyPI, GitHub repo live
-- 128 tests, 81% coverage
+- 225 tests, 84% coverage
 
 ---
 
@@ -39,7 +41,7 @@ v0.1.x  ✅ Foundation      - Basic DimArray, units, PyPI
 v0.2.x  ✅ Usability       - Unit simplification, format strings, numpy ufuncs
 v0.3.x  ✅ NumPy Parity    - Array functions, linear algebra, reshaping
 v0.4.x  ✅ Constants       - Physical constants library
-v0.5.x     Uncertainty     - Error propagation
+v0.5.x  ✅ Uncertainty     - Error propagation
 v0.6.x     PyTorch         - torch.Tensor integration
 v0.7.x     JAX             - JAX array integration
 v0.8.x     Performance     - Rust backend, lazy evaluation
@@ -93,7 +95,7 @@ F = G * m1 * m2 / r**2  # Automatically in Newtons
 - [x] **Domain packs**: `constants.electromagnetic`, `constants.atomic`, etc.
 - [x] **Uncertainty values**: `c.uncertainty`, `G.uncertainty`
 
-### v0.5.0 - Uncertainty Propagation
+### v0.5.0 - Uncertainty Propagation ✅
 **Theme**: Track measurement uncertainty through calculations
 
 ```python
@@ -107,10 +109,11 @@ velocity = length / time
 print(velocity)  # 5.0 ± 0.13 m/s (propagated)
 ```
 
-- [ ] **Uncertainty storage**: Optional uncertainty array
-- [ ] **Propagation rules**: Standard error propagation formulas
-- [ ] **Correlation tracking**: For correlated measurements
-- [ ] **Reporting**: `value.uncertainty`, `value.relative_uncertainty`
+- [x] **Uncertainty storage**: Optional uncertainty array in DimArray
+- [x] **Propagation rules**: Standard error propagation formulas
+- [x] **Reporting**: `.uncertainty`, `.has_uncertainty`, `.relative_uncertainty`
+- [x] **Constant integration**: Constants transfer uncertainty to DimArray
+- [x] **String display**: Shows "value ± uncertainty unit"
 
 ---
 
@@ -434,15 +437,19 @@ dimtensor/
 
 ## Next Immediate Steps
 
-**For v0.5.0:**
-1. Uncertainty storage: Optional uncertainty array in DimArray
-2. Propagation rules: Standard error propagation formulas
-3. Correlation tracking: For correlated measurements
-4. Reporting: `value.uncertainty`, `value.relative_uncertainty`
+**For v0.6.0 (PyTorch Integration):**
+1. DimTensor class wrapping `torch.Tensor` with units
+2. Autograd support for gradient flow through unit-aware operations
+3. Device support (CPU, CUDA, MPS)
+4. dtype support (float32, float64, bfloat16)
+5. nn.Module compatibility
 
-**Recently completed (v0.4.0):**
-- [x] CODATA 2022 physical constants (c, G, h, k_B, N_A, e, m_e, etc.)
-- [x] Derived constants (Planck length, Bohr radius, Hartree energy)
-- [x] Domain packs: `constants.electromagnetic`, `constants.atomic`, etc.
-- [x] Uncertainty values: `c.uncertainty`, `G.uncertainty`
-- [x] Full arithmetic integration with DimArray
+**Recently completed (v0.5.0):**
+- [x] Uncertainty storage: Optional uncertainty array in DimArray
+- [x] Standard error propagation through +, -, *, /, **
+- [x] Unit conversion scales uncertainty appropriately
+- [x] Reduction operations propagate uncertainty (sum, mean, min, max)
+- [x] Constants transfer uncertainty via `to_dimarray()`
+- [x] Properties: `.uncertainty`, `.has_uncertainty`, `.relative_uncertainty`
+- [x] String representations show "value ± uncertainty unit"
+- [x] 39 new tests (225 total, 84% coverage)
