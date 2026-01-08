@@ -265,6 +265,10 @@ class DimArray:
         """Absolute value."""
         return DimArray._from_data_and_unit(np.abs(self._data), self._unit)
 
+    def sqrt(self) -> DimArray:
+        """Square root (dimension exponents halve)."""
+        return self ** 0.5
+
     # =========================================================================
     # Comparison operations
     # =========================================================================
