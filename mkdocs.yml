@@ -86,11 +86,29 @@ nav:
   - User Guide:
     - Working with Units: guide/units.md
     - Array Operations: guide/operations.md
+    - PyTorch Integration: guide/pytorch.md
+    - JAX Integration: guide/jax.md
+    - Physics ML: guide/physics-ml.md
+    - Visualization: guide/visualization.md
+    - Validation: guide/validation.md
+    - Inference: guide/inference.md
+    - Datasets: guide/datasets.md
+    - Equations: guide/equations.md
     - Examples: guide/examples.md
   - API Reference:
-    - DimArray: api/dimarray.md
-    - Units: api/units.md
-    - Functions: api/functions.md
+    - Core:
+      - DimArray: api/dimarray.md
+      - Units: api/units.md
+      - Functions: api/functions.md
+    - Frameworks:
+      - PyTorch: api/torch.md
+    - ML Tools:
+      - Validation: api/validation.md
+      - Inference: api/inference.md
+      - Visualization: api/visualization.md
+    - Integration:
+      - Ecosystem: api/ecosystem.md
+      - Integrations: api/integrations.md
   - Comparisons:
     - Overview: comparisons/index.md
     - dimtensor vs Pint: comparisons/vs-pint.md
