@@ -1,0 +1,24 @@
+[package]
+name = "dimtensor_core"
+version = "0.1.0"
+edition = "2021"
+authors = ["Marc Sperzel"]
+description = "Rust backend for dimtensor - unit-aware tensors"
+license = "MIT"
+
+[lib]
+name = "dimtensor_core"
+crate-type = ["cdylib"]
+
+[dependencies]
+pyo3 = { version = "0.23", features = ["extension-module"] }
+numpy = "0.23"
+ndarray = "0.16"
+num-rational = "0.4"
+
+[build-dependencies]
+pyo3-build-config = "0.23"
+
+[features]
+default = []
+extension-module = ["pyo3/extension-module"]
