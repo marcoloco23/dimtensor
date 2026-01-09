@@ -83,11 +83,11 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 
 ## CURRENT TASK
 
-**Task**: v1.3.0 - Visualization
+**Task**: v3.1.0 - Ecosystem Integration
 
-**Goal**: Add matplotlib and plotly integration with auto-labeled axes
+**Goal**: Add SciPy, Scikit-learn, and Polars integrations
 
-**Why**: Scientists need plots with proper unit labels automatically. This is a key usability feature.
+**Why**: Scientists need seamless integration with the broader Python scientific ecosystem.
 
 ---
 
@@ -282,24 +282,24 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 102 | 🗺️ Design model hub architecture | PENDING | PLAN REQUIRED: Pre-trained physics models |
-| 103 | Create model registry system | PENDING | |
-| 104 | Implement model download/upload | PENDING | |
-| 105 | 🗺️ Design equation database | PENDING | PLAN REQUIRED |
-| 106 | Populate equation database (mechanics) | PENDING | F=ma, E=½mv², etc. |
-| 107 | Populate equation database (E&M) | PENDING | Maxwell's equations |
-| 108 | Populate equation database (thermo) | PENDING | PV=nRT, etc. |
-| 109 | 🗺️ Design dataset registry | PENDING | PLAN REQUIRED: Datasets with unit metadata |
-| 110 | Implement dataset registry | PENDING | |
-| 111 | Create sample physics datasets | PENDING | |
-| 112 | 🗺️ Design CLI tools | PENDING | PLAN REQUIRED |
-| 113 | Implement `dimtensor check` command | PENDING | Validate units in code |
-| 114 | Implement `dimtensor convert` command | PENDING | Convert between units |
-| 115 | Implement `dimtensor info` command | PENDING | Show unit info |
-| 116 | 🗺️ Research symbolic computing bridge | PENDING | PLAN REQUIRED: SymPy integration |
-| 117 | Implement SymPy integration | PENDING | |
-| 118 | Add tests for platform features | PENDING | |
-| 119 | Deploy v3.0.0 to PyPI | PENDING | |
+| 102 | 🗺️ Design model hub architecture | DONE | Plan: .plans/2026-01-09_physics-ml-platform.md |
+| 103 | Create model registry system | DONE | hub/registry.py |
+| 104 | Implement model cards | DONE | hub/cards.py |
+| 105 | 🗺️ Design equation database | DONE | equations/database.py |
+| 106 | Populate equation database (mechanics) | DONE | 10 mechanics equations |
+| 107 | Populate equation database (E&M) | DONE | 6 EM equations |
+| 108 | Populate equation database (thermo) | DONE | 5 thermo equations |
+| 109 | 🗺️ Design dataset registry | DONE | datasets/registry.py |
+| 110 | Implement dataset registry | DONE | 10 built-in datasets |
+| 111 | Create sample physics datasets | DONE | pendulum, burgers, lorenz, etc. |
+| 112 | 🗺️ Design CLI tools | DONE | Enhanced __main__.py |
+| 113 | Implement `dimtensor equations` command | DONE | Browse equations database |
+| 114 | Implement `dimtensor convert` command | DONE | Convert between units |
+| 115 | Implement `dimtensor datasets` command | DONE | List datasets |
+| 116 | 🗺️ Research symbolic computing bridge | DEFERRED | v3.1.0 |
+| 117 | Implement SymPy integration | DEFERRED | v3.1.0 |
+| 118 | Add tests for platform features | DONE | 69 new tests |
+| 119 | Deploy v3.0.0 to PyPI | DONE | https://pypi.org/project/dimtensor/3.0.0/ |
 
 ---
 
