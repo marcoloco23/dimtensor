@@ -105,7 +105,7 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 
 - Agent read full file: YES
 - Current task understood: YES
-- Current task: v4.0.0 Platform Maturity - COMPLETE
+- Current task: v4.1.0 More Domain Units - COMPLETE
 - Session started: 2026-01-09 evening
 
 ---
@@ -113,49 +113,42 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 ## CURRENT STATE
 
 **Date**: 2026-01-09
-**Version**: 4.0.0
-**Status**: v4.0.0 ready for deployment - branch ready
+**Version**: 4.1.0
+**Status**: v4.1.0 ready for deployment - branch ready
 
 ### What Just Happened
-- v4.0.0 Platform Maturity COMPLETE:
-  - **Plugin System** (plugins/ module):
-    - PluginRegistry with lazy loading, validation
-    - Entry points discovery (dimtensor.plugins group)
-    - CLI: `dimtensor plugins list/info`
-    - 36 new tests
-  - **Web Dashboard** (web/ module):
-    - Streamlit multi-page app
-    - Models, Datasets, Equations browsers
-    - LaTeX rendering, code generation
-    - Deployment-ready for Streamlit Cloud
-  - **MLflow Integration** (integrations/mlflow.py):
-    - log_dimarray, DimMLflowCallback
-    - Unit metadata in MLflow tags
-  - **W&B Integration** (integrations/wandb.py):
-    - log_dimarray, DimWandbCallback
-    - Unit columns in wandb Tables
-  - **CI/CD Templates** (.github/workflows/):
-    - dimtensor-lint.yml, dimtensor-test.yml, dimtensor-benchmark.yml
-    - setup-dimtensor composite action
-    - docs/guide/ci-cd.md
+- v4.1.0 More Domain Units COMPLETE:
+  - **11 New Domain Modules** (200+ units total):
+    - domains/nuclear.py - MeV, barn, becquerel, gray, sievert
+    - domains/geophysics.py - gal, eotvos, darcy, gamma
+    - domains/biophysics.py - katal, enzyme_unit, cells_per_mL
+    - domains/materials.py - strain, vickers, MPa_sqrt_m
+    - domains/acoustics.py - decibel, phon, rayl
+    - domains/photometry.py - lumen, lux, nit, lambert
+    - domains/information.py - bit, byte, nat, bit_per_second
+    - domains/cgs.py - dyne, erg, gauss, maxwell, poise
+    - domains/imperial.py - inch, pound, gallon, BTU, psi
+    - domains/natural.py - GeV, to_natural(), from_natural()
+    - domains/planck.py - planck_length, planck_mass, planck_energy
   - 7 new plan documents in .plans/
-  - 939 tests pass (36 new, 89 skipped)
-- Version updated to 4.0.0 in pyproject.toml and __init__.py
-- VS Code extension (#176-177) deferred (separate repo, plan exists)
+  - 150 new tests (248 domain tests total)
+  - 716 tests pass (excluding torch deps)
+- Version updated to 4.1.0 in pyproject.toml and __init__.py
+- CHANGELOG.md updated with v4.1.0 release notes
 
 ### What Needs to Happen
 - Commit and push branch
 - User merges PR to main
-- Deploy v3.6.0 + v4.0.0 to PyPI (local)
-- Continue with v4.1.0+ tasks
+- Deploy v4.1.0 to PyPI (local)
+- Continue with v4.2.0+ tasks
 
 ---
 
 ## CURRENT TASK
 
-**Task**: v4.0.0 - Platform Maturity
+**Task**: v4.1.0 - More Domain Units
 
-**Goal**: Ecosystem and community features
+**Goal**: Comprehensive unit coverage for all sciences
 
 **Status**: COMPLETE - Ready for commit and push
 
@@ -515,19 +508,19 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 186 | 🗺️ Nuclear physics units | PENDING | MeV, barn, becquerel, gray, sievert |
-| 187 | 🗺️ Geophysics units | PENDING | gal, eotvos, darcy, millidarcy |
-| 188 | 🗺️ Biophysics units | PENDING | dalton, enzyme unit, katal |
-| 189 | 🗺️ Materials science units | PENDING | GPa, MPa stress, strain rates |
-| 190 | 🗺️ Acoustics units | PENDING | dB, phon, sone, rayl |
-| 191 | 🗺️ Photometry units | PENDING | lumen, lux, candela, nit |
-| 192 | 🗺️ Information theory units | PENDING | bit, byte, nat, shannon |
-| 193 | Add CGS unit system | PENDING | Full CGS support alongside SI |
-| 194 | Add Imperial/US units | PENDING | Full imperial support |
-| 195 | Add natural units (c=ℏ=1) | PENDING | Particle physics natural units |
-| 196 | Add Planck units | PENDING | Quantum gravity units |
-| 197 | Add tests for all new units | PENDING | |
-| 198 | Deploy v4.1.0 to PyPI | PENDING | |
+| 186 | 🗺️ Nuclear physics units | DONE | MeV, barn, becquerel, gray, sievert |
+| 187 | 🗺️ Geophysics units | DONE | gal, eotvos, darcy, millidarcy |
+| 188 | 🗺️ Biophysics units | DONE | katal, enzyme_unit, cells_per_mL |
+| 189 | 🗺️ Materials science units | DONE | strain, vickers, MPa_sqrt_m |
+| 190 | 🗺️ Acoustics units | DONE | dB, phon, sone, rayl |
+| 191 | 🗺️ Photometry units | DONE | lumen, lux, nit, lambert |
+| 192 | 🗺️ Information theory units | DONE | bit, byte, nat, bit_per_second |
+| 193 | Add CGS unit system | DONE | dyne, erg, gauss, poise, stokes |
+| 194 | Add Imperial/US units | DONE | inch, pound, gallon, BTU, psi |
+| 195 | Add natural units (c=ℏ=1) | DONE | GeV, to_natural(), from_natural() |
+| 196 | Add Planck units | DONE | planck_length, planck_mass, planck_energy |
+| 197 | Add tests for all new units | DONE | 150 new tests (248 domain tests total) |
+| 198 | Deploy v4.1.0 to PyPI | PENDING | Ready for local deploy |
 
 ---
 
@@ -1131,6 +1124,50 @@ Format: Use sequential numbers. Add new entries at the bottom.
 168. CHANGELOG.md updated with v4.0.0 release notes
 169. VS Code extension (#176-177) DEFERRED (separate repo, plan exists)
 170. v4.0.0 READY - Awaiting commit, push, PR merge and PyPI deployment
+
+### Session: 2026-01-09 evening (v4.1.0 Domain Units Orchestrator)
+
+171. Started orchestrator for v4.1.0 More Domain Units
+172. Spawned 7 planners in parallel for tasks #186-192:
+     - Nuclear physics units plan
+     - Geophysics units plan
+     - Biophysics units plan
+     - Materials science units plan
+     - Acoustics units plan
+     - Photometry units plan
+     - Information theory units plan
+173. All 7 plans COMPLETE:
+     - .plans/2026-01-09_nuclear-physics-units.md
+     - .plans/2026-01-09_geophysics-units.md
+     - .plans/2026-01-09_biophysics-units.md
+     - .plans/2026-01-09_materials-science-units.md
+     - .plans/2026-01-09_acoustics-units.md
+     - .plans/2026-01-09_photometry-units.md
+     - .plans/2026-01-09_information-theory-units.md
+174. Spawned 11 implementers in parallel:
+     - 7 domain modules (#186-192)
+     - CGS unit system (#193)
+     - Imperial/US units (#194)
+     - Natural units (#195)
+     - Planck units (#196)
+175. All 11 implementations COMPLETE:
+     - domains/nuclear.py - MeV, barn, becquerel, gray, sievert
+     - domains/geophysics.py - gal, eotvos, darcy, gamma
+     - domains/biophysics.py - katal, enzyme_unit, cells_per_mL
+     - domains/materials.py - strain, vickers, MPa_sqrt_m
+     - domains/acoustics.py - decibel, phon, rayl
+     - domains/photometry.py - lumen, lux, nit, lambert
+     - domains/information.py - bit, byte, nat, bit_per_second
+     - domains/cgs.py - dyne, erg, gauss, maxwell, poise
+     - domains/imperial.py - inch, pound, gallon, BTU, psi
+     - domains/natural.py - GeV, to_natural(), from_natural()
+     - domains/planck.py - planck_length, planck_mass, planck_energy
+176. Updated domains/__init__.py with all 14 domain modules
+177. Spawned test-writer agent for comprehensive unit tests (#197)
+178. 150 new tests added (248 domain tests total)
+179. Version updated to 4.1.0 in pyproject.toml and __init__.py
+180. CHANGELOG.md updated with v4.1.0 release notes
+181. v4.1.0 READY - 716 tests pass (excluding torch deps), 248 domain tests
 
 ---
 

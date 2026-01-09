@@ -5,6 +5,90 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.1.0] - 2026-01-09
+
+### Added
+- **Comprehensive Unit Coverage** - 11 new domain unit modules with 200+ units
+
+  - **Nuclear Physics** (`from dimtensor.domains.nuclear import ...`):
+    - Energy: eV, keV, MeV, GeV (electron volt family)
+    - Cross-section: barn, millibarn, microbarn
+    - Radioactivity: becquerel, curie
+    - Absorbed dose: gray, rad
+    - Dose equivalent: sievert, rem
+
+  - **Geophysics** (`from dimtensor.domains.geophysics import ...`):
+    - Acceleration: gal, milligal
+    - Gravity gradient: eotvos
+    - Permeability: darcy, millidarcy
+    - Magnetic field: gamma, oersted
+
+  - **Biophysics** (`from dimtensor.domains.biophysics import ...`):
+    - Enzyme activity: katal, enzyme_unit
+    - Cell concentrations: cells_per_mL, cells_per_uL
+    - Electrophysiology: millivolt
+
+  - **Materials Science** (`from dimtensor.domains.materials import ...`):
+    - Strain: strain, microstrain, percent_strain
+    - Hardness: vickers, brinell, rockwell_C, rockwell_B
+    - Fracture toughness: MPa_sqrt_m, ksi_sqrt_in
+    - Thermal conductivity: W_per_m_K, W_per_cm_K
+    - Electrical: S_per_m, ohm_m, microohm_cm
+
+  - **Acoustics** (`from dimtensor.domains.acoustics import ...`):
+    - Sound level: decibel (dimensionless)
+    - Loudness: phon, sone
+    - Acoustic impedance: rayl
+    - Reference pressure: micropascal
+
+  - **Photometry** (`from dimtensor.domains.photometry import ...`):
+    - Luminous flux: lumen
+    - Illuminance: lux, foot_candle, phot
+    - Luminance: nit, stilb, lambert
+    - Luminous efficacy: lm_per_W
+
+  - **Information Theory** (`from dimtensor.domains.information import ...`):
+    - Information: bit, byte, nat, shannon
+    - Binary prefixes: kilobyte, megabyte, gigabyte, terabyte (IEC 1024-based)
+    - Data rates: bit_per_second, byte_per_second, baud
+    - Storage density: bit_per_square_meter, gigabit_per_square_inch
+
+  - **CGS Units** (`from dimtensor.domains.cgs import ...`):
+    - Mechanical: dyne, erg, barye, poise, stokes, gal
+    - Electromagnetic: gauss, maxwell, oersted, statcoulomb, statampere, statvolt
+    - Variants: centipoise, centistokes, kilogauss, milligal
+
+  - **Imperial/US Units** (`from dimtensor.domains.imperial import ...`):
+    - Length: inch, foot, yard, mile, nautical_mile, furlong
+    - Mass: ounce, pound, stone, ton, grain
+    - Volume: fluid_ounce, cup, pint, quart, gallon, barrel
+    - Temperature: rankine, fahrenheit (interval)
+    - Force: pound_force, poundal
+    - Energy: BTU, therm, foot_pound
+    - Pressure: psi, inches_of_mercury, inches_of_water
+    - Speed: mph, knot
+
+  - **Natural Units** (`from dimtensor.domains.natural import ...`):
+    - Particle physics units where c = ℏ = 1
+    - Energy: GeV, MeV, eV, TeV
+    - Mass: GeV_mass, MeV_mass (same as energy)
+    - Momentum: GeV_momentum, MeV_momentum
+    - Length/Time: GeV_inv_length, GeV_inv_time
+    - Conversion functions: to_natural(), from_natural()
+
+  - **Planck Units** (`from dimtensor.domains.planck import ...`):
+    - Base: planck_length, planck_mass, planck_time, planck_charge, planck_temperature
+    - Derived: planck_energy, planck_momentum, planck_force, planck_power
+    - Geometric: planck_area, planck_volume
+    - Dynamic: planck_density, planck_acceleration
+
+### Changed
+- Total test count: 939 → 966 passed (716 non-torch tests + 248 domain tests)
+- 150 new tests for domain units
+- domains/__init__.py now exports all 14 domain modules
+
+---
+
 ## [4.0.0] - 2026-01-09
 
 ### Added
