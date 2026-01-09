@@ -491,6 +491,199 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 
 ---
 
+### v4.1.0 - More Domain Units
+
+**Theme**: Comprehensive unit coverage for all sciences
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 186 | 🗺️ Nuclear physics units | PENDING | MeV, barn, becquerel, gray, sievert |
+| 187 | 🗺️ Geophysics units | PENDING | gal, eotvos, darcy, millidarcy |
+| 188 | 🗺️ Biophysics units | PENDING | dalton, enzyme unit, katal |
+| 189 | 🗺️ Materials science units | PENDING | GPa, MPa stress, strain rates |
+| 190 | 🗺️ Acoustics units | PENDING | dB, phon, sone, rayl |
+| 191 | 🗺️ Photometry units | PENDING | lumen, lux, candela, nit |
+| 192 | 🗺️ Information theory units | PENDING | bit, byte, nat, shannon |
+| 193 | Add CGS unit system | PENDING | Full CGS support alongside SI |
+| 194 | Add Imperial/US units | PENDING | Full imperial support |
+| 195 | Add natural units (c=ℏ=1) | PENDING | Particle physics natural units |
+| 196 | Add Planck units | PENDING | Quantum gravity units |
+| 197 | Add tests for all new units | PENDING | |
+| 198 | Deploy v4.1.0 to PyPI | PENDING | |
+
+---
+
+### v4.2.0 - More Framework Integrations
+
+**Theme**: Work everywhere
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 199 | 🗺️ TensorFlow integration | PENDING | DimTensor for TF |
+| 200 | Implement TF DimVariable | PENDING | tf.Variable with units |
+| 201 | 🗺️ CuPy integration | PENDING | GPU arrays with units |
+| 202 | 🗺️ Dask integration | PENDING | Distributed arrays with units |
+| 203 | 🗺️ Ray integration | PENDING | Distributed ML with units |
+| 204 | 🗺️ Numba integration | PENDING | JIT-compiled unit operations |
+| 205 | 🗺️ Apache Arrow integration | PENDING | Zero-copy unit arrays |
+| 206 | Add tests for integrations | PENDING | |
+| 207 | Deploy v4.2.0 to PyPI | PENDING | |
+
+---
+
+### v4.3.0 - More Data Sources
+
+**Theme**: Real-world physics data at your fingertips
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 208 | 🗺️ CERN Open Data loader | PENDING | Particle physics data |
+| 209 | 🗺️ LIGO gravitational wave loader | PENDING | GW event data |
+| 210 | 🗺️ Sloan Digital Sky Survey loader | PENDING | Galaxy catalogs |
+| 211 | 🗺️ Materials Project loader | PENDING | Crystal structures, properties |
+| 212 | 🗺️ PubChem loader | PENDING | Chemical compound data |
+| 213 | 🗺️ NOAA weather loader | PENDING | Historical weather data |
+| 214 | 🗺️ World Bank climate loader | PENDING | Climate indicators |
+| 215 | 🗺️ OpenFOAM results loader | PENDING | CFD simulation data |
+| 216 | 🗺️ COMSOL results loader | PENDING | FEM simulation data |
+| 217 | Add caching for downloaded data | PENDING | Local cache management |
+| 218 | Add tests for loaders | PENDING | |
+| 219 | Deploy v4.3.0 to PyPI | PENDING | |
+
+---
+
+### v4.4.0 - More Equations
+
+**Theme**: Every physics equation you need
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 220 | 🗺️ Quantum field theory equations | PENDING | Lagrangians, propagators |
+| 221 | 🗺️ General relativity equations | PENDING | Einstein field eqs, geodesics |
+| 222 | 🗺️ Statistical mechanics equations | PENDING | Partition functions, ensembles |
+| 223 | 🗺️ Plasma physics equations | PENDING | MHD, Vlasov, Debye |
+| 224 | 🗺️ Solid state physics equations | PENDING | Band theory, phonons |
+| 225 | 🗺️ Nuclear physics equations | PENDING | Decay, cross-sections |
+| 226 | 🗺️ Biophysics equations | PENDING | Michaelis-Menten, Hill |
+| 227 | 🗺️ Chemical kinetics equations | PENDING | Rate laws, Arrhenius |
+| 228 | 🗺️ Materials science equations | PENDING | Stress-strain, fracture |
+| 229 | Add equation derivation trees | PENDING | Show how equations relate |
+| 230 | Add tests for equations | PENDING | |
+| 231 | Deploy v4.4.0 to PyPI | PENDING | |
+
+---
+
+### v4.5.0 - Advanced Analysis Tools
+
+**Theme**: Professional physics analysis
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 232 | 🗺️ Dimensional analysis solver | PENDING | Buckingham Pi theorem |
+| 233 | 🗺️ Unit consistency checker | PENDING | Static analysis for codebases |
+| 234 | 🗺️ Automatic non-dimensionalization | PENDING | Find characteristic scales |
+| 235 | 🗺️ Scaling law finder | PENDING | Discover power laws in data |
+| 236 | 🗺️ Error budget calculator | PENDING | Uncertainty contribution analysis |
+| 237 | 🗺️ Sensitivity analysis | PENDING | Which inputs matter most |
+| 238 | 🗺️ Monte Carlo uncertainty | PENDING | MC error propagation |
+| 239 | Add interactive analysis widgets | PENDING | Jupyter widgets |
+| 240 | Add tests for analysis tools | PENDING | |
+| 241 | Deploy v4.5.0 to PyPI | PENDING | |
+
+---
+
+### v5.0.0 - Research Platform
+
+**Theme**: End-to-end physics research workflow
+
+#### Phase 1: Experiment Tracking
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 242 | 🗺️ Design experiment tracking system | PENDING | Track runs with units |
+| 243 | Implement DimExperiment class | PENDING | Log params, metrics with units |
+| 244 | Implement run comparison | PENDING | Compare across unit systems |
+| 245 | Add experiment visualization | PENDING | Dashboards with unit labels |
+
+#### Phase 2: Paper Reproduction
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 246 | 🗺️ Paper reproduction framework | PENDING | Reproduce physics papers |
+| 247 | Create paper template | PENDING | Standard reproduction format |
+| 248 | Add 10 reproduced papers | PENDING | Classic physics papers |
+| 249 | Add validation suite | PENDING | Verify reproduction accuracy |
+
+#### Phase 3: Collaboration
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 250 | 🗺️ Unit schema sharing | PENDING | Share custom unit definitions |
+| 251 | 🗺️ Model sharing protocol | PENDING | Share models with unit metadata |
+| 252 | 🗺️ Dataset sharing protocol | PENDING | Share datasets with units |
+| 253 | Add versioning for shared items | PENDING | Semantic versioning |
+
+#### Phase 4: Deployment
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 254 | 🗺️ Docker images | PENDING | Pre-built containers |
+| 255 | 🗺️ Kubernetes templates | PENDING | K8s deployment |
+| 256 | 🗺️ AWS Lambda support | PENDING | Serverless physics |
+| 257 | 🗺️ Google Cloud Functions | PENDING | GCP serverless |
+| 258 | Add deployment guides | PENDING | |
+| 259 | Deploy v5.0.0 to PyPI | PENDING | |
+
+---
+
+### v5.1.0 - Education & Accessibility
+
+**Theme**: Physics for everyone
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 260 | 🗺️ Interactive textbook | PENDING | Learn physics with dimtensor |
+| 261 | Create problem sets | PENDING | Physics problems with solutions |
+| 262 | Add auto-grading | PENDING | Check student answers |
+| 263 | 🗺️ Internationalization (i18n) | PENDING | Multiple languages |
+| 264 | Add unit name localization | PENDING | Local unit names |
+| 265 | 🗺️ Accessibility audit | PENDING | Screen reader support |
+| 266 | Add colorblind-safe plots | PENDING | Accessible visualization |
+| 267 | Create video course | PENDING | YouTube/course platform |
+| 268 | Deploy v5.1.0 to PyPI | PENDING | |
+
+---
+
+### v5.2.0 - Testing & Quality
+
+**Theme**: Production-grade reliability
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 269 | 🗺️ Property-based testing | PENDING | Hypothesis for units |
+| 270 | 🗺️ Fuzzing infrastructure | PENDING | Find edge cases |
+| 271 | 🗺️ Mutation testing | PENDING | Test quality metrics |
+| 272 | Add chaos testing | PENDING | Test failure modes |
+| 273 | Add load testing | PENDING | Performance under load |
+| 274 | Create test coverage dashboard | PENDING | Public coverage reports |
+| 275 | Add security audit | PENDING | SAST/DAST scanning |
+| 276 | Deploy v5.2.0 to PyPI | PENDING | |
+
+---
+
+### v6.0.0 - Symbolic Intelligence
+
+**Theme**: AI-powered physics
+
+| # | Task | Status | Notes |
+|---|------|--------|-------|
+| 277 | 🗺️ LLM equation generation | PENDING | Generate equations from descriptions |
+| 278 | 🗺️ Automatic unit annotation | PENDING | Infer units from code context |
+| 279 | 🗺️ Physics copilot | PENDING | AI assistant for physics code |
+| 280 | 🗺️ Symbolic regression with units | PENDING | Discover equations from data |
+| 281 | 🗺️ Unit-aware neural ODEs | PENDING | Learn dynamics with units |
+| 282 | 🗺️ Physics-informed transformers | PENDING | Transformers with unit constraints |
+| 283 | Add LLM fine-tuning dataset | PENDING | Physics code with units |
+| 284 | Deploy v6.0.0 to PyPI | PENDING | |
+
+---
+
 ## CODE REVIEW TEMPLATE
 
 When reviewing each file, check and document:

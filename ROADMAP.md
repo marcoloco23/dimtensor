@@ -88,6 +88,113 @@
 
 ---
 
+## v4.1.0 - More Domain Units
+
+**Theme**: Comprehensive unit coverage
+
+- [ ] Nuclear physics (MeV, barn, becquerel)
+- [ ] Geophysics (gal, darcy)
+- [ ] Biophysics (dalton, katal)
+- [ ] Materials science, acoustics, photometry
+- [ ] CGS, Imperial, Natural, Planck unit systems
+
+---
+
+## v4.2.0 - More Framework Integrations
+
+**Theme**: Work everywhere
+
+- [ ] TensorFlow integration
+- [ ] CuPy (GPU arrays)
+- [ ] Dask (distributed)
+- [ ] Ray (distributed ML)
+- [ ] Numba (JIT)
+- [ ] Apache Arrow
+
+---
+
+## v4.3.0 - More Data Sources
+
+**Theme**: Real-world physics data
+
+- [ ] CERN Open Data, LIGO, SDSS
+- [ ] Materials Project, PubChem
+- [ ] NOAA, World Bank climate
+- [ ] OpenFOAM, COMSOL loaders
+
+---
+
+## v4.4.0 - More Equations
+
+**Theme**: Every physics equation
+
+- [ ] QFT, General Relativity
+- [ ] Statistical mechanics, Plasma physics
+- [ ] Solid state, Nuclear physics
+- [ ] Biophysics, Chemical kinetics
+- [ ] Equation derivation trees
+
+---
+
+## v4.5.0 - Advanced Analysis Tools
+
+**Theme**: Professional physics analysis
+
+- [ ] Buckingham Pi dimensional analysis
+- [ ] Scaling law finder
+- [ ] Error budget calculator
+- [ ] Monte Carlo uncertainty
+- [ ] Interactive Jupyter widgets
+
+---
+
+## v5.0.0 - Research Platform
+
+**Theme**: End-to-end physics research
+
+- [ ] Experiment tracking with units
+- [ ] Paper reproduction framework
+- [ ] Model/dataset sharing protocols
+- [ ] Docker, K8s, serverless deployment
+
+---
+
+## v5.1.0 - Education & Accessibility
+
+**Theme**: Physics for everyone
+
+- [ ] Interactive textbook
+- [ ] Problem sets with auto-grading
+- [ ] Internationalization (i18n)
+- [ ] Accessibility audit
+- [ ] Video course
+
+---
+
+## v5.2.0 - Testing & Quality
+
+**Theme**: Production-grade reliability
+
+- [ ] Property-based testing (Hypothesis)
+- [ ] Fuzzing, mutation testing
+- [ ] Chaos and load testing
+- [ ] Security audit
+
+---
+
+## v6.0.0 - Symbolic Intelligence
+
+**Theme**: AI-powered physics
+
+- [ ] LLM equation generation
+- [ ] Automatic unit annotation from context
+- [ ] Physics copilot
+- [ ] Symbolic regression with units
+- [ ] Unit-aware neural ODEs
+- [ ] Physics-informed transformers
+
+---
+
 ## Success Metrics
 
 | Milestone | Metric | Target | Current |
