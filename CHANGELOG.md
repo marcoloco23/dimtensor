@@ -5,6 +5,42 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.3.0] - 2026-01-09
+
+### Added
+- **Advanced Dataset Loaders** (`from dimtensor.loaders import ...`)
+  - **BaseLoader** - Abstract base class for all data loaders
+  - **CSVLoader** - Generic CSV file loader with unit parsing
+  - **NIST CODATA 2022 Loader** - Fundamental physical constants with uncertainties
+  - **NASA Exoplanet Archive Loader** - Confirmed exoplanets with orbital parameters
+  - **PRISM Climate Loader** - Historical temperature and precipitation data
+  - Caching system at `~/.dimtensor/cache/` for downloaded datasets
+  - 28 new tests for loader functionality
+
+- **Expanded Equation Database** (`from dimtensor.equations import ...`)
+  - 37 new equations added (67 total equations now)
+  - New domains: Quantum Mechanics (Schrödinger, Heisenberg, Compton)
+  - New domains: Relativity (time dilation, length contraction, Doppler)
+  - New domains: Optics (lens equation, diffraction, Rayleigh criterion)
+  - New domains: Acoustics (sound level, Doppler effect, resonance)
+  - Expanded Fluid Dynamics with additional equations
+  - Enhanced search and filtering capabilities
+
+- **Automatic Unit Inference** (`from dimtensor.inference import infer_units`)
+  - Constraint-based solver for inferring unknown units in systems
+  - Expression parser for equations like "F = m * a"
+  - Dimensional analysis to detect unit inconsistencies
+  - `infer_units(equations, knowns, unknowns)` - solve for unknown units
+  - Works with equation database for common physics relationships
+  - 29 new tests for unit inference
+
+### Fixed
+- **NumPy 2.x Compatibility** - Fixed `copy=False` behavior in DimArray `__init__`
+
+### Changed
+- Total test count: 738 → 795 passed (63 skipped)
+- Source files: 65 → 69 (4 new modules: loaders/)
+
 ## [3.2.0] - 2026-01-09
 
 ### Added

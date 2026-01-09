@@ -434,3 +434,92 @@ register_dataset(
         tags=["thermodynamics", "state"],
     ),
 )
+
+
+# =============================================================================
+# REAL PHYSICS DATASETS WITH LOADERS
+# =============================================================================
+
+
+# NIST CODATA 2022 Fundamental Constants
+def _load_nist_codata(**kwargs: Any) -> Any:
+    """Load NIST CODATA fundamental constants."""
+    from .loaders.nist import NISTCODATALoader
+    loader = NISTCODATALoader()
+    return loader.load(**kwargs)
+
+
+register_dataset(
+    "nist_codata_2022",
+    info=DatasetInfo(
+        name="nist_codata_2022",
+        description="NIST CODATA 2022 fundamental physical constants",
+        domain="constants",
+        features={},
+        targets={},
+        source="https://physics.nist.gov/cuu/Constants/",
+        license="Public Domain",
+        citation="CODATA 2022",
+        tags=["constants", "reference", "nist"],
+    ),
+    loader=_load_nist_codata,
+)
+
+
+# NASA Exoplanet Archive
+def _load_nasa_exoplanets(**kwargs: Any) -> Any:
+    """Load NASA Exoplanet Archive confirmed planets."""
+    from .loaders.astronomy import NASAExoplanetLoader
+    loader = NASAExoplanetLoader()
+    return loader.load(**kwargs)
+
+
+register_dataset(
+    "nasa_exoplanets",
+    info=DatasetInfo(
+        name="nasa_exoplanets",
+        description="NASA Exoplanet Archive: confirmed exoplanets with mass, radius, period",
+        domain="astronomy",
+        features={
+            "pl_masse": _M,  # Planet mass (Earth masses)
+            "pl_rade": _L,  # Planet radius (Earth radii)
+            "pl_orbper": _T,  # Orbital period (days)
+        },
+        targets={},
+        source="https://exoplanetarchive.ipac.caltech.edu/",
+        license="Public Domain",
+        citation="NASA Exoplanet Archive",
+        tags=["astronomy", "exoplanets", "nasa", "real-data"],
+    ),
+    loader=_load_nasa_exoplanets,
+)
+
+
+# PRISM Climate Data
+def _load_prism_climate(**kwargs: Any) -> Any:
+    """Load PRISM climate data."""
+    from .loaders.climate import PRISMClimateLoader
+    loader = PRISMClimateLoader()
+    return loader.load(**kwargs)
+
+
+register_dataset(
+    "prism_climate",
+    info=DatasetInfo(
+        name="prism_climate",
+        description="PRISM climate data: temperature and precipitation time series",
+        domain="climate",
+        features={
+            "time": _T,
+        },
+        targets={
+            "temperature": _TEMP,
+            "precipitation": _L,  # mm = length
+        },
+        source="https://prism.oregonstate.edu/",
+        license="PRISM Climate Group",
+        citation="PRISM Climate Group, Oregon State University",
+        tags=["climate", "temperature", "precipitation", "real-data"],
+    ),
+    loader=_load_prism_climate,
+)

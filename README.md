@@ -212,6 +212,30 @@ stress = DimArray([250], MPa)
 power = DimArray([100], hp)
 ```
 
+### Dataset Loaders (v3.3.0+)
+
+```python
+from dimtensor.loaders import NistCodataLoader, NasaExoplanetLoader, PrismClimateLoader
+
+# Load NIST CODATA 2022 fundamental constants
+loader = NistCodataLoader()
+constants_df = loader.load()  # Returns DimArrays with units and uncertainties
+print(constants_df['speed_of_light'])  # 299792458.0 m/s (exact)
+
+# Load NASA confirmed exoplanets
+exo_loader = NasaExoplanetLoader()
+exoplanets = exo_loader.load()  # Orbital parameters with proper units
+print(exoplanets['orbital_period'])  # DimArray with unit: days
+
+# Load PRISM climate data for a specific location
+climate_loader = PrismClimateLoader(lat=40.7128, lon=-74.0060)  # NYC
+data = climate_loader.load(start_date='2020-01-01', end_date='2020-12-31')
+print(data['temperature'])  # DimArray with unit: degC
+print(data['precipitation'])  # DimArray with unit: mm
+
+# All loaders support caching at ~/.dimtensor/cache/
+```
+
 ### Dimensional Inference (v2.0+)
 
 ```python
@@ -233,6 +257,34 @@ for eq in mechanics[:3]:
 # Newton's Second Law: F = ma
 # Kinetic Energy: KE = ½mv²
 # Gravitational Force: F = Gm₁m₂/r²
+```
+
+### Automatic Unit Inference (v3.3.0+)
+
+```python
+from dimtensor.inference import infer_units
+from dimtensor import units
+
+# Infer unknown units from equations
+equations = [
+    "F = m * a",      # Newton's second law
+    "E = F * d"       # Work equation
+]
+knowns = {
+    "m": units.kg,
+    "a": units.m / units.s**2,
+    "d": units.m
+}
+unknowns = ["F", "E"]
+
+result = infer_units(equations, knowns, unknowns)
+print(result["F"])  # kg·m·s⁻² (newton)
+print(result["E"])  # kg·m²·s⁻² (joule)
+
+# Detect dimensional inconsistencies
+equations_bad = ["v = a + t"]  # Invalid: cannot add acceleration to time
+result = infer_units(equations_bad, {"a": units.m/units.s**2, "t": units.s}, ["v"])
+# Raises DimensionError
 ```
 
 ### Dimensional Linting (v2.1+)

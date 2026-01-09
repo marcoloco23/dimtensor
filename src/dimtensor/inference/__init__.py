@@ -39,6 +39,7 @@ from .equations import (
     find_equations_with_variable,
     suggest_dimension_from_equations,
 )
+from .solver import infer_units
 
 __all__ = [
     # Heuristics
@@ -56,4 +57,6 @@ __all__ = [
     "get_equations_by_tag",
     "find_equations_with_variable",
     "suggest_dimension_from_equations",
+    # Unit Inference
+    "infer_units",
 ]

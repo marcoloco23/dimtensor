@@ -576,3 +576,581 @@ register_equation(Equation(
     description="Fundamental limit on simultaneous measurement precision",
     latex=r"\Delta x \Delta p \geq \frac{\hbar}{2}",
 ))
+
+register_equation(Equation(
+    name="Heisenberg Uncertainty (energy-time)",
+    formula="delta_E * delta_t >= hbar/2",
+    variables={
+        "delta_E": _E,
+        "delta_t": _T,
+        "hbar": Dimension(mass=1, length=2, time=-1)
+    },
+    domain="quantum",
+    tags=["uncertainty", "fundamental", "measurement", "energy"],
+    description="Uncertainty relation between energy and time",
+    latex=r"\Delta E \Delta t \geq \frac{\hbar}{2}",
+))
+
+register_equation(Equation(
+    name="Schrödinger Equation (time-independent)",
+    formula="H*psi = E*psi",
+    variables={
+        "H": Dimension(mass=1, length=2, time=-2),  # Hamiltonian (energy)
+        "psi": _DIMLESS,  # wavefunction (normalized)
+        "E": _E
+    },
+    domain="quantum",
+    tags=["schrodinger", "eigenvalue", "fundamental"],
+    description="Time-independent Schrödinger equation for stationary states",
+    latex=r"\hat{H}\psi = E\psi",
+))
+
+register_equation(Equation(
+    name="Compton Scattering",
+    formula="delta_lambda = (h/(m_e*c))*(1 - cos(theta))",
+    variables={
+        "delta_lambda": _L,
+        "h": Dimension(mass=1, length=2, time=-1),
+        "m_e": _M,
+        "c": _V,
+        "theta": _DIMLESS
+    },
+    domain="quantum",
+    tags=["photon", "scattering", "wavelength"],
+    description="Wavelength shift in photon-electron scattering",
+    latex=r"\Delta\lambda = \frac{h}{m_e c}(1 - \cos\theta)",
+))
+
+register_equation(Equation(
+    name="Bohr Radius",
+    formula="a_0 = hbar^2/(m_e*e^2*k_e)",
+    variables={
+        "a_0": _L,
+        "hbar": Dimension(mass=1, length=2, time=-1),
+        "m_e": _M,
+        "e": _CHARGE,
+        "k_e": Dimension(mass=1, length=3, time=-4, current=-2)
+    },
+    domain="quantum",
+    tags=["atomic", "hydrogen", "fundamental"],
+    description="Radius of lowest-energy electron orbit in hydrogen",
+    latex=r"a_0 = \frac{\hbar^2}{m_e e^2 k_e}",
+))
+
+register_equation(Equation(
+    name="Rydberg Formula",
+    formula="1/lambda = R*(1/n1^2 - 1/n2^2)",
+    variables={
+        "lambda": _L,
+        "R": _WAVE_NUMBER,
+        "n1": _DIMLESS,
+        "n2": _DIMLESS
+    },
+    domain="quantum",
+    tags=["atomic", "spectroscopy", "hydrogen"],
+    description="Wavelengths of spectral lines in hydrogen",
+    latex=r"\frac{1}{\lambda} = R\left(\frac{1}{n_1^2} - \frac{1}{n_2^2}\right)",
+))
+
+register_equation(Equation(
+    name="Quantum Harmonic Oscillator Energy",
+    formula="E_n = hbar*omega*(n + 1/2)",
+    variables={
+        "E_n": _E,
+        "hbar": Dimension(mass=1, length=2, time=-1),
+        "omega": _ANGULAR_FREQ,
+        "n": _DIMLESS
+    },
+    domain="quantum",
+    tags=["oscillator", "energy", "quantization"],
+    description="Energy levels of quantum harmonic oscillator",
+    latex=r"E_n = \hbar\omega\left(n + \frac{1}{2}\right)",
+))
+
+# ============================================================================
+# RELATIVITY (EXPANDED)
+# ============================================================================
+
+register_equation(Equation(
+    name="Time Dilation",
+    formula="delta_t = gamma * delta_t0",
+    variables={
+        "delta_t": _T,
+        "gamma": _DIMLESS,
+        "delta_t0": _T
+    },
+    domain="relativity",
+    tags=["time", "lorentz", "special relativity"],
+    description="Time interval in moving frame appears longer",
+    latex=r"\Delta t = \gamma \Delta t_0",
+    related=["Lorentz Factor"],
+))
+
+register_equation(Equation(
+    name="Length Contraction",
+    formula="L = L0/gamma",
+    variables={
+        "L": _L,
+        "L0": _L,
+        "gamma": _DIMLESS
+    },
+    domain="relativity",
+    tags=["length", "lorentz", "special relativity"],
+    description="Length in direction of motion appears contracted",
+    latex=r"L = \frac{L_0}{\gamma}",
+    related=["Lorentz Factor"],
+))
+
+register_equation(Equation(
+    name="Relativistic Momentum",
+    formula="p = gamma*m*v",
+    variables={
+        "p": _P,
+        "gamma": _DIMLESS,
+        "m": _M,
+        "v": _V
+    },
+    domain="relativity",
+    tags=["momentum", "special relativity"],
+    description="Momentum of a relativistic particle",
+    latex=r"\vec{p} = \gamma m\vec{v}",
+    related=["Lorentz Factor"],
+))
+
+register_equation(Equation(
+    name="Relativistic Energy",
+    formula="E = gamma*m*c^2",
+    variables={
+        "E": _E,
+        "gamma": _DIMLESS,
+        "m": _M,
+        "c": _V
+    },
+    domain="relativity",
+    tags=["energy", "special relativity"],
+    description="Total energy of a relativistic particle",
+    latex=r"E = \gamma mc^2",
+    related=["Mass-Energy Equivalence", "Lorentz Factor"],
+))
+
+register_equation(Equation(
+    name="Energy-Momentum Relation",
+    formula="E^2 = (pc)^2 + (mc^2)^2",
+    variables={
+        "E": _E,
+        "p": _P,
+        "m": _M,
+        "c": _V
+    },
+    domain="relativity",
+    tags=["energy", "momentum", "special relativity"],
+    description="Relation between energy and momentum in special relativity",
+    latex=r"E^2 = (pc)^2 + (mc^2)^2",
+    related=["Mass-Energy Equivalence"],
+))
+
+register_equation(Equation(
+    name="Doppler Effect (relativistic)",
+    formula="f = f0*sqrt((1-beta)/(1+beta))",
+    variables={
+        "f": Dimension(time=-1),
+        "f0": Dimension(time=-1),
+        "beta": _DIMLESS  # v/c
+    },
+    domain="relativity",
+    tags=["doppler", "frequency", "special relativity"],
+    description="Frequency shift for source moving radially",
+    latex=r"f = f_0\sqrt{\frac{1-\beta}{1+\beta}}",
+))
+
+register_equation(Equation(
+    name="Schwarzschild Radius",
+    formula="r_s = 2*G*M/c^2",
+    variables={
+        "r_s": _L,
+        "G": Dimension(length=3, mass=-1, time=-2),
+        "M": _M,
+        "c": _V
+    },
+    domain="relativity",
+    tags=["black hole", "gravity", "general relativity"],
+    description="Radius of the event horizon of a non-rotating black hole",
+    latex=r"r_s = \frac{2GM}{c^2}",
+))
+
+# ============================================================================
+# OPTICS
+# ============================================================================
+
+_FREQUENCY = Dimension(time=-1)
+_REFRACTIVE_INDEX = _DIMLESS
+_FOCAL_LENGTH = _L
+_ANGLE = _DIMLESS
+
+register_equation(Equation(
+    name="Snell's Law",
+    formula="n1*sin(theta1) = n2*sin(theta2)",
+    variables={
+        "n1": _REFRACTIVE_INDEX,
+        "theta1": _ANGLE,
+        "n2": _REFRACTIVE_INDEX,
+        "theta2": _ANGLE
+    },
+    domain="optics",
+    tags=["refraction", "fundamental", "wave"],
+    description="Law of refraction at interface between media",
+    latex=r"n_1\sin\theta_1 = n_2\sin\theta_2",
+))
+
+register_equation(Equation(
+    name="Thin Lens Equation",
+    formula="1/f = 1/d_o + 1/d_i",
+    variables={
+        "f": _FOCAL_LENGTH,
+        "d_o": _L,  # object distance
+        "d_i": _L   # image distance
+    },
+    domain="optics",
+    tags=["lens", "imaging", "geometric optics"],
+    description="Relates object and image distances to focal length",
+    latex=r"\frac{1}{f} = \frac{1}{d_o} + \frac{1}{d_i}",
+))
+
+register_equation(Equation(
+    name="Lens Maker's Equation",
+    formula="1/f = (n-1)*(1/R1 - 1/R2)",
+    variables={
+        "f": _FOCAL_LENGTH,
+        "n": _REFRACTIVE_INDEX,
+        "R1": _L,  # radius of curvature 1
+        "R2": _L   # radius of curvature 2
+    },
+    domain="optics",
+    tags=["lens", "fabrication", "geometric optics"],
+    description="Focal length from lens geometry and material",
+    latex=r"\frac{1}{f} = (n-1)\left(\frac{1}{R_1} - \frac{1}{R_2}\right)",
+))
+
+register_equation(Equation(
+    name="Magnification",
+    formula="M = -d_i/d_o",
+    variables={
+        "M": _DIMLESS,
+        "d_i": _L,
+        "d_o": _L
+    },
+    domain="optics",
+    tags=["lens", "imaging", "magnification"],
+    description="Linear magnification of optical system",
+    latex=r"M = -\frac{d_i}{d_o}",
+))
+
+register_equation(Equation(
+    name="Diffraction Grating",
+    formula="d*sin(theta) = m*lambda",
+    variables={
+        "d": _L,  # grating spacing
+        "theta": _ANGLE,
+        "m": _DIMLESS,  # order
+        "lambda": _L
+    },
+    domain="optics",
+    tags=["diffraction", "interference", "wave"],
+    description="Condition for constructive interference in diffraction grating",
+    latex=r"d\sin\theta = m\lambda",
+))
+
+register_equation(Equation(
+    name="Rayleigh Criterion",
+    formula="theta_min = 1.22*lambda/D",
+    variables={
+        "theta_min": _ANGLE,
+        "lambda": _L,
+        "D": _L  # aperture diameter
+    },
+    domain="optics",
+    tags=["resolution", "diffraction", "imaging"],
+    description="Minimum resolvable angle for circular aperture",
+    latex=r"\theta_{\text{min}} = 1.22\frac{\lambda}{D}",
+))
+
+register_equation(Equation(
+    name="Brewster's Angle",
+    formula="tan(theta_B) = n2/n1",
+    variables={
+        "theta_B": _ANGLE,
+        "n1": _REFRACTIVE_INDEX,
+        "n2": _REFRACTIVE_INDEX
+    },
+    domain="optics",
+    tags=["polarization", "reflection", "refraction"],
+    description="Angle of incidence for complete p-polarization",
+    latex=r"\tan\theta_B = \frac{n_2}{n_1}",
+))
+
+register_equation(Equation(
+    name="Critical Angle",
+    formula="sin(theta_c) = n2/n1",
+    variables={
+        "theta_c": _ANGLE,
+        "n1": _REFRACTIVE_INDEX,
+        "n2": _REFRACTIVE_INDEX
+    },
+    domain="optics",
+    tags=["total internal reflection", "refraction"],
+    description="Angle for total internal reflection (n1 > n2)",
+    latex=r"\sin\theta_c = \frac{n_2}{n_1}",
+    assumptions=["n1 > n2"],
+))
+
+register_equation(Equation(
+    name="Malus's Law",
+    formula="I = I0*cos^2(theta)",
+    variables={
+        "I": Dimension(mass=1, time=-3),  # intensity
+        "I0": Dimension(mass=1, time=-3),
+        "theta": _ANGLE
+    },
+    domain="optics",
+    tags=["polarization", "intensity"],
+    description="Intensity of light through polarizer",
+    latex=r"I = I_0\cos^2\theta",
+))
+
+register_equation(Equation(
+    name="Wave Equation (electromagnetic)",
+    formula="c = lambda*f",
+    variables={
+        "c": _V,
+        "lambda": _L,
+        "f": _FREQUENCY
+    },
+    domain="optics",
+    tags=["wave", "fundamental", "electromagnetic"],
+    description="Relates wavelength, frequency, and speed of light",
+    latex=r"c = \lambda f",
+))
+
+# ============================================================================
+# ACOUSTICS
+# ============================================================================
+
+_SOUND_INTENSITY = Dimension(mass=1, time=-3)  # W/m²
+_SOUND_PRESSURE = Dimension(mass=1, length=-1, time=-2)  # Pa
+_BULK_MODULUS = Dimension(mass=1, length=-1, time=-2)
+
+register_equation(Equation(
+    name="Speed of Sound in Fluid",
+    formula="v = sqrt(B/rho)",
+    variables={
+        "v": _V,
+        "B": _BULK_MODULUS,
+        "rho": _DENSITY
+    },
+    domain="acoustics",
+    tags=["wave", "speed", "fluid"],
+    description="Speed of sound in terms of bulk modulus and density",
+    latex=r"v = \sqrt{\frac{B}{\rho}}",
+))
+
+register_equation(Equation(
+    name="Speed of Sound in Ideal Gas",
+    formula="v = sqrt(gamma*R*T/M)",
+    variables={
+        "v": _V,
+        "gamma": _DIMLESS,  # heat capacity ratio
+        "R": Dimension(mass=1, length=2, time=-2, temperature=-1, amount=-1),
+        "T": _TEMP,
+        "M": Dimension(mass=1, amount=-1)  # molar mass
+    },
+    domain="acoustics",
+    tags=["wave", "speed", "gas"],
+    description="Speed of sound in ideal gas",
+    latex=r"v = \sqrt{\frac{\gamma RT}{M}}",
+))
+
+register_equation(Equation(
+    name="Sound Intensity",
+    formula="I = P^2/(2*rho*v)",
+    variables={
+        "I": _SOUND_INTENSITY,
+        "P": _SOUND_PRESSURE,
+        "rho": _DENSITY,
+        "v": _V
+    },
+    domain="acoustics",
+    tags=["intensity", "pressure", "wave"],
+    description="Sound intensity from pressure amplitude",
+    latex=r"I = \frac{P^2}{2\rho v}",
+))
+
+register_equation(Equation(
+    name="Sound Intensity Level",
+    formula="L = 10*log10(I/I0)",
+    variables={
+        "L": _DIMLESS,  # decibels
+        "I": _SOUND_INTENSITY,
+        "I0": _SOUND_INTENSITY  # reference intensity
+    },
+    domain="acoustics",
+    tags=["intensity", "decibel", "logarithmic"],
+    description="Sound level in decibels",
+    latex=r"L = 10\log_{10}\left(\frac{I}{I_0}\right)",
+))
+
+register_equation(Equation(
+    name="Doppler Effect (sound)",
+    formula="f = f0*(v + v_r)/(v - v_s)",
+    variables={
+        "f": _FREQUENCY,
+        "f0": _FREQUENCY,
+        "v": _V,  # speed of sound
+        "v_r": _V,  # receiver velocity
+        "v_s": _V   # source velocity
+    },
+    domain="acoustics",
+    tags=["doppler", "frequency", "wave"],
+    description="Frequency shift due to relative motion in sound",
+    latex=r"f = f_0\frac{v + v_r}{v - v_s}",
+))
+
+register_equation(Equation(
+    name="Acoustic Impedance",
+    formula="Z = rho*v",
+    variables={
+        "Z": Dimension(mass=1, length=-2, time=-1),
+        "rho": _DENSITY,
+        "v": _V
+    },
+    domain="acoustics",
+    tags=["impedance", "wave", "material"],
+    description="Characteristic acoustic impedance of medium",
+    latex=r"Z = \rho v",
+))
+
+register_equation(Equation(
+    name="Wave Equation (1D)",
+    formula="d^2y/dt^2 = v^2*d^2y/dx^2",
+    variables={
+        "y": _L,  # displacement
+        "t": _T,
+        "v": _V,
+        "x": _L
+    },
+    domain="acoustics",
+    tags=["wave", "pde", "fundamental"],
+    description="One-dimensional wave equation",
+    latex=r"\frac{\partial^2 y}{\partial t^2} = v^2\frac{\partial^2 y}{\partial x^2}",
+))
+
+register_equation(Equation(
+    name="Standing Wave Frequency (string)",
+    formula="f_n = n*v/(2*L)",
+    variables={
+        "f_n": _FREQUENCY,
+        "n": _DIMLESS,  # harmonic number
+        "v": _V,
+        "L": _L  # string length
+    },
+    domain="acoustics",
+    tags=["standing wave", "resonance", "string"],
+    description="Natural frequencies of vibrating string",
+    latex=r"f_n = \frac{nv}{2L}",
+    assumptions=["Fixed ends"],
+))
+
+register_equation(Equation(
+    name="Acoustic Power",
+    formula="P = I*A",
+    variables={
+        "P": _W,
+        "I": _SOUND_INTENSITY,
+        "A": Dimension(length=2)
+    },
+    domain="acoustics",
+    tags=["power", "intensity"],
+    description="Total acoustic power through area",
+    latex=r"P = IA",
+))
+
+# ============================================================================
+# FLUID DYNAMICS (EXPANDED)
+# ============================================================================
+
+register_equation(Equation(
+    name="Stokes' Law",
+    formula="F_d = 6*pi*mu*r*v",
+    variables={
+        "F_d": _F,  # drag force
+        "mu": _VISCOSITY,
+        "r": _L,  # sphere radius
+        "v": _V
+    },
+    domain="fluid_dynamics",
+    tags=["drag", "viscous", "sphere"],
+    description="Drag force on a sphere in viscous fluid (low Re)",
+    latex=r"F_d = 6\pi\mu rv",
+    assumptions=["Low Reynolds number", "Spherical object"],
+))
+
+register_equation(Equation(
+    name="Poiseuille's Law",
+    formula="Q = pi*r^4*delta_P/(8*mu*L)",
+    variables={
+        "Q": Dimension(length=3, time=-1),  # volume flow rate
+        "r": _L,  # pipe radius
+        "delta_P": _PRESSURE,
+        "mu": _VISCOSITY,
+        "L": _L  # pipe length
+    },
+    domain="fluid_dynamics",
+    tags=["flow", "viscous", "pipe"],
+    description="Volume flow rate in cylindrical pipe",
+    latex=r"Q = \frac{\pi r^4 \Delta P}{8\mu L}",
+    assumptions=["Laminar flow", "Newtonian fluid"],
+))
+
+register_equation(Equation(
+    name="Drag Equation",
+    formula="F_d = (1/2)*rho*v^2*C_d*A",
+    variables={
+        "F_d": _F,
+        "rho": _DENSITY,
+        "v": _V,
+        "C_d": _DIMLESS,  # drag coefficient
+        "A": Dimension(length=2)  # reference area
+    },
+    domain="fluid_dynamics",
+    tags=["drag", "turbulent", "aerodynamics"],
+    description="Drag force on object in fluid flow",
+    latex=r"F_d = \frac{1}{2}\rho v^2 C_d A",
+))
+
+register_equation(Equation(
+    name="Froude Number",
+    formula="Fr = v/sqrt(g*L)",
+    variables={
+        "Fr": _DIMLESS,
+        "v": _V,
+        "g": _A,
+        "L": _L  # characteristic length
+    },
+    domain="fluid_dynamics",
+    tags=["dimensionless", "wave", "gravity"],
+    description="Ratio of inertial to gravitational forces",
+    latex=r"Fr = \frac{v}{\sqrt{gL}}",
+))
+
+register_equation(Equation(
+    name="Mach Number",
+    formula="M = v/c",
+    variables={
+        "M": _DIMLESS,
+        "v": _V,  # flow velocity
+        "c": _V   # speed of sound
+    },
+    domain="fluid_dynamics",
+    tags=["dimensionless", "compressible", "supersonic"],
+    description="Ratio of flow velocity to speed of sound",
+    latex=r"M = \frac{v}{c}",
+))

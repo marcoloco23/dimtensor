@@ -56,21 +56,23 @@ class DimArray:
             uncertainty: Optional absolute uncertainty (same shape as data).
         """
         # Convert to numpy array
+        # Note: NumPy 2.x changed copy=False behavior; use copy=None for same behavior
+        _copy = copy if copy else None
         if isinstance(data, DimArray):
-            arr = np.array(data._data, dtype=dtype, copy=copy)
+            arr = np.array(data._data, dtype=dtype, copy=_copy)
             unit = unit if unit is not None else data._unit
             # Inherit uncertainty if not explicitly provided
             if uncertainty is None and data._uncertainty is not None:
                 uncertainty = data._uncertainty
         else:
-            arr = np.array(data, dtype=dtype, copy=copy)
+            arr = np.array(data, dtype=dtype, copy=_copy)
 
         self._data: NDArray[Any] = arr
         self._unit: Unit = unit if unit is not None else dimensionless
 
         # Handle uncertainty
         if uncertainty is not None:
-            unc_arr = np.array(uncertainty, dtype=dtype, copy=copy)
+            unc_arr = np.array(uncertainty, dtype=dtype, copy=_copy)
             if unc_arr.shape != arr.shape:
                 raise ValueError(
                     f"Uncertainty shape {unc_arr.shape} must match data shape {arr.shape}"
