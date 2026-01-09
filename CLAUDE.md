@@ -4,6 +4,27 @@ Guidance for Claude Code when working with this repository.
 
 ---
 
+## FIRST: Setup Verification
+
+**Before ANY work, run this setup:**
+
+```bash
+cd "/Users/marcsperzel/Local Documents/Projects/Packages/dimtensor"
+
+# Install with all dependencies
+pip install -e ".[dev,all]"
+
+# Verify NumPy version (must be <2.0)
+python -c "import numpy; print(f'NumPy: {numpy.__version__}'); assert int(numpy.__version__.split('.')[0]) < 2"
+
+# Quick test
+pytest -x -q --tb=short 2>&1 | tail -5
+```
+
+**If NumPy 2.x**: `pip install "numpy>=1.24.0,<2.0.0" --force-reinstall`
+
+---
+
 ## "Start Orchestrator" Command
 
 **If the user says "start orchestrator", "orchestrate", or "run orchestrator":**

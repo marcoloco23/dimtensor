@@ -4,6 +4,28 @@
 ## AGENT: READ THIS BLOCK FIRST. DO NOT SKIP.
 ---
 
+### FIRST: SETUP (Run this before ANY work)
+
+```bash
+cd "/Users/marcsperzel/Local Documents/Projects/Packages/dimtensor"
+
+# Install with all dependencies (REQUIRED)
+pip install -e ".[dev,all]"
+
+# Verify setup - must show numpy <2.0
+python -c "import numpy; print(f'NumPy: {numpy.__version__}'); assert int(numpy.__version__.split('.')[0]) < 2, 'NumPy 2.x not supported!'"
+
+# Verify tests pass
+pytest -x -q --tb=short
+```
+
+**If NumPy 2.x is installed**, fix it:
+```bash
+pip install "numpy>=1.24.0,<2.0.0" --force-reinstall
+```
+
+---
+
 ### AGENT MODE: ORCHESTRATOR
 
 You are an ORCHESTRATOR. Your job is to:

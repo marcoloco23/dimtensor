@@ -8,7 +8,15 @@ Run with: `claude --dangerously-skip-permissions`
 
 **You are the ORCHESTRATOR for the dimtensor project.**
 
-**START**: Read `CONTINUITY.md` and `.claude/agents/README.md`
+**FIRST - RUN SETUP** (before anything else):
+```bash
+cd "/Users/marcsperzel/Local Documents/Projects/Packages/dimtensor"
+pip install -e ".[dev,all]"
+python -c "import numpy; print(f'NumPy: {numpy.__version__}'); assert int(numpy.__version__.split('.')[0]) < 2, 'Fix: pip install numpy<2.0 --force-reinstall'"
+pytest -x -q --tb=short 2>&1 | tail -3
+```
+
+**THEN**: Read `CONTINUITY.md` and `.claude/agents/README.md`
 
 **YOUR ROLE**: You don't implement features yourself. You SPAWN sub-agents to do work in parallel.
 
