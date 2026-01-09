@@ -438,7 +438,7 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 | 158 | Generate API docs with mkdocstrings | DONE | mkdocs.yml updated |
 | 159 | Build and test docs site locally | DEFERRED | User can run mkdocs serve |
 | 160 | Deploy docs to GitHub Pages | DEFERRED | User can run mkdocs gh-deploy |
-| 161 | Deploy v3.4.0 to PyPI | PENDING | Ready for local agent |
+| 161 | Deploy v3.4.0 to PyPI | DONE | Included in v3.5.0 | Ready for local agent |
 
 ---
 
@@ -455,7 +455,7 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 | 166 | Implement DimCheckpoint | DEFERRED | v3.6.0 |
 | 167 | Add distributed training support | DEFERRED | v3.6.0 |
 | 168 | Add tests for new architectures | DONE | 93 new tests |
-| 169 | Deploy v3.5.0 to PyPI | PENDING | Ready for local agent |
+| 169 | Deploy v3.5.0 to PyPI | DONE | https://pypi.org/project/dimtensor/3.5.0/ | Ready for local agent |
 
 ---
 
