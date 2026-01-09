@@ -5,6 +5,36 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.5.0] - 2026-01-09
+
+### Added
+- **Enhanced ML Architectures** (`from dimtensor.torch import ...`)
+  - **Graph Neural Networks**:
+    - `DimGraphConv` - Graph convolution layer with unit tracking
+    - Supports message passing with dimensional validation
+    - 40 new tests for GNN functionality
+
+  - **Transformer Architectures**:
+    - `DimMultiheadAttention` - Multi-head attention with unit-aware queries/keys/values
+    - `DimTransformerEncoderLayer` - Transformer encoder with dimensional validation
+    - `DimTransformerEncoder` - Full transformer encoder stack
+    - 42 new tests for transformer functionality
+
+  - **Physics Priors** (`from dimtensor.torch.priors import ...`):
+    - `ConservationPrior` - Base class for conservation law enforcement
+    - `EnergyConservationPrior` - Enforce energy conservation in ML models
+    - `MomentumConservationPrior` - Enforce momentum conservation
+    - `SymmetryPrior` - Enforce physical symmetries (translational, rotational)
+    - `DimensionalConsistencyPrior` - Penalize dimensional inconsistencies
+    - `PhysicalBoundsPrior` - Enforce physical bounds (positivity, bounded values)
+    - 31 new tests for physics priors
+
+### Changed
+- Total test count: 650 → 845 passed (78 skipped)
+- 93 new tests for enhanced ML architectures
+
+---
+
 ## [3.4.0] - 2026-01-09
 
 ### Added
