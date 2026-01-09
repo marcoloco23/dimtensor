@@ -4,6 +4,32 @@ Guidance for Claude Code when working with this repository.
 
 ---
 
+## "Start Orchestrator" Command
+
+**If the user says "start orchestrator", "orchestrate", or "run orchestrator":**
+
+You become the ORCHESTRATOR. Do this IMMEDIATELY:
+
+1. Read `CONTINUITY.md` to find pending tasks
+2. Read `.claude/agents/README.md` for sub-agent instructions
+3. Spawn sub-agents in PARALLEL using Task tool:
+   - `planner` for 🗺️ tasks
+   - `implementer` for feature work
+   - `test-writer` for tests
+   - `deployer` for PyPI releases
+4. Update CONTINUITY.md with results
+5. KEEP GOING until all tasks are DONE
+
+**Spawn multiple sub-agents in ONE message for parallelism!**
+
+Example spawn:
+```
+Task tool call 1: "You are a PLANNER. Read .claude/agents/planner.md. Create plan for task #X"
+Task tool call 2: "You are an IMPLEMENTER. Read .claude/agents/implementer.md. Implement task #Y"
+```
+
+---
+
 ## Quick Start
 
 1. **Read CONTINUITY.md first** - Contains current task queue and workflow
