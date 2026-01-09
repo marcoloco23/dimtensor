@@ -30,12 +30,30 @@ from .heuristics import (
     SUFFIX_PATTERNS,
     PREFIX_PATTERNS,
 )
+from .equations import (
+    Equation,
+    EQUATION_DATABASE,
+    DOMAINS,
+    get_equations_by_domain,
+    get_equations_by_tag,
+    find_equations_with_variable,
+    suggest_dimension_from_equations,
+)
 
 __all__ = [
+    # Heuristics
     "infer_dimension",
     "get_matching_patterns",
     "InferenceResult",
     "VARIABLE_PATTERNS",
     "SUFFIX_PATTERNS",
     "PREFIX_PATTERNS",
+    # Equations
+    "Equation",
+    "EQUATION_DATABASE",
+    "DOMAINS",
+    "get_equations_by_domain",
+    "get_equations_by_tag",
+    "find_equations_with_variable",
+    "suggest_dimension_from_equations",
 ]

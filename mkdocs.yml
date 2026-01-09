@@ -97,7 +97,10 @@ nav:
     - dimtensor vs Astropy: comparisons/vs-astropy.md
     - dimtensor vs unyt: comparisons/vs-unyt.md
     - Feature Matrix: comparisons/feature-matrix.md
+  - Performance:
+    - Benchmarks: performance/benchmarks.md
   - Troubleshooting:
     - Common Errors: troubleshooting/errors.md
     - FAQ: troubleshooting/faq.md
+    - Migration Guide: troubleshooting/migration.md
   - Changelog: changelog.md

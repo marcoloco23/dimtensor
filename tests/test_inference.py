@@ -8,6 +8,14 @@ from dimtensor.inference import (
     get_matching_patterns,
     InferenceResult,
     VARIABLE_PATTERNS,
+    # Equations
+    Equation,
+    EQUATION_DATABASE,
+    DOMAINS,
+    get_equations_by_domain,
+    get_equations_by_tag,
+    find_equations_with_variable,
+    suggest_dimension_from_equations,
 )
 from dimtensor.inference.heuristics import suggest_dimension
 
@@ -242,3 +250,190 @@ class TestPhysicsIntegration:
         # P = F / A
         expected_p = f_result.dimension / a_result.dimension
         assert p_result.dimension == expected_p
+
+
+# ==============================================================================
+# Equation Database Tests
+# ==============================================================================
+
+
+class TestEquationDatabase:
+    """Test the equation database."""
+
+    def test_database_not_empty(self):
+        """Database should have equations."""
+        assert len(EQUATION_DATABASE) > 0
+
+    def test_database_has_fundamental_equations(self):
+        """Database should have fundamental equations."""
+        names = [eq.name for eq in EQUATION_DATABASE]
+        assert "Newton's Second Law" in names
+        assert "Kinetic Energy" in names
+        assert "Ohm's Law" in names
+        assert "Ideal Gas Law" in names
+
+    def test_equation_structure(self):
+        """Equations should have correct structure."""
+        for eq in EQUATION_DATABASE:
+            assert eq.name, "Equation should have a name"
+            assert eq.formula, "Equation should have a formula"
+            assert eq.variables, "Equation should have variables"
+            assert eq.domain in DOMAINS, f"Unknown domain: {eq.domain}"
+
+    def test_variables_have_dimensions(self):
+        """All variables should have valid dimensions."""
+        for eq in EQUATION_DATABASE:
+            for var_name, dim in eq.variables.items():
+                assert isinstance(dim, Dimension), \
+                    f"Variable {var_name} in {eq.name} should have Dimension"
+
+
+class TestGetEquationsByDomain:
+    """Test get_equations_by_domain function."""
+
+    def test_mechanics_domain(self):
+        """Should return mechanics equations."""
+        mechanics = get_equations_by_domain("mechanics")
+        assert len(mechanics) > 0
+        for eq in mechanics:
+            assert eq.domain == "mechanics"
+
+    def test_electromagnetics_domain(self):
+        """Should return electromagnetics equations."""
+        em = get_equations_by_domain("electromagnetics")
+        assert len(em) > 0
+        for eq in em:
+            assert eq.domain == "electromagnetics"
+
+    def test_unknown_domain(self):
+        """Unknown domain should return empty list."""
+        unknown = get_equations_by_domain("unknown_domain")
+        assert unknown == []
+
+
+class TestGetEquationsByTag:
+    """Test get_equations_by_tag function."""
+
+    def test_energy_tag(self):
+        """Should find equations tagged with energy."""
+        energy_eqs = get_equations_by_tag("energy")
+        assert len(energy_eqs) > 0
+        for eq in energy_eqs:
+            assert "energy" in eq.tags
+
+    def test_fundamental_tag(self):
+        """Should find fundamental equations."""
+        fundamental = get_equations_by_tag("fundamental")
+        assert len(fundamental) > 0
+
+    def test_unknown_tag(self):
+        """Unknown tag should return empty list."""
+        unknown = get_equations_by_tag("unknown_tag_xyz")
+        assert unknown == []
+
+
+class TestFindEquationsWithVariable:
+    """Test find_equations_with_variable function."""
+
+    def test_find_force_equations(self):
+        """Should find equations with F (force)."""
+        force_eqs = find_equations_with_variable("F")
+        assert len(force_eqs) > 0
+
+    def test_find_mass_equations(self):
+        """Should find equations with mass."""
+        mass_eqs = find_equations_with_variable("m")
+        assert len(mass_eqs) > 0
+
+    def test_find_delta_t_equations(self):
+        """Should find equations with delta_t."""
+        dt_eqs = find_equations_with_variable("delta_t")
+        assert len(dt_eqs) > 0
+
+
+class TestSuggestDimensionFromEquations:
+    """Test suggest_dimension_from_equations function."""
+
+    def test_suggest_force(self):
+        """Should suggest dimension for force."""
+        suggestions = suggest_dimension_from_equations("F")
+        assert len(suggestions) > 0
+
+        # First suggestion should be force dimension
+        dim, eq_name, confidence = suggestions[0]
+        assert dim == Dimension(length=1, mass=1, time=-2)
+
+    def test_suggest_velocity(self):
+        """Should suggest dimension for velocity."""
+        suggestions = suggest_dimension_from_equations("v")
+        assert len(suggestions) > 0
+
+    def test_partial_matches_have_low_confidence(self):
+        """Partial matches should have lower confidence."""
+        suggestions = suggest_dimension_from_equations("v")
+        # Partial matches should exist
+        assert len(suggestions) > 0
+        # All should have confidence levels
+        for dim, eq_name, conf in suggestions:
+            assert 0 < conf <= 1.0
+
+
+class TestEquationDimensionalConsistency:
+    """Test dimensional consistency of equations."""
+
+    def test_newtons_second_law(self):
+        """F = ma should be dimensionally consistent."""
+        eq = next(e for e in EQUATION_DATABASE if e.name == "Newton's Second Law")
+
+        F = eq.variables["F"]
+        m = eq.variables["m"]
+        a = eq.variables["a"]
+
+        # F should equal m * a
+        assert F == m * a
+
+    def test_kinetic_energy(self):
+        """KE = ½mv² should be dimensionally consistent."""
+        eq = next(e for e in EQUATION_DATABASE if e.name == "Kinetic Energy")
+
+        KE = eq.variables["KE"]
+        m = eq.variables["m"]
+        v = eq.variables["v"]
+
+        # KE should equal m * v^2
+        assert KE == m * v * v
+
+    def test_ohms_law(self):
+        """V = IR should be dimensionally consistent."""
+        eq = next(e for e in EQUATION_DATABASE if e.name == "Ohm's Law")
+
+        V = eq.variables["V"]
+        I = eq.variables["I"]
+        R = eq.variables["R"]
+
+        # V should equal I * R
+        assert V == I * R
+
+    def test_ideal_gas_law(self):
+        """PV = nRT should be dimensionally consistent."""
+        eq = next(e for e in EQUATION_DATABASE if e.name == "Ideal Gas Law")
+
+        P = eq.variables["P"]
+        V = eq.variables["V"]
+        n = eq.variables["n"]
+        R = eq.variables["R"]
+        T = eq.variables["T"]
+
+        # PV should equal nRT
+        assert P * V == n * R * T
+
+    def test_mass_energy_equivalence(self):
+        """E = mc² should be dimensionally consistent."""
+        eq = next(e for e in EQUATION_DATABASE if e.name == "Mass-Energy Equivalence")
+
+        E = eq.variables["E"]
+        m = eq.variables["m"]
+        c = eq.variables["c"]
+
+        # E should equal m * c^2
+        assert E == m * c * c

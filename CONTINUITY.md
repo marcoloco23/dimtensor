@@ -63,24 +63,22 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 
 **Date**: 2026-01-09
 **Version**: 1.4.0 (deployed to PyPI)
-**Status**: v2.0.0 IN PROGRESS (BLOCKED)
+**Status**: v2.1.0 IN PROGRESS
 
 ### What Just Happened
-- v2.0.0 Rust backend foundation created:
-  - rust/Cargo.toml with PyO3, rust-numpy, ndarray deps
-  - rust/src/lib.rs with array operations
-  - rust/src/dimension.rs with RustDimension type
-  - src/dimtensor/_rust.py Python wrapper with fallback
-  - tests/test_rust_backend.py (17 tests)
-- 498 tests pass, 64 skipped, mypy clean (38 files)
+- v2.1.0 Dimensional Inference in progress:
+  - inference/heuristics.py with 50+ variable patterns
+  - inference/equations.py with 30+ physics equations
+  - 8 physics domains, prefix/suffix/component handling
+  - tests/test_inference.py (48 tests)
+- 546 tests pass, 64 skipped, mypy clean (41 files)
 
-### BLOCKER
+### v2.0.0 BLOCKED
 - Rust/Cargo not installed on this system
-- To continue v2.0.0: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
+- To continue: `curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh`
 
 ### What Needs to Happen
-- Install Rust, then complete v2.0.0 (tasks #70-77)
-- OR skip to v2.1.0 (Dimensional Inference) which doesn't require Rust
+- Continue v2.1.0: tasks #80-87 (equation patterns, IDE plugin, linting)
 
 ---
 
@@ -247,8 +245,8 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 |---|------|--------|-------|
 | 78 | 🗺️ Design inference system architecture | DONE | Plan: .plans/2026-01-09_dimensional-inference.md |
 | 79 | 🗺️ Implement variable name heuristics | DONE | inference/heuristics.py, 27 tests |
-| 80 | Build equation pattern database | PENDING | Common physics equations |
-| 81 | Implement equation pattern matching | PENDING | Recognize F=ma, E=mc², etc. |
+| 80 | Build equation pattern database | DONE | inference/equations.py, 30+ equations |
+| 81 | Implement equation pattern matching | DONE | 8 physics domains, 21 new tests |
 | 82 | 🗺️ Create IDE plugin architecture | PENDING | PLAN REQUIRED: VS Code, PyCharm |
 | 83 | Implement VS Code extension | PENDING | Unit hints, error highlighting |
 | 84 | Implement dimensional linting | PENDING | dimtensor lint command |
@@ -521,6 +519,11 @@ Format: Use sequential numbers. Add new entries at the bottom.
     - Suffix handling (_m, _kg, _m_per_s, etc.)
     - Component handling (_x, _y, _z)
     - 27 new tests (525 total pass)
+72. Task #80-81: Implemented equation pattern database:
+    - 30+ physics equations (F=ma, E=mc², PV=nRT, etc.)
+    - 8 physics domains (mechanics, electromagnetics, thermodynamics, etc.)
+    - Functions: get_equations_by_domain/tag, find_equations_with_variable
+    - 21 new tests for equations (546 total pass)
 
 ---
 
