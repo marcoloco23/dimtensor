@@ -396,3 +396,192 @@ class DimSequential(nn.Module):
         """Get layer by index."""
         layer: DimLayer = self.layers[idx]
         return layer
+
+
+class DimGraphConv(DimLayer):
+    """Graph convolution layer with dimension tracking.
+
+    Implements a simple graph convolution that preserves physical units through
+    message passing operations. This is useful for physics-based graph neural networks
+    where nodes represent physical entities (atoms, particles, etc.) with units.
+
+    The layer computes:
+        h_i' = W_self · h_i + W_neigh · AGG_{j∈N(i)}(h_j)
+
+    Where:
+    - h_i: node feature vector for node i [input_dim]
+    - h_i': updated node feature vector [output_dim]
+    - N(i): neighbors of node i (from edge_index)
+    - W_self, W_neigh: learnable weight matrices
+    - AGG: aggregation function (mean or sum)
+
+    Args:
+        in_features: Number of input features per node.
+        out_features: Number of output features per node.
+        input_dim: Physical dimension of node features.
+        output_dim: Physical dimension of output features.
+        aggr: Aggregation method ('mean' or 'sum'). Default: 'mean'.
+        bias: If True, add learnable bias. Default: True.
+        normalize: If True, normalize aggregated messages by node degree. Default: True.
+        device: Device to place parameters on.
+        dtype: Data type for parameters.
+        validate_input: If True, validate input dimensions.
+
+    Examples:
+        >>> from dimtensor.torch import DimTensor, DimGraphConv
+        >>> from dimtensor import units, Dimension
+        >>> import torch
+        >>>
+        >>> # Molecular dynamics: atoms with positions [m] -> forces [N]
+        >>> layer = DimGraphConv(
+        ...     in_features=3,
+        ...     out_features=3,
+        ...     input_dim=Dimension(L=1),           # meters
+        ...     output_dim=Dimension(L=1, M=1, T=-2) # Newtons (kg·m/s²)
+        ... )
+        >>>
+        >>> # 4 atoms with 3D positions
+        >>> positions = DimTensor(torch.randn(4, 3), units.m)
+        >>>
+        >>> # Connectivity: atom 0→1, 1→2, 2→3, 3→0 (ring)
+        >>> edge_index = torch.tensor([[0, 1, 2, 3],
+        ...                            [1, 2, 3, 0]])
+        >>>
+        >>> forces = layer(positions, edge_index)
+        >>> print(forces.dimension)  # L·M·T⁻² (force)
+        >>> print(forces.shape)      # (4, 3)
+    """
+
+    def __init__(
+        self,
+        in_features: int,
+        out_features: int,
+        input_dim: Dimension = DIMENSIONLESS,
+        output_dim: Dimension = DIMENSIONLESS,
+        aggr: str = "mean",
+        bias: bool = True,
+        normalize: bool = True,
+        device: torch.device | str | None = None,
+        dtype: torch.dtype | None = None,
+        validate_input: bool = True,
+    ) -> None:
+        super().__init__(input_dim, output_dim, validate_input)
+
+        if aggr not in ("mean", "sum"):
+            raise ValueError(f"aggr must be 'mean' or 'sum', got {aggr!r}")
+
+        self.in_features = in_features
+        self.out_features = out_features
+        self.aggr = aggr
+        self.normalize = normalize
+
+        # Linear transformations for self and neighbor features
+        self.lin_self = nn.Linear(
+            in_features, out_features, bias=False, device=device, dtype=dtype
+        )
+        self.lin_neigh = nn.Linear(
+            in_features, out_features, bias=False, device=device, dtype=dtype
+        )
+
+        # Optional bias
+        if bias:
+            self.bias = nn.Parameter(
+                torch.zeros(out_features, device=device, dtype=dtype)
+            )
+        else:
+            self.register_parameter("bias", None)
+
+    def _forward_impl(self, x: Tensor, edge_index: Tensor) -> Tensor:
+        """Compute graph convolution.
+
+        Args:
+            x: Node features [num_nodes, in_features]
+            edge_index: Edge connectivity [2, num_edges]
+                       edge_index[0]: source nodes
+                       edge_index[1]: target nodes
+
+        Returns:
+            Updated node features [num_nodes, out_features]
+        """
+        num_nodes = x.size(0)
+
+        # Self transformation
+        out_self = self.lin_self(x)
+
+        # Neighbor aggregation
+        if edge_index.size(1) > 0:  # Check if there are any edges
+            row, col = edge_index[0], edge_index[1]
+
+            # Get neighbor features and transform
+            neighbor_feats = x[row]  # Features of source nodes
+            neighbor_msg = self.lin_neigh(neighbor_feats)
+
+            # Aggregate messages to target nodes
+            out_neigh = torch.zeros_like(out_self)
+            out_neigh.index_add_(0, col, neighbor_msg)
+
+            # Normalize by degree if requested
+            if self.normalize and self.aggr == "mean":
+                # Compute degree (number of incoming edges per node)
+                deg = torch.zeros(num_nodes, device=x.device, dtype=x.dtype)
+                deg.index_add_(0, col, torch.ones(col.size(0), device=x.device, dtype=x.dtype))
+                deg = deg.clamp(min=1.0)  # Avoid division by zero for isolated nodes
+                out_neigh = out_neigh / deg.unsqueeze(-1)
+        else:
+            # No edges - only self transformation
+            out_neigh = torch.zeros_like(out_self)
+
+        # Combine self and neighbor contributions
+        out = out_self + out_neigh
+
+        # Add bias
+        if self.bias is not None:
+            out = out + self.bias
+
+        return out
+
+    def forward(
+        self,
+        x: DimTensor | Tensor,
+        edge_index: Tensor,
+    ) -> DimTensor:
+        """Forward pass with dimension tracking.
+
+        Args:
+            x: Node features with units [num_nodes, in_features].
+               Can be DimTensor (validated) or raw Tensor (no validation).
+            edge_index: Edge connectivity (unitless indices) [2, num_edges].
+                       edge_index[0] = source nodes, edge_index[1] = target nodes.
+
+        Returns:
+            Updated node features with output_dim [num_nodes, out_features].
+
+        Raises:
+            DimensionError: If input dimension doesn't match expected
+                           (and validate_input is True).
+        """
+        # Validate input dimension and extract raw tensor
+        if isinstance(x, DimTensor):
+            if self.validate_input and x.dimension != self.input_dim:
+                raise DimensionError(
+                    f"Layer expects input dimension {self.input_dim}, "
+                    f"got {x.dimension}"
+                )
+            tensor = x.data
+        else:
+            tensor = x
+
+        # Compute graph convolution
+        result = self._forward_impl(tensor, edge_index)
+
+        # Return with output dimension
+        return DimTensor._from_tensor_and_unit(result, self._output_unit)
+
+    def extra_repr(self) -> str:
+        """Extra representation for printing."""
+        return (
+            f"in_features={self.in_features}, out_features={self.out_features}, "
+            f"aggr={self.aggr!r}, normalize={self.normalize}, "
+            f"input_dim={self.input_dim}, output_dim={self.output_dim}, "
+            f"bias={self.bias is not None}"
+        )

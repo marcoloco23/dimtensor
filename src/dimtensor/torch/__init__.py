@@ -27,9 +27,17 @@ from .dimtensor import DimTensor
 from .layers import (
     DimConv1d,
     DimConv2d,
+    DimGraphConv,
     DimLayer,
     DimLinear,
     DimSequential,
+)
+
+# Dimension-aware attention and transformers
+from .attention import (
+    DimMultiheadAttention,
+    DimTransformerEncoder,
+    DimTransformerEncoderLayer,
 )
 
 # Dimension-aware loss functions
@@ -53,6 +61,17 @@ from .normalization import (
 # Scalers for non-dimensionalization
 from .scaler import DimScaler, MultiScaler
 
+# Physics priors for physics-informed machine learning
+from .priors import (
+    ConservationPrior,
+    DimensionalConsistencyPrior,
+    EnergyConservationPrior,
+    MomentumConservationPrior,
+    PhysicalBoundsPrior,
+    PhysicsPrior,
+    SymmetryPrior,
+)
+
 __all__ = [
     # Core tensor
     "DimTensor",
@@ -61,7 +80,12 @@ __all__ = [
     "DimLinear",
     "DimConv1d",
     "DimConv2d",
+    "DimGraphConv",
     "DimSequential",
+    # Attention
+    "DimMultiheadAttention",
+    "DimTransformerEncoderLayer",
+    "DimTransformerEncoder",
     # Losses
     "DimMSELoss",
     "DimL1Loss",
@@ -77,4 +101,12 @@ __all__ = [
     # Scalers
     "DimScaler",
     "MultiScaler",
+    # Physics Priors
+    "PhysicsPrior",
+    "ConservationPrior",
+    "EnergyConservationPrior",
+    "MomentumConservationPrior",
+    "SymmetryPrior",
+    "DimensionalConsistencyPrior",
+    "PhysicalBoundsPrior",
 ]

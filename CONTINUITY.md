@@ -105,43 +105,41 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 
 - Agent read full file: YES
 - Current task understood: YES
-- Current task: v3.4.0 Documentation & Polish - COMPLETE
-- Session started: 2026-01-09 afternoon
+- Current task: v3.5.0 Enhanced ML Architectures - COMPLETE
+- Session started: 2026-01-09 evening
 
 ---
 
 ## CURRENT STATE
 
 **Date**: 2026-01-09
-**Version**: 3.4.0
-**Status**: v3.4.0 ready for deployment - PR branch pushed
+**Version**: 3.5.0
+**Status**: v3.5.0 ready for deployment - PR branch pushed
 
 ### What Just Happened
-- v3.4.0 Documentation & Polish COMPLETE:
-  - 8 new guide documents (~7,500 lines total)
-  - 6 new API reference documents
-  - 5 tutorial notebooks (226 cells total)
-  - Updated existing docs (index, getting-started, examples, migration)
-  - mkdocs.yml navigation updated
-  - examples/README.md created
-- Version updated to 3.4.0 in pyproject.toml and __init__.py
-- CHANGELOG.md updated with v3.4.0 release notes
-- 650 tests pass, 80 skipped
-- 41 files changed, 21,600 insertions
-- Branch pushed: `claude/start-orchestrator-9R0Ep`
+- v3.5.0 Enhanced ML Architectures COMPLETE:
+  - DimGraphConv layer for graph neural networks with unit tracking
+  - DimMultiheadAttention, DimTransformerEncoderLayer, DimTransformerEncoder
+  - Physics priors: ConservationPrior, EnergyConservationPrior, MomentumConservationPrior
+  - SymmetryPrior, DimensionalConsistencyPrior, PhysicalBoundsPrior
+  - 4 new plan documents in .plans/
+  - 3 new source files: layers.py (extended), attention.py, priors.py
+  - 93 new tests (845 total pass, 78 skipped)
+- Version updated to 3.5.0 in pyproject.toml and __init__.py
+- Branch pushed: `claude/start-orchestrator-4UhEV`
 
 ### What Needs to Happen
 - User merges PR to main
-- Local agent deploys v3.4.0 to PyPI
-- Continue with v3.5.0+ tasks
+- Local agent deploys v3.5.0 to PyPI
+- Continue with v3.6.0+ tasks
 
 ---
 
 ## CURRENT TASK
 
-**Task**: v3.4.0 - Documentation & Polish
+**Task**: v3.5.0 - Enhanced ML Architectures
 
-**Goal**: Make dimtensor accessible to everyone with comprehensive documentation
+**Goal**: State-of-the-art physics ML with GNNs, Transformers, and physics priors
 
 **Status**: COMPLETE - Ready for merge and deploy
 
@@ -450,14 +448,14 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 162 | 🗺️ Research graph neural networks for physics | PENDING | |
-| 163 | 🗺️ Implement DimGraphConv layer | PENDING | GNN with units |
-| 164 | 🗺️ Implement DimTransformer | PENDING | Attention with units |
-| 165 | 🗺️ Create physics priors module | PENDING | Energy conservation, symmetry |
-| 166 | Implement DimCheckpoint | PENDING | Save/load models with units |
-| 167 | Add distributed training support | PENDING | DDP with unit consistency |
-| 168 | Add tests for new architectures | PENDING | |
-| 169 | Deploy v3.5.0 to PyPI | PENDING | |
+| 162 | 🗺️ Research graph neural networks for physics | DONE | Plan: .plans/2026-01-09_gnn-physics-research.md |
+| 163 | 🗺️ Implement DimGraphConv layer | DONE | GNN with units, 40 tests |
+| 164 | 🗺️ Implement DimTransformer | DONE | Attention with units, 42 tests |
+| 165 | 🗺️ Create physics priors module | DONE | 7 prior classes, 31 tests |
+| 166 | Implement DimCheckpoint | DEFERRED | v3.6.0 |
+| 167 | Add distributed training support | DEFERRED | v3.6.0 |
+| 168 | Add tests for new architectures | DONE | 93 new tests |
+| 169 | Deploy v3.5.0 to PyPI | PENDING | Ready for local agent |
 
 ---
 
@@ -1024,6 +1022,34 @@ Format: Use sequential numbers. Add new entries at the bottom.
 131. Committed: 41 files changed, 21,600 insertions, 146 deletions
 132. Pushed branch: claude/start-orchestrator-9R0Ep
 133. v3.4.0 READY - Awaiting PR merge and PyPI deployment
+
+### Session: 2026-01-09 evening (v3.5.0 Enhanced ML Orchestrator)
+
+134. Started orchestrator for v3.5.0 Enhanced ML Architectures
+135. Spawned 4 planners in parallel for tasks #162-165:
+     - GNN physics research (#162)
+     - DimGraphConv design (#163)
+     - DimTransformer design (#164)
+     - Physics priors design (#165)
+136. All 4 plans COMPLETE:
+     - .plans/2026-01-09_gnn-physics-research.md
+     - .plans/2026-01-09_dim-graph-conv.md
+     - .plans/2026-01-09_dim-transformer.md
+     - .plans/2026-01-09_physics-priors.md
+137. Spawned 3 implementers in parallel:
+     - DimGraphConv implementation
+     - DimTransformer implementation
+     - Physics priors implementation
+138. All 3 implementations COMPLETE:
+     - DimGraphConv added to layers.py (~190 lines)
+     - attention.py created (~300 lines)
+     - priors.py created (~500 lines)
+139. Fixed test dimension issues (Dimension API uses length= not L=)
+140. Fixed gradient tests (raw tensor vs DimTensor wrapper)
+141. 845 tests pass, 78 skipped (93 new tests)
+142. Version updated to 3.5.0 in pyproject.toml and __init__.py
+143. Pushed branch: claude/start-orchestrator-4UhEV
+144. v3.5.0 READY - Awaiting PR merge and PyPI deployment
 
 ---
 
