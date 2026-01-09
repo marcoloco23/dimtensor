@@ -6,15 +6,17 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Unit-aware tensors for physics and scientific machine learning - NumPy, PyTorch, and JAX with physical units">
+        <meta name="description" content="Compare dimtensor with other Python unit libraries like Pint, Astropy, and unyt for scientific computing.">
       
       
       
-        <link rel="canonical" href="https://marcoloco23.github.io/dimtensor/changelog/">
+        <link rel="canonical" href="https://marcoloco23.github.io/dimtensor/comparisons/">
       
       
-        <link rel="prev" href="../troubleshooting/faq/">
+        <link rel="prev" href="../api/functions/">
       
+      
+        <link rel="next" href="vs-pint/">
       
       
         
@@ -25,7 +27,7 @@
     
     
       
-        <title>Changelog - dimtensor</title>
+        <title>Python Units Library Comparison - dimtensor</title>
       
     
     
@@ -78,7 +80,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#changelog" class="md-skip">
+        <a href="#python-units-library-comparison" class="md-skip">
           Skip to content
         </a>
       
@@ -114,7 +116,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Changelog
+              Python Units Library Comparison
             
           </span>
         </div>
@@ -297,11 +299,13 @@
   
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../comparisons/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="./" class="md-tabs__link">
           
   
   
@@ -337,11 +341,9 @@
   
   
   
-    
   
-  
-    <li class="md-tabs__item md-tabs__item--active">
-      <a href="./" class="md-tabs__link">
+    <li class="md-tabs__item">
+      <a href="../changelog/" class="md-tabs__link">
         
   
   
@@ -753,28 +755,31 @@
       
   
   
+    
   
   
+  
     
     
     
     
+      
+        
+        
       
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
       
         
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
         
           
-        
-        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_5" >
-        
-          
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
+          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="">
             
   
   
@@ -792,7 +797,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             
@@ -807,10 +812,37 @@
                 
   
   
+    
   
   
-    <li class="md-nav__item">
-      <a href="../comparisons/" class="md-nav__link">
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
         
   
   
@@ -826,6 +858,59 @@
   
 
       </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#quick-comparison" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Quick Comparison
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#when-to-choose-dimtensor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        When to Choose dimtensor
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#detailed-comparisons" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Detailed Comparisons
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
     </li>
   
 
@@ -838,7 +923,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparisons/vs-pint/" class="md-nav__link">
+      <a href="vs-pint/" class="md-nav__link">
         
   
   
@@ -866,7 +951,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparisons/vs-astropy/" class="md-nav__link">
+      <a href="vs-astropy/" class="md-nav__link">
         
   
   
@@ -894,7 +979,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparisons/vs-unyt/" class="md-nav__link">
+      <a href="vs-unyt/" class="md-nav__link">
         
   
   
@@ -922,7 +1007,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../comparisons/feature-matrix/" class="md-nav__link">
+      <a href="feature-matrix/" class="md-nav__link">
         
   
   
@@ -1071,37 +1156,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-        
-      
-      
-        <label class="md-nav__link md-nav__link--active" for="__toc">
-          
-  
-  
-  <span class="md-ellipsis">
-    
-  
-    Changelog
-  
-
-    
-  </span>
-  
-  
-
-          <span class="md-nav__icon md-icon"></span>
-        </label>
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../changelog/" class="md-nav__link">
         
   
   
@@ -1117,216 +1175,6 @@
   
 
       </a>
-      
-        
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#031-2026-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.3.1] - 2026-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.3.1] - 2026-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#030-2026-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.3.0] - 2026-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.3.0] - 2026-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#020-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.2.0] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.2.0] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#changed_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#012-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.2] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.2] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fixed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#011-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.1] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.1] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#010-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.0] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.0] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-      
     </li>
   
 
@@ -1358,192 +1206,35 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#031-2026-01-08" class="md-nav__link">
+  <a href="#quick-comparison" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [0.3.1] - 2026-01-08
+        Quick Comparison
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="[0.3.1] - 2026-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#030-2026-01-08" class="md-nav__link">
+  <a href="#when-to-choose-dimtensor" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [0.3.0] - 2026-01-08
+        When to Choose dimtensor
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="[0.3.0] - 2026-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#changed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#020-2025-01-08" class="md-nav__link">
+  <a href="#detailed-comparisons" class="md-nav__link">
     <span class="md-ellipsis">
       
-        [0.2.0] - 2025-01-08
+        Detailed Comparisons
       
     </span>
   </a>
-  
-    <nav class="md-nav" aria-label="[0.2.0] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_2" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#changed_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Changed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#012-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.2] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.2] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#fixed" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Fixed
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#011-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.1] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.1] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_3" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#010-2025-01-08" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        [0.1.0] - 2025-01-08
-      
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="[0.1.0] - 2025-01-08">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#added_4" class="md-nav__link">
-    <span class="md-ellipsis">
-      
-        Added
-      
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
   
 </li>
       
@@ -1567,91 +1258,91 @@
   
 
 
-<h1 id="changelog">Changelog<a class="headerlink" href="#changelog" title="Permanent link">&para;</a></h1>
-<p>All notable changes to dimtensor.</p>
-<h2 id="031-2026-01-08">[0.3.1] - 2026-01-08<a class="headerlink" href="#031-2026-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="added">Added<a class="headerlink" href="#added" title="Permanent link">&para;</a></h3>
+<h1 id="python-units-library-comparison">Python Units Library Comparison<a class="headerlink" href="#python-units-library-comparison" title="Permanent link">&para;</a></h1>
+<p>Choosing the right units library depends on your use case. This section compares dimtensor with other popular Python unit libraries.</p>
+<h2 id="quick-comparison">Quick Comparison<a class="headerlink" href="#quick-comparison" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>dimtensor</th>
+<th>Pint</th>
+<th>Astropy</th>
+<th>unyt</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>NumPy support</td>
+<td>Full</td>
+<td>Full</td>
+<td>Full</td>
+<td>Full</td>
+</tr>
+<tr>
+<td>PyTorch support</td>
+<td>Native</td>
+<td>Limited</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>JAX support</td>
+<td>Native</td>
+<td>None</td>
+<td>None</td>
+<td>None</td>
+</tr>
+<tr>
+<td>Autograd</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>No</td>
+</tr>
+<tr>
+<td>GPU support</td>
+<td>Yes</td>
+<td>No</td>
+<td>No</td>
+<td>Yes</td>
+</tr>
+<tr>
+<td>Uncertainty</td>
+<td>Built-in</td>
+<td>Extension</td>
+<td>Separate</td>
+<td>No</td>
+</tr>
+<tr>
+<td>Physical constants</td>
+<td>CODATA 2022</td>
+<td>Via scipy</td>
+<td>Built-in</td>
+<td>yt constants</td>
+</tr>
+<tr>
+<td>I/O formats</td>
+<td>6+</td>
+<td>Limited</td>
+<td>FITS</td>
+<td>yt native</td>
+</tr>
+</tbody>
+</table>
+<h2 id="when-to-choose-dimtensor">When to Choose dimtensor<a class="headerlink" href="#when-to-choose-dimtensor" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Documentation site</strong>: Full mkdocs documentation with Material theme</li>
-<li><strong>Display configuration</strong>: New <code>config</code> module for controlling output</li>
-<li><code>config.set_display(precision=N)</code> - set display precision</li>
-<li><code>config.precision(N)</code> - context manager for temporary precision</li>
-<li><code>config.options(...)</code> - context manager for multiple options</li>
-<li><code>config.reset_display()</code> - reset to defaults</li>
+<li><strong>Machine learning</strong> - Native PyTorch/JAX with autograd</li>
+<li><strong>GPU computing</strong> - CUDA/MPS support with units</li>
+<li><strong>Scientific simulations</strong> - Uncertainty propagation built-in</li>
+<li><strong>Multi-framework</strong> - Same API across NumPy, PyTorch, JAX</li>
 </ul>
-<h2 id="030-2026-01-08">[0.3.0] - 2026-01-08<a class="headerlink" href="#030-2026-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="added_1">Added<a class="headerlink" href="#added_1" title="Permanent link">&para;</a></h3>
+<h2 id="detailed-comparisons">Detailed Comparisons<a class="headerlink" href="#detailed-comparisons" title="Permanent link">&para;</a></h2>
 <ul>
-<li><strong>Module-level array functions</strong> (NumPy-style API):</li>
-<li><code>concatenate(arrays, axis)</code> - join arrays along existing axis</li>
-<li><code>stack(arrays, axis)</code> - join arrays along new axis</li>
-<li><code>split(array, indices_or_sections, axis)</code> - split array into sub-arrays</li>
-<li><strong>Linear algebra functions</strong>:</li>
-<li><code>dot(a, b)</code> - dot product with dimension multiplication</li>
-<li><code>matmul(a, b)</code> - matrix multiplication with dimension multiplication</li>
-<li><code>norm(array, ord, axis, keepdims)</code> - vector/matrix norm, preserves units</li>
-<li><strong>Reshaping methods</strong> on DimArray:</li>
-<li><code>reshape(shape)</code> - reshape preserving units</li>
-<li><code>transpose(axes)</code> - permute dimensions preserving units</li>
-<li><code>flatten()</code> - flatten to 1D preserving units</li>
-<li><strong>Statistics method</strong>:</li>
-<li><code>var(axis, keepdims)</code> - variance with squared units (m -&gt; m^2)</li>
-<li><strong>Searching methods</strong>:</li>
-<li><code>argmin(axis)</code> - return indices of minimum values</li>
-<li><code>argmax(axis)</code> - return indices of maximum values</li>
-</ul>
-<h3 id="changed">Changed<a class="headerlink" href="#changed" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Array functions enforce same dimension for all input arrays</li>
-<li>Linear algebra functions properly multiply dimensions (L * L = L^2)</li>
-</ul>
-<h2 id="020-2025-01-08">[0.2.0] - 2025-01-08<a class="headerlink" href="#020-2025-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="added_2">Added<a class="headerlink" href="#added_2" title="Permanent link">&para;</a></h3>
-<ul>
-<li><strong>Unit simplification</strong>: Compound units now display as their SI derived equivalents</li>
-<li><code>kg*m/s^2</code> -&gt; <code>N</code> (newton)</li>
-<li><code>kg*m^2/s^2</code> -&gt; <code>J</code> (joule)</li>
-<li><code>kg*m^2/s^3</code> -&gt; <code>W</code> (watt)</li>
-<li><code>m/s*s</code> -&gt; <code>m</code> (cancellation)</li>
-<li><strong>Format string support</strong>: Use f-strings with DimArray</li>
-<li><code>f"{distance:.2f}"</code> -&gt; <code>"1234.57 m"</code></li>
-<li><code>f"{energy:.2e}"</code> -&gt; <code>"1.23e+03 J"</code></li>
-<li><strong>NumPy ufunc integration</strong>: Use numpy functions directly</li>
-<li><code>np.sin(angle)</code>, <code>np.cos(angle)</code> - require dimensionless input</li>
-<li><code>np.exp(x)</code>, <code>np.log(x)</code> - require dimensionless input</li>
-<li><code>np.sqrt(area)</code> - halves dimension exponents</li>
-<li><code>np.abs(velocity)</code> - preserves units</li>
-<li><code>np.add(a, b)</code>, <code>np.multiply(a, b)</code> - dimension-aware arithmetic</li>
-</ul>
-<h3 id="changed_1">Changed<a class="headerlink" href="#changed_1" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Unit display now uses simplified symbols by default</li>
-</ul>
-<h2 id="012-2025-01-08">[0.1.2] - 2025-01-08<a class="headerlink" href="#012-2025-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="fixed">Fixed<a class="headerlink" href="#fixed" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Corrected GitHub repository URLs in PyPI metadata</li>
-</ul>
-<h2 id="011-2025-01-08">[0.1.1] - 2025-01-08<a class="headerlink" href="#011-2025-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="added_3">Added<a class="headerlink" href="#added_3" title="Permanent link">&para;</a></h3>
-<ul>
-<li><code>sqrt()</code> method on DimArray for square root with proper dimension handling</li>
-</ul>
-<h2 id="010-2025-01-08">[0.1.0] - 2025-01-08<a class="headerlink" href="#010-2025-01-08" title="Permanent link">&para;</a></h2>
-<h3 id="added_4">Added<a class="headerlink" href="#added_4" title="Permanent link">&para;</a></h3>
-<ul>
-<li>Initial release</li>
-<li><code>DimArray</code> class wrapping numpy arrays with unit metadata</li>
-<li><code>Dimension</code> class with full algebra (multiply, divide, power)</li>
-<li>SI base units: meter, kilogram, second, ampere, kelvin, mole, candela</li>
-<li>SI derived units: newton, joule, watt, pascal, volt, hertz, etc.</li>
-<li>Common non-SI units: km, mile, hour, eV, atm, etc.</li>
-<li>Unit conversion with <code>.to()</code> method</li>
-<li>Dimensional error catching at operation time</li>
-<li>Arithmetic operations with automatic dimension checking</li>
-<li>Comparison operations between compatible dimensions</li>
-<li>Array indexing, slicing, and iteration</li>
-<li>Reduction operations (sum, mean, std, min, max)</li>
+<li><a href="vs-pint/">dimtensor vs Pint</a> - The most popular Python units library</li>
+<li><a href="vs-astropy/">dimtensor vs Astropy</a> - Astronomy-focused units</li>
+<li><a href="vs-unyt/">dimtensor vs unyt</a> - yt project's units library</li>
+<li><a href="feature-matrix/">Feature Matrix</a> - Comprehensive feature comparison</li>
 </ul>
 
 
@@ -1659,6 +1350,9 @@
 
 
 
+
+  
+  
 
 
 

@@ -2,38 +2,66 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/changelog/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/getting-started/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/api/dimarray/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/api/functions/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/api/units/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/comparisons/</loc>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/comparisons/feature-matrix/</loc>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/comparisons/vs-astropy/</loc>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/comparisons/vs-pint/</loc>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/comparisons/vs-unyt/</loc>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/guide/examples/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/guide/operations/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
     </url>
     <url>
          <loc>https://marcoloco23.github.io/dimtensor/guide/units/</loc>
-         <lastmod>2026-01-08</lastmod>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/troubleshooting/errors/</loc>
+         <lastmod>2026-01-09</lastmod>
+    </url>
+    <url>
+         <loc>https://marcoloco23.github.io/dimtensor/troubleshooting/faq/</loc>
+         <lastmod>2026-01-09</lastmod>
     </url>
 </urlset>
