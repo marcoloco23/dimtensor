@@ -70,6 +70,10 @@ dmypy.json
 # mkdocs
 site/
 
+# Benchmarks
+.asv/
+.benchmarks/
+
 # OS
 .DS_Store
 Thumbs.db

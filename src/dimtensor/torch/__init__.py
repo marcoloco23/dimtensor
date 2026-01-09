@@ -4,7 +4,8 @@ Provides DimTensor, a torch.Tensor wrapper with physical unit tracking.
 Supports autograd, GPU acceleration, and neural network compatibility.
 
 Also provides dimension-aware neural network layers, loss functions,
-normalization layers, and scalers for physics-informed machine learning.
+normalization layers, scalers for physics-informed machine learning,
+and CUDA profiling utilities.
 
 Example:
     >>> import torch
@@ -22,6 +23,9 @@ Example:
 """
 
 from .dimtensor import DimTensor
+
+# Benchmarking utilities
+from . import benchmarks
 
 # Dimension-aware layers
 from .layers import (
@@ -109,4 +113,6 @@ __all__ = [
     "SymmetryPrior",
     "DimensionalConsistencyPrior",
     "PhysicalBoundsPrior",
+    # Benchmarks (as module)
+    "benchmarks",
 ]

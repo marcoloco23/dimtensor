@@ -1,0 +1,35 @@
+# ASV (Airspeed Velocity) generated files
+.asv/
+*.asv.conf.json.bak
+
+# pytest-benchmark results
+.benchmarks/
+*.benchmark.json
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+env/
+venv/
+ENV/
+
+# Build artifacts
+*.so
+*.dll
+*.dylib
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db

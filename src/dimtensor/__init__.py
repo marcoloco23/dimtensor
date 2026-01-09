@@ -41,7 +41,10 @@ from . import config
 # Module-level array functions
 from .functions import concatenate, stack, split, dot, matmul, norm
 
-__version__ = "3.5.0"
+# Profiling tools
+from . import profiling
+
+__version__ = "3.6.0"
 
 __all__ = [
     # Core classes
@@ -68,6 +71,7 @@ __all__ = [
     "visualization",
     "validation",
     "config",
+    "profiling",
     # Version
     "__version__",
 ]

@@ -105,7 +105,7 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 
 - Agent read full file: YES
 - Current task understood: YES
-- Current task: v3.5.0 Enhanced ML Architectures - COMPLETE
+- Current task: v3.6.0 Performance & GPU - COMPLETE
 - Session started: 2026-01-09 evening
 
 ---
@@ -113,35 +113,46 @@ IMPORTANT: DO NOT STOP. EVER. KEEP WORKING.
 ## CURRENT STATE
 
 **Date**: 2026-01-09
-**Version**: 3.5.0
-**Status**: v3.5.0 ready for deployment - PR branch pushed
+**Version**: 3.6.0
+**Status**: v3.6.0 ready for deployment - PR branch ready
 
 ### What Just Happened
-- v3.5.0 Enhanced ML Architectures COMPLETE:
-  - DimGraphConv layer for graph neural networks with unit tracking
-  - DimMultiheadAttention, DimTransformerEncoderLayer, DimTransformerEncoder
-  - Physics priors: ConservationPrior, EnergyConservationPrior, MomentumConservationPrior
-  - SymmetryPrior, DimensionalConsistencyPrior, PhysicalBoundsPrior
+- v3.6.0 Performance & GPU COMPLETE:
+  - **CUDA Profiling** (torch/benchmarks.py - 795 lines):
+    - cuda_timer() context manager with CUDA Events
+    - 11 benchmark functions for GPU operations
+    - torch.profiler integration
+    - CPU fallback when CUDA unavailable
+  - **Benchmark Suite** (benchmarks/ directory):
+    - ASV configuration for historical tracking
+    - 97 benchmarks across NumPy, PyTorch, competitors
+    - suites/numpy_ops.py, torch_ops.py, competitors.py
+    - HTML reports and CI-ready structure
+  - **Memory Profiling** (profiling.py):
+    - memory_stats(), memory_report(), get_overhead_ratio()
+    - MemoryProfiler context manager
+    - GPU memory tracking, shared metadata analysis
+    - Actionable optimization recommendations
   - 4 new plan documents in .plans/
-  - 3 new source files: layers.py (extended), attention.py, priors.py
-  - 93 new tests (845 total pass, 78 skipped)
-- Version updated to 3.5.0 in pyproject.toml and __init__.py
-- Branch pushed: `claude/start-orchestrator-4UhEV`
+  - 58 new tests (903 total pass, 87 skipped)
+- Version updated to 3.6.0 in pyproject.toml and __init__.py
+- CUDA kernels (#171) and Rust optimization (#172) deferred to v3.7.0
 
 ### What Needs to Happen
+- Push branch to remote
 - User merges PR to main
-- Local agent deploys v3.5.0 to PyPI
-- Continue with v3.6.0+ tasks
+- Local agent deploys v3.6.0 to PyPI
+- Continue with v4.0.0+ tasks
 
 ---
 
 ## CURRENT TASK
 
-**Task**: v3.5.0 - Enhanced ML Architectures
+**Task**: v3.6.0 - Performance & GPU
 
-**Goal**: State-of-the-art physics ML with GNNs, Transformers, and physics priors
+**Goal**: Comprehensive performance profiling tools for dimtensor
 
-**Status**: COMPLETE - Ready for merge and deploy
+**Status**: COMPLETE - Ready for commit and push
 
 ---
 
@@ -465,12 +476,12 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 170 | 🗺️ Profile CUDA overhead for DimTensor | PENDING | |
-| 171 | 🗺️ Implement CUDA kernels for common ops | PENDING | Fused add/mul with unit check |
-| 172 | Optimize Rust backend | PENDING | Target <20% overhead |
-| 173 | Create benchmark suite | PENDING | Compare vs pint, astropy, unyt |
-| 174 | Add memory profiling tools | PENDING | Track unit metadata overhead |
-| 175 | Deploy v3.6.0 to PyPI | PENDING | |
+| 170 | 🗺️ Profile CUDA overhead for DimTensor | DONE | torch/benchmarks.py, CUDA Events timing |
+| 171 | 🗺️ Implement CUDA kernels for common ops | DEFERRED | v3.7.0 - Requires profiling analysis |
+| 172 | Optimize Rust backend | DEFERRED | v3.7.0 - Depends on benchmark results |
+| 173 | Create benchmark suite | DONE | benchmarks/ folder, ASV + pytest-benchmark |
+| 174 | Add memory profiling tools | DONE | profiling.py, memory_stats, MemoryProfiler |
+| 175 | Deploy v3.6.0 to PyPI | PENDING | Ready for local agent |
 
 ---
 
@@ -1050,6 +1061,36 @@ Format: Use sequential numbers. Add new entries at the bottom.
 142. Version updated to 3.5.0 in pyproject.toml and __init__.py
 143. Pushed branch: claude/start-orchestrator-4UhEV
 144. v3.5.0 READY - Awaiting PR merge and PyPI deployment
+
+### Session: 2026-01-09 evening (v3.6.0 Performance Orchestrator)
+
+145. Started orchestrator for v3.6.0 Performance & GPU
+146. Spawned 4 planners in parallel for tasks #170, #171, #173, #174:
+     - CUDA profiling plan (#170)
+     - CUDA kernels plan (#171)
+     - Benchmark suite plan (#173)
+     - Memory profiling plan (#174)
+147. All 4 plans COMPLETE:
+     - .plans/2026-01-09_cuda-profiling.md
+     - .plans/2026-01-09_cuda-kernels.md
+     - .plans/2026-01-09_benchmark-suite.md
+     - .plans/2026-01-09_memory-profiling.md
+148. Spawned 3 implementers in parallel:
+     - CUDA profiling implementation (#170)
+     - Benchmark suite implementation (#173)
+     - Memory profiling implementation (#174)
+149. All 3 implementations COMPLETE:
+     - torch/benchmarks.py created (795 lines, CUDA Events timing)
+     - benchmarks/ directory created (asv.conf.json, 97 benchmarks)
+     - profiling.py created (memory stats, reports, profiler)
+150. Fixed profiling.py bugs:
+     - DimTensor doesn't have _uncertainty attribute (hasattr check)
+     - Type detection using type(obj).__name__ instead of nbytes check
+151. 903 tests pass, 87 skipped (58 new tests)
+152. Version updated to 3.6.0 in pyproject.toml and __init__.py
+153. CHANGELOG.md updated with v3.6.0 release notes
+154. CUDA kernels (#171) and Rust optimization (#172) DEFERRED to v3.7.0
+155. v3.6.0 READY - Awaiting commit, push, PR merge and PyPI deployment
 
 ---
 

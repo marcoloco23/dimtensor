@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dimtensor"
-version = "3.5.0"
+version = "3.6.0"
 description = "Unit-aware tensors for physics and scientific machine learning"
 readme = "README.md"
 license = {text = "MIT"}
@@ -43,6 +43,10 @@ dev = [
     "pytest-cov>=4.0",
     "mypy>=1.0",
     "ruff>=0.1.0",
+]
+benchmark = [
+    "asv>=0.6.0",
+    "pytest-benchmark>=4.0.0",
 ]
 docs = [
     "mkdocs>=1.5",

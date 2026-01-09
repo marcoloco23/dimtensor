@@ -1,0 +1,25 @@
+{
+    "version": 1,
+    "project": "dimtensor",
+    "project_url": "https://github.com/marcoloco23/dimtensor",
+    "repo": "..",
+    "branches": ["main"],
+    "dvcs": "git",
+    "environment_type": "virtualenv",
+    "show_commit_url": "https://github.com/marcoloco23/dimtensor/commit/",
+    "pythons": ["3.10", "3.11", "3.12"],
+    "matrix": {
+        "numpy": ["1.24.0", "1.26.0"],
+        "torch": ["", "2.0.0"],
+        "jax": ["", "0.4.0"]
+    },
+    "exclude": [],
+    "include": [],
+    "benchmark_dir": ".",
+    "env_dir": ".asv/env",
+    "results_dir": ".asv/results",
+    "html_dir": ".asv/html",
+    "build_cache_size": 8,
+    "install_timeout": 600,
+    "default_benchmark_timeout": 60.0
+}

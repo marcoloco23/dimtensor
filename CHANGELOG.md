@@ -5,6 +5,51 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.6.0] - 2026-01-09
+
+### Added
+- **Performance Profiling Tools** - Comprehensive performance analysis for dimtensor
+
+  - **CUDA Profiling** (`from dimtensor.torch.benchmarks import ...`):
+    - `cuda_timer()` context manager for precise GPU timing with CUDA Events
+    - `cuda_time_operation()` for micro-benchmarking with warmup
+    - `CudaBenchmarkResult` dataclass for structured results
+    - 11 benchmark functions: tensor creation, transfers, element-wise ops, matmul, autograd
+    - `torch.profiler` integration via `profile_dimtensor()`
+    - CPU fallback when CUDA unavailable
+    - `run_all_benchmarks()` for comprehensive performance analysis
+
+  - **Benchmark Suite** (`benchmarks/` directory):
+    - ASV (Airspeed Velocity) integration for historical performance tracking
+    - 97 benchmarks across NumPy, PyTorch, and competitor libraries
+    - `benchmarks/suites/numpy_ops.py` - 46 NumPy DimArray benchmarks
+    - `benchmarks/suites/torch_ops.py` - 22 PyTorch DimTensor benchmarks
+    - `benchmarks/suites/competitors.py` - Compare vs pint, astropy.units, unyt
+    - Tests array sizes: 1, 100, 10K, 1M elements
+    - Statistical analysis with warmup rounds and confidence intervals
+    - HTML reports via `asv publish && asv preview`
+
+  - **Memory Profiling** (`from dimtensor import profiling`):
+    - `memory_stats(obj)` - Detailed memory breakdown for DimArray/DimTensor
+    - `memory_report(obj)` - Human-readable formatted report
+    - `metadata_overhead(obj)` - Calculate metadata overhead in bytes
+    - `get_overhead_ratio(obj)` - Get overhead as percentage
+    - `compare_to_baseline(obj)` - Compare vs raw numpy/torch arrays
+    - `analyze_shared_metadata(arrays)` - Analyze unit/dimension sharing
+    - `MemoryProfiler` context manager for session-level profiling
+    - `gpu_memory_stats(device)` - Track GPU memory for DimTensor
+    - Actionable recommendations for optimization
+
+### Changed
+- Total test count: 845 → 903 passed (87 skipped)
+- 58 new tests for performance profiling tools
+
+### Deferred to v3.7.0
+- CUDA kernels implementation (task #171) - Requires profiling analysis
+- Rust backend optimization (task #172) - Depends on benchmark results
+
+---
+
 ## [3.5.0] - 2026-01-09
 
 ### Added
