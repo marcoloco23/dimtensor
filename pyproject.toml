@@ -7,7 +7,7 @@ name = "dimtensor"
 version = "3.3.0"
 description = "Unit-aware tensors for physics and scientific machine learning"
 readme = "README.md"
-license = "MIT"
+license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     { name = "Marc Sperzel" }
