@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.4.0] - 2026-01-09
+
+### Added
+- **Comprehensive Documentation Overhaul**
+  - **New Guide Documents** (8 new guides):
+    - `docs/guide/pytorch.md` - Complete PyTorch integration guide (912 lines)
+    - `docs/guide/jax.md` - JAX integration with JIT, vmap, grad (714 lines)
+    - `docs/guide/physics-ml.md` - Physics-informed ML tutorial (850 lines)
+    - `docs/guide/visualization.md` - Matplotlib and Plotly integration
+    - `docs/guide/validation.md` - Constraints and conservation tracking (732 lines)
+    - `docs/guide/inference.md` - Automatic unit inference and linting (1,121 lines)
+    - `docs/guide/datasets.md` - Dataset registry and loaders (1,000 lines)
+    - `docs/guide/equations.md` - Equation database usage (1,043 lines)
+
+  - **New API Reference Documents** (6 new docs):
+    - `docs/api/torch.md` - PyTorch API (DimTensor, layers, losses)
+    - `docs/api/validation.md` - Validation API (constraints, conservation)
+    - `docs/api/inference.md` - Inference API (heuristics, solver)
+    - `docs/api/ecosystem.md` - Hub, datasets, equations API
+    - `docs/api/integrations.md` - SciPy, sklearn, SymPy API
+    - `docs/api/visualization.md` - Matplotlib and Plotly API
+
+  - **Tutorial Notebooks** (5 interactive notebooks):
+    - `examples/01_basics.ipynb` - DimArray fundamentals (43 cells)
+    - `examples/02_physics_simulation.ipynb` - Physics simulations (36 cells)
+    - `examples/03_pytorch_training.ipynb` - Train a PINN (65 cells)
+    - `examples/04_data_analysis.ipynb` - Analyze exoplanet data (37 cells)
+    - `examples/05_unit_inference.ipynb` - Unit inference features (45 cells)
+
+  - **Updated Existing Documentation**:
+    - `docs/index.md` - Expanded with v2.0-v3.3.0 features
+    - `docs/getting-started.md` - Framework-specific installation
+    - `docs/guide/examples.md` - 659 new lines of examples (204 → 863 lines)
+    - `docs/troubleshooting/migration.md` - Comprehensive migration guide (360 → 1,825 lines)
+
+  - `mkdocs.yml` - Updated navigation with all new guides and API docs
+  - `examples/README.md` - Index of tutorial notebooks
+
+### Changed
+- Total documentation: ~15,000 new lines of docs and examples
+- Test count: 650 passed, 80 skipped
+
 ## [3.3.0] - 2026-01-09
 
 ### Added
