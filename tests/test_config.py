@@ -93,3 +93,56 @@ class TestScalarDisplay:
         assert "1.23457" in s
 
         config.reset_display()
+
+
+class TestInferenceOptions:
+    """Test inference configuration."""
+
+    def test_default_inference_options(self):
+        """Default inference options are set correctly."""
+        config.reset_inference()
+        assert config.inference.min_confidence == 0.5
+        assert config.inference.strict_mode is False
+        assert config.inference.enabled_domains is None
+        assert config.inference.infer_from_context is True
+        assert config.inference.warn_on_mismatch is True
+
+    def test_set_inference(self):
+        """Can set inference options permanently."""
+        config.set_inference(min_confidence=0.8, strict_mode=True)
+        assert config.inference.min_confidence == 0.8
+        assert config.inference.strict_mode is True
+        config.reset_inference()
+        assert config.inference.min_confidence == 0.5
+        assert config.inference.strict_mode is False
+
+    def test_inference_options_context_manager(self):
+        """Inference options context manager temporarily changes options."""
+        assert config.inference.min_confidence == 0.5
+        with config.inference_options(min_confidence=0.9):
+            assert config.inference.min_confidence == 0.9
+        assert config.inference.min_confidence == 0.5
+
+    def test_enabled_domains(self):
+        """Can enable specific physics domains."""
+        config.set_inference(enabled_domains={"mechanics", "electromagnetics"})
+        assert config.inference.enabled_domains == {"mechanics", "electromagnetics"}
+        config.reset_inference()
+        assert config.inference.enabled_domains is None
+
+    def test_reset_inference(self):
+        """Reset returns all inference options to defaults."""
+        config.set_inference(
+            min_confidence=0.9,
+            strict_mode=True,
+            enabled_domains={"mechanics"},
+            infer_from_context=False,
+            warn_on_mismatch=False,
+        )
+        config.reset_inference()
+
+        assert config.inference.min_confidence == 0.5
+        assert config.inference.strict_mode is False
+        assert config.inference.enabled_domains is None
+        assert config.inference.infer_from_context is True
+        assert config.inference.warn_on_mismatch is True

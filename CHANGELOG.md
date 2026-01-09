@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2026-01-09
+
+### Added
+- **Dimensional linting CLI** (`python -m dimtensor lint`)
+  - Static analysis of Python files for dimensional issues
+  - Detects addition/subtraction of incompatible dimensions
+  - Reports variable dimension inferences
+  - JSON output format for IDE integration
+  - Strict mode for comprehensive reporting
+
+- **Inference configuration** (`from dimtensor import config`)
+  - `config.inference.min_confidence` - minimum confidence threshold
+  - `config.inference.strict_mode` - enable/disable strict checking
+  - `config.inference.enabled_domains` - filter by physics domains
+  - `config.inference_options()` - context manager for temporary settings
+  - `config.set_inference()` - permanent configuration
+
+- CLI entry point: `dimtensor` command with `lint` and `info` subcommands
+- 26 new tests (21 lint, 5 config)
+
+### Changed
+- Total test count: 548 → 574 passed (62 skipped)
+- Source files: 44 (3 new: cli/__init__.py, cli/lint.py, __main__.py)
+
 ## [2.0.0] - 2026-01-09
 
 ### Added

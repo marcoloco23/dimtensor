@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "dimtensor"
-version = "2.0.0"
+version = "2.1.0"
 description = "Unit-aware tensors for physics and scientific machine learning"
 readme = "README.md"
 license = "MIT"
@@ -74,6 +74,9 @@ Homepage = "https://github.com/marcoloco23/dimtensor"
 Documentation = "https://marcoloco23.github.io/dimtensor"
 Repository = "https://github.com/marcoloco23/dimtensor"
 Issues = "https://github.com/marcoloco23/dimtensor/issues"
+
+[project.scripts]
+dimtensor = "dimtensor.__main__:main"
 
 [tool.hatch.build.targets.sdist]
 include = [

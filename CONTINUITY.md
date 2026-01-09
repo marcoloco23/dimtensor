@@ -62,8 +62,8 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 ## CURRENT STATE
 
 **Date**: 2026-01-09
-**Version**: 2.0.0 (deployed to PyPI)
-**Status**: v2.0.0 COMPLETE, v2.1.0 IN PROGRESS
+**Version**: 2.1.0
+**Status**: v2.1.0 deployed to PyPI
 
 ### What Just Happened
 - v2.0.0 Rust Backend NOW WORKING:
@@ -249,12 +249,12 @@ Note: Core inference (tasks 78-81) shipped in v2.0.0
 | 79 | 🗺️ Implement variable name heuristics | DONE | Shipped in v2.0.0, 50+ patterns |
 | 80 | Build equation pattern database | DONE | Shipped in v2.0.0, 30+ equations |
 | 81 | Implement equation pattern matching | DONE | Shipped in v2.0.0, 8 domains |
-| 82 | 🗺️ Create IDE plugin architecture | PENDING | PLAN REQUIRED: VS Code, PyCharm |
-| 83 | Implement VS Code extension | PENDING | Unit hints, error highlighting |
-| 84 | Implement dimensional linting | PENDING | dimtensor lint command |
-| 85 | Add configuration for inference strictness | PENDING | |
+| 82 | 🗺️ Create IDE plugin architecture | DEFERRED | v2.2.0 - separate project |
+| 83 | Implement VS Code extension | DEFERRED | v2.2.0 - separate project |
+| 84 | Implement dimensional linting | DONE | dimtensor lint command, 21 tests |
+| 85 | Add configuration for inference strictness | DONE | config.inference options, 5 tests |
 | 86 | Add tests for inference | DONE | 48 tests in test_inference.py |
-| 87 | Deploy v2.1.0 to PyPI | PENDING | |
+| 87 | Deploy v2.1.0 to PyPI | DONE | https://pypi.org/project/dimtensor/2.1.0/ |
 
 ---
 
@@ -537,6 +537,22 @@ Format: Use sequential numbers. Add new entries at the bottom.
 79. Updated CHANGELOG with v2.0.0 features
 80. Deployed v2.0.0 to PyPI: https://pypi.org/project/dimtensor/2.0.0/
 81. v2.0.0 COMPLETE - Rust backend + dimensional inference released
+82. Starting v2.1.0 - IDE Integration & Linting
+83. Task #84: Created dimensional linting CLI:
+    - src/dimtensor/cli/lint.py with AST-based analysis
+    - src/dimtensor/__main__.py for CLI entry point
+    - Detects dimension mismatches in +/- operations
+    - JSON/YAML output formats for IDE integration
+    - 21 tests in test_lint.py
+84. Task #85: Added inference configuration:
+    - InferenceOptions dataclass with min_confidence, strict_mode, etc.
+    - inference_options() context manager
+    - set_inference() and reset_inference() functions
+    - 5 tests in test_config.py
+85. All 574 tests pass, mypy clean with 44 source files
+86. Updated README with linting CLI section
+87. Task #87: Deployed v2.1.0 to PyPI: https://pypi.org/project/dimtensor/2.1.0/
+88. v2.1.0 COMPLETE - Dimensional linting CLI released
 
 ---
 

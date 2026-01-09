@@ -55,6 +55,7 @@ velocity + acceleration  # DimensionError: cannot add m/s to m/s^2
 - **Visualization** - Matplotlib and Plotly with automatic unit labels
 - **Domain Units** - Astronomy, chemistry, and engineering units
 - **Dimensional Inference** - Infer dimensions from variable names and equations
+- **Dimensional Linting** - Static analysis CLI for finding unit errors
 - **Optional Rust Backend** - Accelerated operations when built from source
 
 ## Installation
@@ -232,6 +233,24 @@ for eq in mechanics[:3]:
 # Newton's Second Law: F = ma
 # Kinetic Energy: KE = ½mv²
 # Gravitational Force: F = Gm₁m₂/r²
+```
+
+### Dimensional Linting (v2.1+)
+
+```bash
+# Lint a file for dimensional issues
+dimtensor lint physics_simulation.py
+
+# Example output:
+# physics.py:15:4: W002 Potential dimension mismatch: LT⁻¹ + LT⁻²
+#   velocity + acceleration
+#   Suggestion: Cannot add/subtract LT⁻¹ and LT⁻². Check your units.
+
+# JSON output for IDE integration
+dimtensor lint --format=json src/
+
+# Strict mode (report all inferences)
+dimtensor lint --strict script.py
 ```
 
 ## Useful Links
