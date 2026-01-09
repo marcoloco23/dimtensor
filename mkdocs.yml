@@ -1,5 +1,5 @@
 site_name: dimtensor
-site_description: Unit-aware tensors for physics and scientific machine learning
+site_description: Unit-aware tensors for physics and scientific machine learning - NumPy, PyTorch, and JAX with physical units
 site_url: https://marcoloco23.github.io/dimtensor
 repo_url: https://github.com/marcoloco23/dimtensor
 repo_name: marcoloco23/dimtensor
@@ -21,24 +21,52 @@ theme:
         name: Switch to light mode
   features:
     - navigation.instant
+    - navigation.tracking
+    - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
     - navigation.expand
+    - navigation.top
+    - search.suggest
+    - search.highlight
     - content.code.copy
     - content.code.annotate
+    - content.tabs.link
+    - toc.follow
+  icon:
+    repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/marcoloco23/dimtensor
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/dimtensor/
 
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.superfences
   - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.tabbed:
+      alternate_style: true
   - admonition
   - pymdownx.details
   - attr_list
   - md_in_html
   - tables
+  - toc:
+      permalink: true
+  - def_list
+  - pymdownx.tasklist:
+      custom_checkbox: true
 
 plugins:
-  - search
+  - search:
+      separator: '[\s\-\.]+'
   - mkdocstrings:
       handlers:
         python:
@@ -50,6 +78,7 @@ plugins:
             heading_level: 2
             members_order: source
             docstring_style: google
+            show_signature_annotations: true
 
 nav:
   - Home: index.md
@@ -62,4 +91,13 @@ nav:
     - DimArray: api/dimarray.md
     - Units: api/units.md
     - Functions: api/functions.md
+  - Comparisons:
+    - Overview: comparisons/index.md
+    - dimtensor vs Pint: comparisons/vs-pint.md
+    - dimtensor vs Astropy: comparisons/vs-astropy.md
+    - dimtensor vs unyt: comparisons/vs-unyt.md
+    - Feature Matrix: comparisons/feature-matrix.md
+  - Troubleshooting:
+    - Common Errors: troubleshooting/errors.md
+    - FAQ: troubleshooting/faq.md
   - Changelog: changelog.md

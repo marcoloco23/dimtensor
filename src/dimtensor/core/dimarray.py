@@ -170,6 +170,38 @@ class DimArray:
         return result
 
     # =========================================================================
+    # Validation
+    # =========================================================================
+
+    def validate(
+        self, constraints: list[Any] | None = None
+    ) -> DimArray:
+        """Validate array values against constraints.
+
+        Args:
+            constraints: List of Constraint objects to check. If None,
+                just returns self (no-op).
+
+        Returns:
+            Self if validation passes.
+
+        Raises:
+            ConstraintError: If any constraint is violated.
+
+        Example:
+            >>> from dimtensor.validation import Positive, Bounded
+            >>> mass = DimArray([1.0, 2.0], units.kg)
+            >>> mass.validate([Positive()])  # OK
+            >>> prob = DimArray([0.5, 1.5], units.dimensionless)
+            >>> prob.validate([Bounded(0, 1)])  # Raises ConstraintError
+        """
+        if constraints is None:
+            return self
+        for constraint in constraints:
+            constraint.validate(self._data)
+        return self
+
+    # =========================================================================
     # Unit conversion
     # =========================================================================
 

@@ -54,28 +54,28 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 
 - Agent read full file: YES
 - Current task understood: YES
-- Current task: v1.2.0 Domain Extensions - creating plans for astronomy, chemistry, engineering units
-- Session started: 2026-01-08 ~late evening
+- Current task: v1.3.0 Visualization - starting with task #42 (research matplotlib)
+- Session started: 2026-01-09 morning
 
 ---
 
 ## CURRENT STATE
 
-**Date**: 2026-01-08
-**Version**: 1.2.0 (deployed to PyPI)
-**Status**: v1.2.0 RELEASED
+**Date**: 2026-01-09
+**Version**: 1.4.0 (deployed to PyPI)
+**Status**: v1.4.0 RELEASED
 
 ### What Just Happened
-- v1.2.0 domain extensions implemented:
-  - Astronomy units: parsec, AU, light_year, solar_mass, etc.
-  - Chemistry units: molar, dalton, ppm, angstrom, etc.
-  - Engineering units: MPa, ksi, BTU, hp, etc.
-- 53 new domain unit tests (456 total tests)
-- mypy passes (0 errors, 31 source files)
-- Plans created in .plans/ folder per workflow
+- v1.4.0 validation & constraints implemented:
+  - Constraint system: Positive, NonNegative, NonZero, Bounded, Finite, NotNaN
+  - DimArray.validate() method
+  - ConservationTracker for physics simulations
+  - ConstraintError exception
+- 66 new validation tests (481 passed, 62 skipped)
+- mypy passes (0 errors, 37 source files)
 
 ### What Needs to Happen
-- Plan v1.3.0 (check ROADMAP.md)
+- Start v2.0.0 (Rust Backend)
 
 ---
 
@@ -183,17 +183,17 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 42 | 🗺️ Research matplotlib integration patterns | PENDING | How to auto-label axes with units |
-| 43 | 🗺️ Create visualization/matplotlib.py | PENDING | PLAN REQUIRED |
-| 44 | Implement plot() wrapper with auto-labels | PENDING | |
-| 45 | Implement scatter(), bar(), hist() wrappers | PENDING | |
-| 46 | 🗺️ Research plotly integration | PENDING | |
-| 47 | 🗺️ Create visualization/plotly.py | PENDING | PLAN REQUIRED |
-| 48 | Add unit conversion in plot calls | PENDING | e.g., plot(distance, unit=km) |
-| 49 | Add tests for visualization | PENDING | |
-| 50 | Update visualization/__init__.py exports | PENDING | |
-| 51 | Update README with visualization examples | PENDING | |
-| 52 | Deploy v1.3.0 to PyPI | PENDING | |
+| 42 | 🗺️ Research matplotlib integration patterns | DONE | Researched pint/astropy patterns, matplotlib.units API |
+| 43 | 🗺️ Create visualization/matplotlib.py | DONE | Plan: .plans/2026-01-09_matplotlib-visualization.md |
+| 44 | Implement plot() wrapper with auto-labels | DONE | plot(), errorbar() with uncertainty |
+| 45 | Implement scatter(), bar(), hist() wrappers | DONE | All wrapper functions complete |
+| 46 | 🗺️ Research plotly integration | DONE | No unit registry - use wrapper functions with update_layout() |
+| 47 | 🗺️ Create visualization/plotly.py | DONE | Plan + implementation |
+| 48 | Add unit conversion in plot calls | DONE | x_unit, y_unit params in all wrappers |
+| 49 | Add tests for visualization | DONE | 14 tests in test_visualization.py |
+| 50 | Update visualization/__init__.py exports | DONE | setup_matplotlib, plot, scatter, etc. |
+| 51 | Update README with visualization examples | DONE | Matplotlib + Plotly sections added |
+| 52 | Deploy v1.3.0 to PyPI | DONE | https://pypi.org/project/dimtensor/1.3.0/ |
 
 ---
 
@@ -201,16 +201,16 @@ IMPORTANT: DO NOT STOP TO ASK FOR APPROVAL.
 
 | # | Task | Status | Notes |
 |---|------|--------|-------|
-| 53 | 🗺️ Design constraint system | PENDING | PLAN REQUIRED: positive, bounded, etc. |
-| 54 | 🗺️ Create validation/constraints.py | PENDING | PLAN REQUIRED |
-| 55 | Implement PositiveConstraint | PENDING | Raise on negative values |
-| 56 | Implement BoundedConstraint(min, max) | PENDING | |
-| 57 | Implement NonZeroConstraint | PENDING | |
-| 58 | Add constraint checking to DimArray operations | PENDING | |
-| 59 | 🗺️ Design conservation law tracking | PENDING | PLAN REQUIRED |
-| 60 | Implement ConservationTracker | PENDING | Track energy, momentum, etc. |
-| 61 | Add tests for validation | PENDING | |
-| 62 | Deploy v1.4.0 to PyPI | PENDING | |
+| 53 | 🗺️ Design constraint system | DONE | Plan: .plans/2026-01-09_constraint-system.md |
+| 54 | 🗺️ Create validation/constraints.py | DONE | Constraint base class, 6 constraint types |
+| 55 | Implement PositiveConstraint | DONE | Positive, NonNegative |
+| 56 | Implement BoundedConstraint(min, max) | DONE | Bounded(min, max) |
+| 57 | Implement NonZeroConstraint | DONE | NonZero, Finite, NotNaN |
+| 58 | Add constraint checking to DimArray operations | DONE | DimArray.validate() method added |
+| 59 | 🗺️ Design conservation law tracking | DONE | Plan: .plans/2026-01-09_conservation-tracking.md |
+| 60 | Implement ConservationTracker | DONE | Track energy, momentum, mass |
+| 61 | Add tests for validation | DONE | 66 tests in test_constraints.py |
+| 62 | Deploy v1.4.0 to PyPI | DONE | https://pypi.org/project/dimtensor/1.4.0/ |
 
 ---
 
@@ -455,6 +455,47 @@ Format: Use sequential numbers. Add new entries at the bottom.
 40. Updated CHANGELOG.md and README.md
 41. Deployed v1.2.0 to PyPI: https://pypi.org/project/dimtensor/1.2.0/
 42. v1.2.0 COMPLETE - Domain extensions released
+
+### Session: 2026-01-09 morning (v1.3.0 Visualization)
+
+43. Started v1.3.0 - Visualization support
+44. Task #42: Researched matplotlib integration patterns (pint, astropy, matplotlib.units API)
+45. Key finding: Use matplotlib.units.ConversionInterface with convert(), axisinfo(), default_units()
+46. Task #43: Created plan for matplotlib visualization module
+47. Task #44-45: Implemented matplotlib visualization module:
+    - DimArrayConverter for matplotlib.units registry
+    - setup_matplotlib() to enable/disable integration
+    - Wrapper functions: plot(), scatter(), bar(), hist(), errorbar()
+    - Unit conversion via x_unit/y_unit params
+    - Auto-extracts uncertainty for errorbar()
+48. Task #48-50: Added tests (14 pass), updated __init__.py exports
+49. Task #46-47: Implemented plotly visualization module:
+    - Wrapper functions: line(), scatter(), bar(), histogram(), scatter_with_errors()
+    - Same pattern as matplotlib: x_unit/y_unit params, auto-labels
+    - 7 new tests (21 total visualization tests pass)
+50. All mypy type checks pass
+51. Task #51: Updated README with visualization examples (Matplotlib + Plotly sections)
+52. Task #52: Deployed v1.3.0 to PyPI: https://pypi.org/project/dimtensor/1.3.0/
+53. v1.3.0 COMPLETE - Visualization support released
+54. Started v1.4.0 - Validation & Constraints
+55. Task #53: Created constraint system design plan
+56. Task #54-57: Implemented validation module:
+    - Constraint base class with check(), is_satisfied(), validate()
+    - Positive, NonNegative, NonZero constraints
+    - Bounded(min, max) for range constraints
+    - Finite, NotNaN for numeric validity
+57. Task #58: Added DimArray.validate() method
+58. Task #59: Created conservation law tracking design plan
+59. Task #60: Implemented ConservationTracker:
+    - Record checkpoint values with record()
+    - Check conservation with is_conserved(rtol, atol)
+    - Calculate drift with drift() and max_drift()
+    - Unit consistency checking
+    - 22 additional tests (66 total in test_constraints.py)
+60. Fixed mypy type errors in constraints.py (NDArray return types)
+61. All 481 tests pass, mypy clean
+62. Task #62: Deployed v1.4.0 to PyPI: https://pypi.org/project/dimtensor/1.4.0/
+63. v1.4.0 COMPLETE - Validation & Constraints with Conservation Tracking released
 
 ---
 

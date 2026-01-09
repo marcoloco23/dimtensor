@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2026-01-09
+
+### Added
+- **Validation & Constraints module** (`from dimtensor.validation import ...`)
+  - **Value constraints** for enforcing physical validity:
+    - `Positive` - values must be > 0 (mass, temperature in K, etc.)
+    - `NonNegative` - values must be >= 0 (counts, magnitudes)
+    - `NonZero` - values must be != 0 (divisors)
+    - `Bounded(min, max)` - values must be in [min, max] (probability, efficiency)
+    - `Finite` - no inf or NaN allowed
+    - `NotNaN` - no NaN allowed (inf is ok)
+  - `validate_all(data, constraints)` - check data against multiple constraints
+  - `is_all_satisfied(data, constraints)` - boolean check
+  - `DimArray.validate(constraints)` - method to validate array values
+
+- **Conservation law tracking** for physics simulations:
+  - `ConservationTracker` - track conserved quantities across computations
+  - `tracker.record(value)` - record checkpoint values
+  - `tracker.is_conserved(rtol, atol)` - check if quantity is conserved
+  - `tracker.drift()` - calculate relative drift from initial value
+  - `tracker.max_drift()` - maximum drift across all checkpoints
+  - Unit consistency checking between recorded values
+
+- `ConstraintError` exception for constraint violations
+- 66 new tests for validation module
+
+### Changed
+- Total test count: 415 → 481 passed (62 skipped)
+- mypy source files: 34 → 37
+
+## [1.3.0] - 2026-01-09
+
+### Added
+- **Visualization support** via new `visualization` module
+  - **Matplotlib integration** (`from dimtensor.visualization import ...`)
+    - `setup_matplotlib()` - Enable automatic unit labels for DimArray plots
+    - `plot()`, `scatter()`, `bar()`, `hist()` - Wrapper functions with auto-labels
+    - `errorbar()` - Auto-extracts uncertainty from DimArray
+    - Unit conversion via `x_unit`/`y_unit` parameters
+    - Implements `matplotlib.units.ConversionInterface` for seamless integration
+  - **Plotly integration** (`from dimtensor.visualization import plotly`)
+    - `plotly.line()`, `plotly.scatter()`, `plotly.bar()`, `plotly.histogram()`
+    - `plotly.scatter_with_errors()` - Auto-extracts uncertainty
+    - Custom axis titles with automatic unit labels
+    - Unit conversion support
+
+- 21 new tests for visualization module (14 matplotlib, 7 plotly)
+- Visualization examples in README
+
+### Changed
+- Total test count: 456 → 415 passed + 62 skipped
+- mypy source files: 31 → 34
+
 ## [1.2.0] - 2026-01-08
 
 ### Added

@@ -1,8 +1,59 @@
+<div align="center">
+
 # dimtensor
 
-Unit-aware tensors for physics and scientific machine learning.
+**Unit-aware tensors for physics and scientific machine learning**
 
-`dimtensor` wraps NumPy, PyTorch, and JAX arrays with physical unit tracking, catching dimensional errors at operation time rather than after hours of computation.
+[![PyPI version](https://img.shields.io/pypi/v/dimtensor.svg)](https://pypi.org/project/dimtensor/)
+[![Python versions](https://img.shields.io/pypi/pyversions/dimtensor.svg)](https://pypi.org/project/dimtensor/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Downloads](https://static.pepy.tech/badge/dimtensor/month)](https://pepy.tech/project/dimtensor)
+[![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://marcoloco23.github.io/dimtensor)
+
+[Documentation](https://marcoloco23.github.io/dimtensor) |
+[PyPI](https://pypi.org/project/dimtensor/) |
+[Changelog](https://github.com/marcoloco23/dimtensor/blob/main/CHANGELOG.md) |
+[Contributing](https://github.com/marcoloco23/dimtensor/blob/main/CONTRIBUTING.md)
+
+</div>
+
+---
+
+**dimtensor** catches dimensional errors at operation time, not after hours of computation.
+
+```python
+from dimtensor import DimArray, units
+
+# Operations check dimensions automatically
+velocity = DimArray([10, 20, 30], units.m / units.s)
+time = DimArray([1, 2, 3], units.s)
+distance = velocity * time  # [10 40 90] m
+
+# Errors caught immediately
+acceleration = DimArray([9.8], units.m / units.s**2)
+velocity + acceleration  # DimensionError: cannot add m/s to m/s^2
+```
+
+## Why dimtensor?
+
+| Problem | Solution |
+|---------|----------|
+| Silent unit errors waste compute time | Immediate `DimensionError` at operation time |
+| PyTorch has no unit support | Native `DimTensor` with full autograd and GPU support |
+| JAX incompatible with unit libraries | `DimArray` registered as pytree for jit/vmap/grad |
+| Uncertainty handled separately | Built-in uncertainty propagation through all operations |
+| Units lost during I/O | Save/load with units to JSON, HDF5, Parquet, NetCDF |
+
+## Features
+
+- **Dimensional Safety** - Operations between incompatible dimensions raise `DimensionError`
+- **Unit Conversion** - Convert between compatible units with `.to()`
+- **NumPy/PyTorch/JAX** - Full integration with all three frameworks
+- **Physical Constants** - CODATA 2022 constants with proper units and uncertainties
+- **Uncertainty Propagation** - Track and propagate measurement uncertainties
+- **I/O Support** - JSON, HDF5, Parquet, NetCDF, pandas, xarray
+- **Visualization** - Matplotlib and Plotly with automatic unit labels
+- **Domain Units** - Astronomy, chemistry, and engineering units
 
 ## Installation
 
@@ -10,7 +61,7 @@ Unit-aware tensors for physics and scientific machine learning.
 pip install dimtensor
 ```
 
-For PyTorch or JAX support:
+For framework-specific support:
 ```bash
 pip install dimtensor[torch]  # PyTorch integration
 pip install dimtensor[jax]    # JAX integration
@@ -19,36 +70,17 @@ pip install dimtensor[all]    # All optional dependencies
 
 ## Quick Start
 
+### NumPy
+
 ```python
 from dimtensor import DimArray, units
 
-# Create dimension-aware arrays
-velocity = DimArray([10, 20, 30], units.m / units.s)
-time = DimArray([1, 2, 3], units.s)
-
-# Operations preserve/check dimensions
-distance = velocity * time
-print(distance)  # [10 40 90] m
-
-# Catch errors early
-acceleration = DimArray([9.8], units.m / units.s**2)
-velocity + acceleration  # DimensionError: cannot add m/s to m/s^2
+v = DimArray([10], units.m / units.s)  # velocity
+t = DimArray([5], units.s)              # time
+d = v * t                               # distance = 50 m
 ```
 
-## Features
-
-- **Dimensional Safety**: Operations between incompatible dimensions raise `DimensionError` immediately
-- **Unit Conversion**: Convert between compatible units with `.to()`
-- **SI Units**: Full support for SI base and derived units
-- **NumPy Integration**: Works with NumPy arrays and supports common operations
-- **PyTorch Integration**: `DimTensor` wraps PyTorch tensors with autograd support
-- **JAX Integration**: `DimArray` registered as JAX pytree for jit/vmap/grad
-- **Physical Constants**: CODATA constants with proper units and uncertainties
-- **Uncertainty Propagation**: Track and propagate measurement uncertainties
-- **I/O Support**: Save/load to JSON, HDF5, Parquet, NetCDF, pandas, xarray
-- **Domain Units**: Astronomy, chemistry, and engineering units
-
-## PyTorch Integration
+### PyTorch
 
 ```python
 import torch
@@ -60,16 +92,15 @@ v = DimTensor(torch.tensor([1.0, 2.0, 3.0], requires_grad=True), units.m / units
 t = DimTensor(torch.tensor([0.5, 1.0, 1.5]), units.s)
 d = v * t  # distance in meters
 
-# Gradients work
-loss = d.sum()
-loss.backward()
-print(v.grad)  # Gradients flow through
+# Gradients flow through
+d.sum().backward()
+print(v.grad)
 
 # GPU support
-v_cuda = v.cuda()  # Move to GPU, preserving units
+v_cuda = v.cuda()
 ```
 
-## JAX Integration
+### JAX
 
 ```python
 import jax
@@ -77,199 +108,104 @@ import jax.numpy as jnp
 from dimtensor.jax import DimArray
 from dimtensor import units
 
-# Unit-aware arrays compatible with JAX transformations
 @jax.jit
 def kinetic_energy(mass, velocity):
     return 0.5 * mass * velocity**2
 
 m = DimArray(jnp.array([1.0, 2.0]), units.kg)
 v = DimArray(jnp.array([10.0, 20.0]), units.m / units.s)
-E = kinetic_energy(m, v)  # JIT-compiled, units preserved
-print(E)  # [50. 400.] J
+E = kinetic_energy(m, v)  # JIT-compiled, units preserved: [50. 400.] J
 ```
 
-## Physical Constants
+### Physical Constants
 
 ```python
-from dimtensor import constants
+from dimtensor import constants, DimArray, units
 
-# CODATA physical constants with proper units
-print(constants.c)           # Speed of light: 299792458.0 m/s
-print(constants.h)           # Planck constant with uncertainty
-print(constants.G)           # Gravitational constant
+print(constants.c)   # Speed of light: 299792458.0 m/s
+print(constants.h)   # Planck constant with uncertainty
 
-# Use in calculations
 E = constants.c**2 * DimArray([1.0], units.kg)  # E = mc^2
 ```
 
-## Uncertainty Propagation
+### Uncertainty Propagation
 
 ```python
 from dimtensor import DimArray, units
 
-# Measurement with uncertainty
 length = DimArray([10.0], units.m, uncertainty=[0.1])
 width = DimArray([5.0], units.m, uncertainty=[0.05])
 
-# Uncertainties propagate through operations
-area = length * width
-print(area)  # 50 +/- 0.71 m^2 (propagated in quadrature)
+area = length * width  # 50 +/- 0.71 m^2 (propagated in quadrature)
 ```
 
-## I/O Support
-
-### JSON
+### I/O
 
 ```python
-from dimtensor.io import save_json, load_json
+from dimtensor import DimArray, units
+from dimtensor.io import save_json, load_json, save_hdf5, load_hdf5
 
 arr = DimArray([1.0, 2.0, 3.0], units.m)
+
+# JSON
 save_json(arr, "data.json")
 loaded = load_json("data.json")  # Units preserved
-```
 
-### HDF5
-
-```python
-from dimtensor.io import save_hdf5, load_hdf5
-
-arr = DimArray([1.0, 2.0, 3.0], units.m)
+# HDF5
 save_hdf5(arr, "data.h5", compression="gzip")
 loaded = load_hdf5("data.h5")
 ```
 
-### Pandas
-
-```python
-from dimtensor.io import to_dataframe, from_dataframe
-
-data = {
-    "position": DimArray([1, 2, 3], units.m),
-    "velocity": DimArray([10, 20, 30], units.m / units.s)
-}
-df = to_dataframe(data)  # Unit metadata in attrs
-arrays = from_dataframe(df)  # Reconstruct DimArrays
-```
-
-### NetCDF
-
-```python
-from dimtensor.io import save_netcdf, load_netcdf
-
-arr = DimArray([1.0, 2.0, 3.0], units.m)
-save_netcdf(arr, "data.nc")
-loaded = load_netcdf("data.nc")
-```
-
-### Parquet
-
-```python
-from dimtensor.io import save_parquet, load_parquet
-
-arr = DimArray([1.0, 2.0, 3.0], units.m)
-save_parquet(arr, "data.parquet", compression="snappy")
-loaded = load_parquet("data.parquet")
-```
-
-### xarray
-
-```python
-from dimtensor.io import to_xarray, from_xarray
-
-arr = DimArray([1.0, 2.0, 3.0], units.m)
-da = to_xarray(arr, name="distance", dims=("x",))
-restored = from_xarray(da)  # Back to DimArray with units
-```
-
-## Domain-Specific Units
-
-### Astronomy
-
-```python
-from dimtensor import DimArray
-from dimtensor.domains.astronomy import parsec, AU, solar_mass, light_year
-
-# Distance to Proxima Centauri
-distance = DimArray([4.24], light_year)
-distance_pc = distance.to(parsec)  # ~1.3 pc
-
-# Stellar mass
-mass = DimArray([1.0], solar_mass)  # 1 solar mass
-```
-
-### Chemistry
-
-```python
-from dimtensor import DimArray
-from dimtensor.domains.chemistry import molar, dalton, ppm
-
-# Solution concentration
-concentration = DimArray([0.1], molar)  # 0.1 M
-
-# Atomic mass
-carbon_mass = DimArray([12.011], dalton)  # Carbon atomic weight
-
-# Trace amounts
-contamination = DimArray([50], ppm)  # 50 parts per million
-```
-
-### Engineering
-
-```python
-from dimtensor import DimArray
-from dimtensor.domains.engineering import MPa, hp, BTU, kWh
-
-# Material stress
-yield_strength = DimArray([250], MPa)
-
-# Engine power
-power = DimArray([100], hp)  # 100 horsepower
-
-# Energy consumption
-electricity = DimArray([500], kWh)  # 500 kilowatt-hours
-```
-
-## Examples
-
-### Kinematics
+### Visualization
 
 ```python
 from dimtensor import DimArray, units
+from dimtensor.visualization import plot
 
-v = DimArray([10], units.m / units.s)  # velocity
-t = DimArray([5], units.s)              # time
-d = v * t                               # distance = 50 m
+time = DimArray([0, 1, 2, 3], units.s)
+distance = DimArray([0, 10, 40, 90], units.m)
+
+plot(time, distance)  # Axes labeled automatically: [s], [m]
 ```
 
-### Force and Energy
+### Domain-Specific Units
 
 ```python
-m = DimArray([2], units.kg)              # mass
-g = DimArray([9.8], units.m / units.s**2)  # gravity
-h = DimArray([10], units.m)              # height
+from dimtensor import DimArray
+from dimtensor.domains.astronomy import parsec, light_year, solar_mass
+from dimtensor.domains.chemistry import molar, dalton
+from dimtensor.domains.engineering import MPa, hp, kWh
 
-# Potential energy
-PE = m * g * h  # 196 J
+# Astronomy
+distance = DimArray([4.24], light_year).to(parsec)  # ~1.3 pc
 
-# Force
-F = m * g  # 19.6 N
+# Chemistry
+concentration = DimArray([0.1], molar)  # 0.1 M
+
+# Engineering
+stress = DimArray([250], MPa)
+power = DimArray([100], hp)
 ```
 
-### Unit Conversion
+## Useful Links
 
-```python
-distance = DimArray([1], units.km)
-in_meters = distance.to(units.m)  # 1000 m
-in_miles = distance.to(units.mile)  # ~0.621 mi
-```
+- [Documentation](https://marcoloco23.github.io/dimtensor)
+- [Source Code](https://github.com/marcoloco23/dimtensor)
+- [Issue Tracker](https://github.com/marcoloco23/dimtensor/issues)
+- [Changelog](https://github.com/marcoloco23/dimtensor/blob/main/CHANGELOG.md)
+- [PyPI](https://pypi.org/project/dimtensor/)
 
-## Why dimtensor?
+## Call for Contributions
 
-1. **Catch errors early**: Don't waste compute on dimensionally invalid calculations
-2. **Self-documenting code**: Units make physics code clearer
-3. **ML-ready**: PyTorch autograd and JAX transformations fully supported
-4. **Scientific computing**: Physical constants and uncertainty propagation
-5. **Lightweight**: Just metadata tracking, minimal overhead
+dimtensor is an open source project and welcomes contributions of all kinds. Here are ways to get involved:
+
+- **Report bugs** - [Open an issue](https://github.com/marcoloco23/dimtensor/issues/new)
+- **Request features** - Share ideas in [discussions](https://github.com/marcoloco23/dimtensor/discussions)
+- **Contribute code** - See our [contributing guide](CONTRIBUTING.md)
+- **Improve docs** - Fix typos, add examples, clarify explanations
+- **Share use cases** - Write tutorials or blog posts
+
+Writing code isn't the only way to contribute. Good issues, documentation improvements, and community engagement are just as valuable.
 
 ## License
 

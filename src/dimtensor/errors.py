@@ -63,3 +63,24 @@ class UnitConversionError(DimTensorError):
             from_unit=from_unit,
             to_unit=to_unit,
         )
+
+
+class ConstraintError(DimTensorError):
+    """Raised when a value constraint is violated."""
+
+    def __init__(
+        self,
+        message: str,
+        constraint: str | None = None,
+        indices: list[int] | None = None,
+    ) -> None:
+        """Create a constraint error.
+
+        Args:
+            message: Error description.
+            constraint: Name of the violated constraint.
+            indices: Indices of values that violated the constraint.
+        """
+        self.constraint = constraint
+        self.indices = indices
+        super().__init__(message)

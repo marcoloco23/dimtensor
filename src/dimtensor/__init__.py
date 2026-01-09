@@ -18,7 +18,7 @@ Basic usage:
 from .core.dimensions import Dimension, DIMENSIONLESS
 from .core.dimarray import DimArray
 from .core.units import Unit
-from .errors import DimensionError, UnitConversionError
+from .errors import DimensionError, UnitConversionError, ConstraintError
 
 # Import all units into a 'units' namespace
 from .core import units
@@ -29,13 +29,19 @@ from . import constants
 # Domain-specific units
 from . import domains
 
+# Visualization
+from . import visualization
+
+# Validation
+from . import validation
+
 # Configuration
 from . import config
 
 # Module-level array functions
 from .functions import concatenate, stack, split, dot, matmul, norm
 
-__version__ = "1.2.0"
+__version__ = "1.4.0"
 
 __all__ = [
     # Core classes
@@ -47,6 +53,7 @@ __all__ = [
     # Exceptions
     "DimensionError",
     "UnitConversionError",
+    "ConstraintError",
     # Module-level functions
     "concatenate",
     "stack",
@@ -58,6 +65,8 @@ __all__ = [
     "units",
     "constants",
     "domains",
+    "visualization",
+    "validation",
     "config",
     # Version
     "__version__",
