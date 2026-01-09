@@ -10,22 +10,7 @@
       "WebFetch",
       "Glob",
       "Grep",
-      "mcp__*",
-      "mcp__ide__getDiagnostics",
-      "WebFetch(pint.readthedocs.io)",
-      "WebFetch(matplotlib.org)",
-      "WebFetch(plotly.com)",
-      "WebFetch(docs.python.org)",
-      "WebFetch(numpy.org)",
-      "WebFetch(pytorch.org)",
-      "WebFetch(jax.readthedocs.io)",
-      "WebFetch(docs.scipy.org)",
-      "WebFetch(pandas.pydata.org)",
-      "WebFetch(pypi.org)",
-      "WebFetch(github.com)",
-      "WebFetch(readthedocs.io)",
-      "WebFetch(docs.rs)",
-      "WebFetch(pyo3.rs)"
+      "mcp__*"
     ],
     "deny": []
   }
