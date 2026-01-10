@@ -10,6 +10,7 @@ Supported formats:
 - NetCDF: Scientific data format (requires netCDF4)
 - Parquet: Columnar format (requires pyarrow)
 - xarray: Labelled arrays (requires xarray)
+- Arrow: Zero-copy IPC with unit metadata (requires pyarrow)
 
 Example:
     >>> from dimtensor import DimArray, units
@@ -21,6 +22,10 @@ Example:
     >>>
     >>> # Pandas integration
     >>> df = to_dataframe({"distance": arr, "time": times})
+    >>>
+    >>> # Arrow IPC (for zero-copy inter-process communication)
+    >>> from dimtensor.io.arrow import write_ipc_file, read_ipc_file
+    >>> write_ipc_file({"distance": arr}, "data.arrow")
 """
 
 from .json import to_json, from_json, save_json, load_json
@@ -29,6 +34,20 @@ from .hdf5 import save_hdf5, load_hdf5
 from .netcdf import save_netcdf, load_netcdf
 from .parquet import save_parquet, load_parquet
 from .xarray import to_xarray, from_xarray, to_dataset, from_dataset
+from .arrow import (
+    to_arrow_array,
+    from_arrow_array,
+    to_arrow_table,
+    from_arrow_table,
+    to_record_batch,
+    from_record_batch,
+    write_ipc_stream,
+    read_ipc_stream,
+    write_ipc_file,
+    read_ipc_file,
+    read_ipc_file_mmap,
+    from_arrow_buffer,
+)
 
 __all__ = [
     # JSON
@@ -55,4 +74,17 @@ __all__ = [
     "from_xarray",
     "to_dataset",
     "from_dataset",
+    # Arrow
+    "to_arrow_array",
+    "from_arrow_array",
+    "to_arrow_table",
+    "from_arrow_table",
+    "to_record_batch",
+    "from_record_batch",
+    "write_ipc_stream",
+    "read_ipc_stream",
+    "write_ipc_file",
+    "read_ipc_file",
+    "read_ipc_file_mmap",
+    "from_arrow_buffer",
 ]

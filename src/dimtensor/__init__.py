@@ -44,7 +44,7 @@ from .functions import concatenate, stack, split, dot, matmul, norm
 # Profiling tools
 from . import profiling
 
-__version__ = "4.1.0"
+__version__ = "4.2.0"
 
 __all__ = [
     # Core classes

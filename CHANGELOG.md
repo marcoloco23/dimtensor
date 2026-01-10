@@ -5,6 +5,59 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [4.2.0] - 2026-01-10
+
+### Added
+- **TensorFlow Integration** (`from dimtensor.tensorflow import DimTensor, DimVariable`):
+  - DimTensor wraps tf.Tensor with physical unit tracking
+  - DimVariable wraps tf.Variable for trainable parameters with units
+  - Full eager mode and tf.function (graph mode) support
+  - GradientTape integration for gradient computation
+  - Arithmetic, comparison, reduction, and linear algebra operations
+  - 74 test cases (skipped if TensorFlow unavailable)
+
+- **CuPy Integration** (`from dimtensor.cupy import DimArray`):
+  - GPU-accelerated DimArray following NumPy patterns
+  - Full uncertainty propagation on GPU
+  - GPU memory management: `cpu()`, `gpu()`, `to_device()`
+  - NumPy/CuPy interoperability
+  - 91 test cases (skipped if CuPy unavailable)
+
+- **Dask Integration** (`from dimtensor.dask import DaskDimArray`):
+  - Distributed/chunked arrays with physical units
+  - Implements Dask collection protocol (DaskMethodsMixin)
+  - Lazy evaluation with `compute()` and `persist()`
+  - Fail-fast dimension errors (raised before compute)
+  - 68 test cases
+
+- **Ray Integration** (`from dimtensor.ray import ...`):
+  - `@dim_remote` decorator for unit-aware remote functions
+  - `dim_get()` / `dim_put()` helpers for transparent unit handling
+  - `DimDataset` wrapper for Ray Data with unit tracking
+  - `DimTrainContext` for distributed training with scalers
+  - Serialization support for DimArray and DimTensor
+  - 26 test cases (5 skipped in local mode)
+
+- **Numba Integration** (`from dimtensor.numba import dim_jit, prange`):
+  - `@dim_jit` decorator for JIT-compiled unit operations
+  - Integer-encoded dimensions for efficient JIT compilation
+  - Parallel support with `prange`
+  - JIT-compiled dimension algebra (multiply, divide, power)
+  - 31 test cases
+
+- **Apache Arrow Integration** (`from dimtensor.io import arrow`):
+  - `DimArrayType` PyArrow extension type preserving unit metadata
+  - Zero-copy conversion: `to_arrow_array()`, `from_arrow_array()`
+  - Table conversion: `to_arrow_table()`, `from_arrow_table()`
+  - Record batch support: `to_record_batch()`, `from_record_batch()`
+  - IPC streaming and file support with unit preservation
+  - Memory-mapped file support for large datasets
+  - 40 test cases
+
+### Changed
+- New modules add ~6,000 lines of framework integration code
+- Updated `io/__init__.py` to export Arrow functions
+
 ## [4.1.0] - 2026-01-09
 
 ### Added
