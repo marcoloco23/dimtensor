@@ -17,13 +17,18 @@ from .cern import CERNOpenDataLoader
 from .climate import NOAAClimateLoader, PRISMClimateLoader
 from .comsol import COMSOLLoader, PhysicsModule, load_comsol_csv, load_comsol_txt
 from .gravitational_wave import GWOSCEventLoader, GWOSCStrainLoader
-from .materials_project import MaterialsProjectLoader
 from .nist import NISTCODATALoader
 from .noaa import NOAAWeatherLoader
 from .openfoam import OpenFOAMLoader
 from .pubchem import PubChemLoader
 from .sdss import SDSSLoader
 from .worldbank import WorldBankClimateLoader
+
+# Optional import - mp_api has dependency issues
+try:
+    from .materials_project import MaterialsProjectLoader
+except (ImportError, TypeError):
+    MaterialsProjectLoader = None  # type: ignore
 
 __all__ = [
     "BaseLoader",

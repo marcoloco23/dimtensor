@@ -1,0 +1,81 @@
+# Preset values for batch processing workloads
+# Usage: helm install dimtensor ./dimtensor -f values-batch.yaml
+
+# Use job workload type
+workloadType: job
+
+# Use minimal image for CPU batch processing
+image:
+  variant: latest
+  pullPolicy: IfNotPresent
+
+# Job configuration
+job:
+  parallelism: 10
+  completions: 100
+  backoffLimit: 3
+  ttlSecondsAfterFinished: 86400
+  restartPolicy: OnFailure
+
+# Batch processing resources
+resources:
+  requests:
+    cpu: 500m
+    memory: 1Gi
+  limits:
+    cpu: 2000m
+    memory: 4Gi
+  gpu:
+    enabled: false
+
+# Disable service (not needed for jobs)
+service:
+  enabled: false
+
+# Disable autoscaling (not applicable to jobs)
+autoscaling:
+  enabled: false
+
+# Enable ConfigMap for physics parameters
+configMap:
+  enabled: true
+  data:
+    physics_params.json: |
+      {
+        "gravity": 9.81,
+        "air_density": 1.225,
+        "air_viscosity": 1.81e-5
+      }
+
+# Optional: Use persistent storage for results
+persistence:
+  enabled: false
+  # Uncomment to enable:
+  # enabled: true
+  # size: 10Gi
+  # mountPath: /data
+
+# Example command for parameter sweep
+container:
+  command: ['python', '-c']
+  args:
+  - |
+    import os
+    from dimtensor import DimArray, units
+    import numpy as np
+
+    task_id = int(os.environ.get('JOB_COMPLETION_INDEX', 0))
+    print(f"Processing batch task {task_id}")
+
+    # Your batch processing code here
+    velocities = np.linspace(1, 100, 100)[task_id:task_id+1]
+    for v in velocities:
+        velocity = DimArray([v], units.m / units.s)
+        print(f"Velocity: {velocity}")
+
+    print(f"Task {task_id} complete")
+  env:
+  - name: JOB_COMPLETION_INDEX
+    valueFrom:
+      fieldRef:
+        fieldPath: metadata.annotations['batch.kubernetes.io/job-completion-index']

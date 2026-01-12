@@ -1,0 +1,137 @@
+name: engineering
+version: 1.0.0
+schema_version: "1.0.0"
+description: Units for mechanical, thermal, and electrical engineering
+author: dimtensor team
+license: MIT
+
+units:
+  - symbol: kPa
+    dimension: {M: 1, L: -1, T: -2}
+    scale: 1e3
+    description: Kilopascal
+
+  - symbol: MPa
+    dimension: {M: 1, L: -1, T: -2}
+    scale: 1e6
+    description: Megapascal
+
+  - symbol: GPa
+    dimension: {M: 1, L: -1, T: -2}
+    scale: 1e9
+    description: Gigapascal
+
+  - symbol: ksi
+    dimension: {M: 1, L: -1, T: -2}
+    scale: 6.894757e6
+    description: Kilopound per square inch
+
+  - symbol: mbar
+    dimension: {M: 1, L: -1, T: -2}
+    scale: 100.0
+    description: Millibar (common in meteorology)
+
+  - symbol: BTU
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 1055.05585262
+    description: British Thermal Unit
+
+  - symbol: therm
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 1.0550559e8
+    description: Therm (100,000 BTU)
+
+  - symbol: kWh
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 3.6e6
+    description: Kilowatt-hour
+
+  - symbol: MWh
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 3.6e9
+    description: Megawatt-hour
+
+  - symbol: ft·lbf
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 1.3558179483314
+    description: Foot-pound (energy)
+
+  - symbol: hp
+    dimension: {M: 1, L: 2, T: -3}
+    scale: 745.69987158227022
+    description: Mechanical horsepower
+
+  - symbol: PS
+    dimension: {M: 1, L: 2, T: -3}
+    scale: 735.49875
+    description: Metric horsepower
+
+  - symbol: RT
+    dimension: {M: 1, L: 2, T: -3}
+    scale: 3516.8528420667
+    description: Ton of refrigeration
+
+  - symbol: BTU/h
+    dimension: {M: 1, L: 2, T: -3}
+    scale: 0.29307107017222
+    description: BTU per hour
+
+  - symbol: gpm
+    dimension: {L: 3, T: -1}
+    scale: 6.30901964e-5
+    description: Gallon per minute (US)
+
+  - symbol: cfm
+    dimension: {L: 3, T: -1}
+    scale: 4.71947443e-4
+    description: Cubic feet per minute
+
+  - symbol: L/min
+    dimension: {L: 3, T: -1}
+    scale: 1.66666667e-5
+    description: Liters per minute
+
+  - symbol: N·m
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 1.0
+    description: Newton-meter (torque)
+
+  - symbol: ft·lb
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 1.3558179483314
+    description: Foot-pound (torque)
+
+  - symbol: in·lb
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 0.1129848290276
+    description: Inch-pound
+
+  - symbol: rpm
+    dimension: {T: -1}
+    scale: 0.016666666666666666
+    description: Revolutions per minute
+
+  - symbol: rps
+    dimension: {T: -1}
+    scale: 1.0
+    description: Revolutions per second
+
+  - symbol: mil
+    dimension: {L: 1}
+    scale: 2.54e-5
+    description: Mil (thousandth of an inch)
+
+  - symbol: um
+    dimension: {L: 1}
+    scale: 1e-6
+    description: Micrometer
+
+  - symbol: BTU/lb
+    dimension: {L: 2, T: -2}
+    scale: 2326.0
+    description: BTU per pound (specific energy)
+
+  - symbol: BTU/(h·ft²)
+    dimension: {M: 1, T: -3}
+    scale: 3.15459074506
+    description: BTU per hour per square foot (heat flux)

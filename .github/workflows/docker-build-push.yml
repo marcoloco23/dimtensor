@@ -1,0 +1,281 @@
+name: Docker Build and Push
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'docker/**'
+      - 'src/**'
+      - 'pyproject.toml'
+      - '.github/workflows/docker-build-push.yml'
+  workflow_dispatch:
+    inputs:
+      push_images:
+        description: 'Push images to registry'
+        required: false
+        type: boolean
+        default: false
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [base, ml, full, jupyter]
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
+
+      - name: Log in to Container Registry
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          flavor: |
+            latest=false
+            suffix=-${{ matrix.target }},onlatest=true
+          tags: |
+            # Version tags for releases
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            # Branch tags
+            type=ref,event=branch
+            # PR tags
+            type=ref,event=pr
+            # Latest tag for main branch
+            type=raw,value=latest,enable=${{ matrix.target == 'full' && github.ref == 'refs/heads/main' }}
+            type=raw,value=${{ matrix.target }}-latest,enable={{is_default_branch}}
+            # Development tag
+            type=raw,value=${{ matrix.target }}-dev,enable={{is_default_branch}}
+
+      - name: Determine platforms
+        id: platforms
+        run: |
+          # ML target is x86-only (CUDA doesn't support ARM64)
+          if [ "${{ matrix.target }}" = "ml" ]; then
+            echo "platforms=linux/amd64" >> $GITHUB_OUTPUT
+          else
+            echo "platforms=linux/amd64,linux/arm64" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./docker/Dockerfile
+          target: ${{ matrix.target }}
+          platforms: ${{ steps.platforms.outputs.platforms }}
+          push: ${{ (github.event_name != 'pull_request') || (github.event.inputs.push_images == 'true') }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha,scope=${{ matrix.target }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.target }}
+          build-args: |
+            BUILDKIT_INLINE_CACHE=1
+
+      - name: Run Trivy vulnerability scanner
+        if: github.event_name != 'pull_request'
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev
+          format: 'sarif'
+          output: 'trivy-results-${{ matrix.target }}.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'  # Don't fail on vulnerabilities, just report
+
+      - name: Upload Trivy results to GitHub Security
+        if: github.event_name != 'pull_request'
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results-${{ matrix.target }}.sarif'
+          category: 'trivy-${{ matrix.target }}'
+
+  test-images:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    strategy:
+      fail-fast: false
+      matrix:
+        target: [base, ml, full, jupyter]
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull image
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev
+
+      - name: Test base image
+        if: matrix.target == 'base'
+        run: |
+          # Test basic import
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor import DimArray, units; print(DimArray([1, 2, 3], units.m))"
+
+          # Verify NumPy version
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import numpy; assert int(numpy.__version__.split('.')[0]) < 2, 'NumPy 2.x detected!'; print(f'NumPy {numpy.__version__}')"
+
+          # Test basic operations
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor import DimArray, units; d = DimArray([100], units.m); t = DimArray([10], units.s); v = d / t; assert str(v.unit) == 'm/s'"
+
+      - name: Test ML image
+        if: matrix.target == 'ml'
+        run: |
+          # Test PyTorch import
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor.torch import DimTensor; import torch; print(f'PyTorch {torch.__version__}')"
+
+          # Test JAX import
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import jax; print(f'JAX {jax.__version__}'); print(f'Devices: {jax.devices()}')"
+
+          # Verify NumPy version
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import numpy; assert int(numpy.__version__.split('.')[0]) < 2"
+
+          # Test DimTensor creation
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor.torch import DimTensor; from dimtensor import units; t = DimTensor([1.0, 2.0], units.m); print(t)"
+
+      - name: Test full image
+        if: matrix.target == 'full'
+        run: |
+          # Test all major integrations
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import torch, jax, pandas, xarray, h5py, scipy; from sklearn import datasets; import polars; print('All packages imported successfully')"
+
+          # Test dimtensor integrations
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor import DimArray; from dimtensor.torch import DimTensor; from dimtensor.jax import DimArray as JAXDimArray; print('All dimtensor modules imported')"
+
+          # Verify NumPy version
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import numpy; assert int(numpy.__version__.split('.')[0]) < 2"
+
+      - name: Test Jupyter image
+        if: matrix.target == 'jupyter'
+        run: |
+          # Test Jupyter installation
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            jupyter --version
+
+          # Test JupyterLab
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            jupyter lab --version
+
+          # Test dimtensor import
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "from dimtensor import DimArray, units; print(DimArray([1], units.m))"
+
+          # Verify NumPy version
+          docker run --rm ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev \
+            python -c "import numpy; assert int(numpy.__version__.split('.')[0]) < 2"
+
+      - name: Check image size
+        run: |
+          SIZE=$(docker image inspect ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev --format='{{.Size}}')
+          SIZE_MB=$((SIZE / 1024 / 1024))
+          echo "Image size: ${SIZE_MB} MB"
+
+          # Warn on unexpected sizes (but don't fail)
+          case "${{ matrix.target }}" in
+            base)
+              if [ $SIZE_MB -gt 500 ]; then
+                echo "::warning::Base image is larger than expected (${SIZE_MB} MB > 500 MB)"
+              fi
+              ;;
+            ml)
+              if [ $SIZE_MB -gt 12000 ]; then
+                echo "::warning::ML image is larger than expected (${SIZE_MB} MB > 12 GB)"
+              fi
+              ;;
+            full)
+              if [ $SIZE_MB -gt 4000 ]; then
+                echo "::warning::Full image is larger than expected (${SIZE_MB} MB > 4 GB)"
+              fi
+              ;;
+            jupyter)
+              if [ $SIZE_MB -gt 5000 ]; then
+                echo "::warning::Jupyter image is larger than expected (${SIZE_MB} MB > 5 GB)"
+              fi
+              ;;
+          esac
+
+  # Generate SBOM (Software Bill of Materials)
+  generate-sbom:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name != 'pull_request'
+    strategy:
+      matrix:
+        target: [base, ml, full, jupyter]
+    permissions:
+      contents: read
+      packages: read
+
+    steps:
+      - name: Log in to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ matrix.target }}-dev
+          format: 'spdx-json'
+          output-file: 'sbom-${{ matrix.target }}.spdx.json'
+
+      - name: Upload SBOM
+        uses: actions/upload-artifact@v4
+        with:
+          name: sbom-${{ matrix.target }}
+          path: sbom-${{ matrix.target }}.spdx.json
+          retention-days: 30

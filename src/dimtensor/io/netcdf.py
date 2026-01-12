@@ -279,3 +279,123 @@ def load_multiple_netcdf(
             result[name] = DimArray(data, unit, uncertainty=uncertainty)
 
     return result
+
+
+def save_netcdf_with_card(
+    data: dict[str, DimArray],
+    path: str | Path,
+    card: "DimDatasetCard",
+    compression: bool = True,
+) -> None:
+    """Save dataset to NetCDF with dataset card metadata.
+
+    The dataset card is stored as JSON in the global attributes.
+
+    Args:
+        data: Dictionary mapping column names to DimArrays.
+        path: File path.
+        card: Dataset card with metadata.
+        compression: Whether to enable compression.
+
+    Raises:
+        ImportError: If netCDF4 is not installed.
+    """
+    try:
+        import netCDF4
+    except ImportError:
+        raise ImportError(
+            "netCDF4 is required for NetCDF support. "
+            "Install with: pip install netCDF4"
+        )
+
+    import json
+
+    path = Path(path)
+
+    with netCDF4.Dataset(path, "w", format="NETCDF4") as nc:
+        # Store dataset card as JSON in global attributes
+        nc.dataset_card = json.dumps(card.to_dict())
+
+        # Track created dimensions to reuse them
+        dim_sizes: dict[int, str] = {}
+
+        for name, arr in data.items():
+            # Create dimensions for this array's shape
+            dims = []
+            for i, size in enumerate(arr.shape):
+                if size not in dim_sizes:
+                    dim_name = f"{name}_dim_{i}"
+                    nc.createDimension(dim_name, size)
+                    dim_sizes[size] = dim_name
+                dims.append(dim_sizes[size])
+
+            # Create variable
+            var = nc.createVariable(
+                name,
+                arr.dtype,
+                tuple(dims),
+                zlib=compression,
+            )
+            var[:] = arr._data
+
+            # Store unit metadata
+            var.unit_symbol = arr.unit.symbol
+            var.unit_scale = arr.unit.scale
+            var.dim_length = float(arr.dimension.length)
+            var.dim_mass = float(arr.dimension.mass)
+            var.dim_time = float(arr.dimension.time)
+            var.dim_current = float(arr.dimension.current)
+            var.dim_temperature = float(arr.dimension.temperature)
+            var.dim_amount = float(arr.dimension.amount)
+            var.dim_luminosity = float(arr.dimension.luminosity)
+
+            if arr.has_uncertainty and arr._uncertainty is not None:
+                unc_var = nc.createVariable(
+                    f"{name}_uncertainty",
+                    arr._uncertainty.dtype,
+                    tuple(dims),
+                    zlib=compression,
+                )
+                unc_var[:] = arr._uncertainty
+
+
+def load_netcdf_with_card(
+    path: str | Path,
+) -> tuple[dict[str, DimArray], "DimDatasetCard"]:
+    """Load dataset from NetCDF with dataset card metadata.
+
+    Args:
+        path: File path.
+
+    Returns:
+        Tuple of (data dictionary, dataset card).
+
+    Raises:
+        ImportError: If netCDF4 is not installed.
+        AttributeError: If dataset card not found in file.
+    """
+    try:
+        import netCDF4
+    except ImportError:
+        raise ImportError(
+            "netCDF4 is required for NetCDF support. "
+            "Install with: pip install netCDF4"
+        )
+
+    import json
+    from ..datasets.card import DimDatasetCard
+
+    path = Path(path)
+    data = load_multiple_netcdf(path)
+
+    with netCDF4.Dataset(path, "r") as nc:
+        if not hasattr(nc, "dataset_card"):
+            raise AttributeError(
+                "No dataset card found in NetCDF file. "
+                "Use load_multiple_netcdf() for files without cards."
+            )
+
+        card_json = nc.dataset_card
+        card = DimDatasetCard.from_dict(json.loads(card_json))
+
+    return data, card

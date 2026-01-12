@@ -1,0 +1,87 @@
+name: astronomy
+version: 1.0.0
+schema_version: "1.0.0"
+description: Units for astrophysics and space science
+author: dimtensor team
+license: MIT
+
+units:
+  - symbol: AU
+    dimension: {L: 1}
+    scale: 1.495978707e11
+    description: Astronomical Unit (IAU 2012 definition)
+
+  - symbol: pc
+    dimension: {L: 1}
+    scale: 3.0856775814913673e16
+    description: Parsec (IAU 2015)
+
+  - symbol: kpc
+    dimension: {L: 1}
+    scale: 3.0856775814913673e19
+    description: Kiloparsec
+
+  - symbol: Mpc
+    dimension: {L: 1}
+    scale: 3.0856775814913673e22
+    description: Megaparsec
+
+  - symbol: ly
+    dimension: {L: 1}
+    scale: 9.460730472580800e15
+    description: Light-year (IAU)
+
+  - symbol: M_sun
+    dimension: {M: 1}
+    scale: 1.98841e30
+    description: Solar mass (IAU 2015 nominal value)
+
+  - symbol: M_earth
+    dimension: {M: 1}
+    scale: 5.9722e24
+    description: Earth mass (IAU nominal value)
+
+  - symbol: M_jup
+    dimension: {M: 1}
+    scale: 1.8982e27
+    description: Jupiter mass (IAU nominal value)
+
+  - symbol: R_sun
+    dimension: {L: 1}
+    scale: 6.957e8
+    description: Solar radius (IAU 2015 nominal value)
+
+  - symbol: R_earth
+    dimension: {L: 1}
+    scale: 6.3781e6
+    description: Earth radius (IAU nominal equatorial radius)
+
+  - symbol: R_jup
+    dimension: {L: 1}
+    scale: 7.1492e7
+    description: Jupiter radius (IAU nominal equatorial radius)
+
+  - symbol: L_sun
+    dimension: {M: 1, L: 2, T: -3}
+    scale: 3.828e26
+    description: Solar luminosity (IAU 2015 nominal value)
+
+  - symbol: arcsec
+    dimension: {}
+    scale: 4.84813681109536e-6
+    description: Arcsecond (1/3600 degree)
+
+  - symbol: mas
+    dimension: {}
+    scale: 4.84813681109536e-9
+    description: Milliarcsecond
+
+  - symbol: uas
+    dimension: {}
+    scale: 4.84813681109536e-12
+    description: Microarcsecond
+
+  - symbol: yr
+    dimension: {T: 1}
+    scale: 3.15576e7
+    description: Julian year (exactly 365.25 days)

@@ -1,0 +1,31 @@
+{{- if and (eq .Values.workloadType "deployment") .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "dimtensor.fullname" . }}
+  labels:
+    {{- include "dimtensor.labels" . | nindent 4 }}
+  {{- with .Values.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  type: {{ .Values.service.type }}
+  {{- if .Values.service.loadBalancerIP }}
+  loadBalancerIP: {{ .Values.service.loadBalancerIP }}
+  {{- end }}
+  {{- with .Values.service.loadBalancerSourceRanges }}
+  loadBalancerSourceRanges:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  ports:
+  - port: {{ .Values.service.port }}
+    targetPort: {{ .Values.service.targetPort }}
+    protocol: TCP
+    name: http
+    {{- if and (eq .Values.service.type "NodePort") .Values.service.nodePort }}
+    nodePort: {{ .Values.service.nodePort }}
+    {{- end }}
+  selector:
+    {{- include "dimtensor.selectorLabels" . | nindent 4 }}
+{{- end }}

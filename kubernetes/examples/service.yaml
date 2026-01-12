@@ -1,0 +1,80 @@
+---
+# Service for inference API
+apiVersion: v1
+kind: Service
+metadata:
+  name: dimtensor-inference
+  labels:
+    app: dimtensor
+    component: inference
+spec:
+  type: ClusterIP  # Change to LoadBalancer for external access
+  selector:
+    app: dimtensor
+    component: inference
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  sessionAffinity: None
+
+---
+# Optional: Ingress for external access with TLS
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: dimtensor-inference
+  labels:
+    app: dimtensor
+    component: inference
+  annotations:
+    # Uncomment for cert-manager TLS
+    # cert-manager.io/cluster-issuer: "letsencrypt-prod"
+    # Uncomment for nginx ingress
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+spec:
+  ingressClassName: nginx  # Adjust based on your ingress controller
+  rules:
+  - host: dimtensor.example.com  # Change to your domain
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: dimtensor-inference
+            port:
+              name: http
+  # Uncomment for TLS
+  # tls:
+  # - hosts:
+  #   - dimtensor.example.com
+  #   secretName: dimtensor-tls
+
+---
+# Optional: Service for LoadBalancer (external access)
+apiVersion: v1
+kind: Service
+metadata:
+  name: dimtensor-inference-external
+  labels:
+    app: dimtensor
+    component: inference
+spec:
+  type: LoadBalancer
+  selector:
+    app: dimtensor
+    component: inference
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+    protocol: TCP
+  # Uncomment to specify load balancer IP
+  # loadBalancerIP: "1.2.3.4"
+  # Uncomment to restrict source IPs
+  # loadBalancerSourceRanges:
+  # - "10.0.0.0/8"
+  # - "172.16.0.0/12"

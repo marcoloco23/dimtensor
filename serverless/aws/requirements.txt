@@ -1,0 +1,3 @@
+# Dependencies for Lambda deployment
+numpy>=1.24.0,<2.0.0
+dimtensor>=5.0.0

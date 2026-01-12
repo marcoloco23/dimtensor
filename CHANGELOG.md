@@ -5,6 +5,83 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.0.0] - 2026-01-12
+
+### Added
+- **Research Platform** - End-to-end physics research workflow:
+
+  **Experiment Tracking** (`from dimtensor import experiments`):
+  - `DimExperiment` class for tracking physics experiments with units
+  - Backend support for MLflow and Weights & Biases
+  - `log_param()`, `log_metric()`, `log_array()` with full unit preservation
+  - `RunComparison` for comparing runs across different unit systems
+  - Automatic unit conversion in experiment comparisons
+  - Export/import experiments as JSON with units preserved
+  - Visualization functions for experiment results
+
+  **Paper Reproduction Framework** (`from dimtensor import research`):
+  - `Paper` class for storing paper metadata (title, DOI, equations, units)
+  - `ReproductionResult` for tracking reproduction accuracy
+  - `compare_values()` with automatic unit conversion
+  - Three-tier status: SUCCESS, PARTIAL, FAILED
+  - Export to Markdown, HTML, LaTeX, and Jupyter notebooks
+  - Example reproduction: Schwarzschild radius calculation
+
+  **Unit Schema Sharing** (`from dimtensor import schema`):
+  - `UnitSchema` class to package custom units, constants, dimensions
+  - YAML/JSON serialization with semantic versioning
+  - `SchemaRegistry` for local schema management
+  - Merge strategies: STRICT, OVERRIDE, NAMESPACE
+  - Built-in schemas: astronomy, chemistry, engineering
+  - CLI commands for schema operations
+
+  **Model Sharing Protocol** (`from dimtensor.hub import DimModelPackage`):
+  - Save/load physics ML models with unit metadata
+  - `DimModelWrapper` for runtime unit validation
+  - Framework support: PyTorch, JAX, NumPy
+  - Directory-based package format (model_card.json + weights)
+  - Automatic dimension checking at inference time
+
+  **Dataset Sharing Protocol** (`from dimtensor.datasets import DimDatasetCard`):
+  - Per-column unit specifications and uncertainties
+  - Coordinate system declarations (Cartesian, Spherical, Cylindrical)
+  - Validation functions for schema and unit checking
+  - Extended I/O with metadata for HDF5, NetCDF, Parquet
+  - JSON sidecar support for CSV format
+
+  **Docker Support** (`docker/`):
+  - Multi-stage Dockerfile with 4 targets: base, ml, full, jupyter
+  - Multi-platform builds (amd64, arm64)
+  - GPU support with NVIDIA CUDA 12.1
+  - GitHub Actions workflow for automated builds
+  - Docker Compose files for each variant
+
+  **Kubernetes Support** (`kubernetes/`):
+  - YAML examples: batch job, training, inference deployment
+  - Helm chart with flexible configuration
+  - GPU support with NVIDIA device plugin
+  - Horizontal Pod Autoscaler
+  - Three image variants: minimal, cpu-full, gpu
+
+  **Serverless Support** (`from dimtensor import serverless`):
+  - AWS Lambda handler decorators (`@lambda_physics`, `@lambda_ml`)
+  - Google Cloud Functions decorators (`@cloud_function`)
+  - HTTP-friendly DimArray serialization (base64 + unit metadata)
+  - Cold start optimization with lazy imports
+  - SAM and Cloud Functions deployment templates
+  - Example functions: physics API, model inference, batch simulation
+
+### Changed
+- New `experiments/` module for experiment tracking
+- New `research/` module for paper reproduction
+- New `schema/` module for unit schema sharing
+- New `serverless/` module for cloud deployment
+- Extended `hub/` with model packaging and validation
+- Extended `datasets/` with dataset cards and validation
+- Extended `io/` with CSV support and card-based functions
+- 200+ new tests across all v5.0.0 features
+- Docker and Kubernetes infrastructure for production deployment
+
 ## [4.5.0] - 2026-01-12
 
 ### Added

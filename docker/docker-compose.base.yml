@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  dimtensor-base:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: base
+    image: dimtensor:base
+    container_name: dimtensor-base
+    volumes:
+      # Mount local directory for data persistence
+      - ./data:/home/dimtensor/data
+    environment:
+      # Python optimization
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    command: python -c "from dimtensor import DimArray, units; print('dimtensor base ready'); print(DimArray([1, 2, 3], units.m))"
+    restart: unless-stopped
+
+# Usage:
+# docker-compose -f docker/docker-compose.base.yml up
+# docker-compose -f docker/docker-compose.base.yml run dimtensor-base python your_script.py

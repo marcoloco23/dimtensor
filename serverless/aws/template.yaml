@@ -1,0 +1,88 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: dimtensor physics computation functions
+
+Globals:
+  Function:
+    Timeout: 30
+    MemorySize: 512  # Recommended minimum for numpy/dimtensor
+    Runtime: python3.12
+    Environment:
+      Variables:
+        DIMTENSOR_LAZY_IMPORT: "true"
+    Architectures:
+      - x86_64
+
+Resources:
+  # Physics computation function
+  PhysicsComputeFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/physics_compute/
+      Handler: app.lambda_handler
+      Description: Generic physics computation endpoint
+      Events:
+        PhysicsApi:
+          Type: Api
+          Properties:
+            Path: /compute
+            Method: post
+
+  # ML model inference function
+  ModelInferenceFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/model_inference/
+      Handler: app.lambda_handler
+      Description: Physics ML model inference
+      MemorySize: 1024  # More memory for ML workloads
+      Events:
+        InferenceApi:
+          Type: Api
+          Properties:
+            Path: /infer
+            Method: post
+
+  # Batch processing function (S3 trigger)
+  BatchProcessFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/batch_process/
+      Handler: app.lambda_handler
+      Description: Batch physics simulation processor
+      MemorySize: 1024
+      Timeout: 300  # 5 minutes for longer simulations
+      Events:
+        S3Event:
+          Type: S3
+          Properties:
+            Bucket: !Ref SimulationBucket
+            Events: s3:ObjectCreated:*
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: input/
+                  - Name: suffix
+                    Value: .json
+
+  # S3 bucket for simulation data
+  SimulationBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub '${AWS::StackName}-simulations'
+      VersioningConfiguration:
+        Status: Enabled
+
+Outputs:
+  PhysicsComputeApi:
+    Description: "API Gateway endpoint URL for physics compute"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/compute/"
+
+  ModelInferenceApi:
+    Description: "API Gateway endpoint URL for model inference"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/infer/"
+
+  SimulationBucketName:
+    Description: "S3 bucket for simulation data"
+    Value: !Ref SimulationBucket

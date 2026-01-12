@@ -59,7 +59,8 @@ except ImportError:
 try:
     from mp_api.client import MPRester
     HAS_MP_API = True
-except ImportError:
+except (ImportError, TypeError, Exception):
+    # mp_api may fail with pydantic/emmet version conflicts
     HAS_MP_API = False
 
 

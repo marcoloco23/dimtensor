@@ -1,0 +1,22 @@
+apiVersion: v2
+name: dimtensor
+description: Unit-aware tensors for physics and scientific machine learning
+type: application
+version: 1.0.0
+appVersion: "4.2.0"
+keywords:
+  - physics
+  - machine-learning
+  - units
+  - dimensions
+  - scientific-computing
+  - pytorch
+  - jax
+  - numpy
+home: https://github.com/marcoloco23/dimtensor
+sources:
+  - https://github.com/marcoloco23/dimtensor
+maintainers:
+  - name: Marc Sperzel
+    email: marc@example.com
+icon: https://raw.githubusercontent.com/marcoloco23/dimtensor/main/docs/logo.png

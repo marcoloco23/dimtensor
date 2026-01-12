@@ -1,0 +1,92 @@
+name: chemistry
+version: 1.0.0
+schema_version: "1.0.0"
+description: Units for analytical and physical chemistry
+author: dimtensor team
+license: MIT
+
+units:
+  - symbol: Da
+    dimension: {M: 1}
+    scale: 1.66053906892e-27
+    description: Dalton (unified atomic mass unit, CODATA 2022)
+
+  - symbol: A
+    dimension: {L: 1}
+    scale: 1e-10
+    description: Angstrom (common in crystallography)
+
+  - symbol: a0
+    dimension: {L: 1}
+    scale: 5.29177210544e-11
+    description: Bohr radius (CODATA 2022)
+
+  - symbol: M
+    dimension: {N: 1, L: -3}
+    scale: 1000.0
+    description: Molar concentration (mol/L)
+
+  - symbol: mM
+    dimension: {N: 1, L: -3}
+    scale: 1.0
+    description: Millimolar
+
+  - symbol: uM
+    dimension: {N: 1, L: -3}
+    scale: 1e-3
+    description: Micromolar
+
+  - symbol: nM
+    dimension: {N: 1, L: -3}
+    scale: 1e-6
+    description: Nanomolar
+
+  - symbol: pM
+    dimension: {N: 1, L: -3}
+    scale: 1e-9
+    description: Picomolar
+
+  - symbol: m
+    dimension: {N: 1, M: -1}
+    scale: 1.0
+    description: Molality (mol/kg solvent)
+
+  - symbol: ppm
+    dimension: {}
+    scale: 1e-6
+    description: Parts per million
+
+  - symbol: ppb
+    dimension: {}
+    scale: 1e-9
+    description: Parts per billion
+
+  - symbol: ppt
+    dimension: {}
+    scale: 1e-12
+    description: Parts per trillion
+
+  - symbol: "%"
+    dimension: {}
+    scale: 0.01
+    description: Percent
+
+  - symbol: E_h
+    dimension: {M: 1, L: 2, T: -2}
+    scale: 4.3597447222060e-18
+    description: Hartree (atomic unit of energy, CODATA 2022)
+
+  - symbol: kcal/mol
+    dimension: {M: 1, L: 2, T: -2, N: -1}
+    scale: 4184.0
+    description: Kilocalorie per mole (common in biochemistry)
+
+  - symbol: kJ/mol
+    dimension: {M: 1, L: 2, T: -2, N: -1}
+    scale: 1000.0
+    description: Kilojoule per mole
+
+  - symbol: D
+    dimension: {I: 1, T: 1, L: 1}
+    scale: 3.33564e-30
+    description: Debye (electric dipole moment)

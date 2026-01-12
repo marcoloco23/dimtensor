@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  dimtensor-jupyter:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: jupyter
+    image: dimtensor:jupyter
+    container_name: dimtensor-jupyter
+    ports:
+      - "8888:8888"
+    volumes:
+      # Mount local notebooks directory
+      - ./notebooks:/home/dimtensor/notebooks
+      # Mount local data directory
+      - ./data:/home/dimtensor/data
+    environment:
+      # Jupyter settings
+      - JUPYTER_ENABLE_LAB=yes
+      # Python optimization
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      # Display settings for matplotlib
+      - MPLBACKEND=Agg
+    restart: unless-stopped
+
+# Usage:
+# docker-compose -f docker/docker-compose.jupyter.yml up
+# Open browser to: http://localhost:8888
+
+# Optional: Add GPU support (uncomment below)
+#    deploy:
+#      resources:
+#        reservations:
+#          devices:
+#            - driver: nvidia
+#              count: all
+#              capabilities: [gpu]

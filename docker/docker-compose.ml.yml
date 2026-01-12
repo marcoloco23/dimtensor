@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  dimtensor-ml:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: ml
+    image: dimtensor:ml
+    container_name: dimtensor-ml
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    volumes:
+      # Mount local directory for data and models
+      - ./data:/home/dimtensor/data
+      - ./models:/home/dimtensor/models
+    environment:
+      # CUDA settings
+      - NVIDIA_VISIBLE_DEVICES=all
+      - CUDA_VISIBLE_DEVICES=0
+      # Python optimization
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+      # PyTorch settings
+      - TORCH_HOME=/home/dimtensor/.cache/torch
+      # JAX settings
+      - XLA_PYTHON_CLIENT_PREALLOCATE=false
+    shm_size: '8gb'  # Shared memory for PyTorch DataLoader
+    command: python -c "import torch; from dimtensor.torch import DimTensor; print('PyTorch version:', torch.__version__); print('CUDA available:', torch.cuda.is_available()); print('GPU count:', torch.cuda.device_count())"
+    restart: unless-stopped
+
+# Usage:
+# docker-compose -f docker/docker-compose.ml.yml up
+# docker-compose -f docker/docker-compose.ml.yml run dimtensor-ml python train.py
+
+# Prerequisites:
+# 1. NVIDIA Docker runtime installed: https://github.com/NVIDIA/nvidia-docker
+# 2. NVIDIA GPU with CUDA support
+# 3. Verify with: docker run --rm --gpus all nvidia/cuda:12.1.0-base-ubuntu22.04 nvidia-smi

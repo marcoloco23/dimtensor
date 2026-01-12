@@ -47,7 +47,19 @@ from . import profiling
 # Analysis tools
 from . import analysis
 
-__version__ = "4.5.0"
+# Experiment tracking
+from . import experiments
+
+# Research paper reproduction
+from . import research
+
+# Unit schema sharing
+from . import schema
+
+# Serverless deployment
+from . import serverless
+
+__version__ = "5.0.0"
 
 __all__ = [
     # Core classes
@@ -76,6 +88,10 @@ __all__ = [
     "config",
     "profiling",
     "analysis",
+    "experiments",
+    "research",
+    "schema",
+    "serverless",
     # Version
     "__version__",
 ]

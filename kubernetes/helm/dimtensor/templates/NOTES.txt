@@ -1,0 +1,104 @@
+Thank you for installing {{ .Chart.Name }}!
+
+Your release is named {{ .Release.Name }}.
+
+{{- if eq .Values.workloadType "deployment" }}
+
+To learn more about dimtensor, visit:
+  https://github.com/marcoloco23/dimtensor
+
+{{- if .Values.service.enabled }}
+
+To access your dimtensor deployment:
+
+{{- if eq .Values.service.type "ClusterIP" }}
+
+  1. Forward the service port to your local machine:
+
+     kubectl port-forward svc/{{ include "dimtensor.fullname" . }} 8080:{{ .Values.service.port }}
+
+  2. Visit http://localhost:8080
+
+{{- else if eq .Values.service.type "LoadBalancer" }}
+
+  1. Get the external IP:
+
+     kubectl get svc {{ include "dimtensor.fullname" . }} --watch
+
+  2. Once EXTERNAL-IP is assigned, visit:
+
+     http://<EXTERNAL-IP>:{{ .Values.service.port }}
+
+{{- else if eq .Values.service.type "NodePort" }}
+
+  1. Get the node port:
+
+     export NODE_PORT=$(kubectl get svc {{ include "dimtensor.fullname" . }} -o jsonpath='{.spec.ports[0].nodePort}')
+     export NODE_IP=$(kubectl get nodes -o jsonpath='{.items[0].status.addresses[0].address}')
+
+  2. Visit:
+
+     http://$NODE_IP:$NODE_PORT
+
+{{- end }}
+{{- end }}
+
+{{- if .Values.ingress.enabled }}
+
+Your dimtensor instance is accessible via Ingress:
+
+{{- range .Values.ingress.hosts }}
+  http{{ if $.Values.ingress.tls }}s{{ end }}://{{ .host }}
+{{- end }}
+
+{{- end }}
+
+{{- if .Values.autoscaling.enabled }}
+
+Autoscaling is enabled:
+  - Min replicas: {{ .Values.autoscaling.minReplicas }}
+  - Max replicas: {{ .Values.autoscaling.maxReplicas }}
+  - Target CPU: {{ .Values.autoscaling.targetCPUUtilizationPercentage }}%
+
+Monitor autoscaling:
+  kubectl get hpa {{ include "dimtensor.fullname" . }}
+
+{{- end }}
+
+{{- if .Values.resources.gpu.enabled }}
+
+GPU support is enabled:
+  - GPU count: {{ .Values.resources.gpu.count }}
+  - Image variant: {{ .Values.image.variant }}
+
+Verify GPU availability:
+  kubectl exec -it deployment/{{ include "dimtensor.fullname" . }} -- nvidia-smi
+
+{{- end }}
+
+{{- else if eq .Values.workloadType "job" }}
+
+Your dimtensor job has been submitted.
+
+Monitor the job:
+  kubectl get job {{ include "dimtensor.fullname" . }}
+  kubectl logs job/{{ include "dimtensor.fullname" . }}
+
+{{- if .Values.job.ttlSecondsAfterFinished }}
+Note: Job will be automatically cleaned up {{ .Values.job.ttlSecondsAfterFinished }} seconds after completion.
+{{- end }}
+
+{{- else if eq .Values.workloadType "cronjob" }}
+
+Your dimtensor CronJob has been scheduled.
+
+Schedule: {{ .Values.cronjob.schedule }}
+
+Monitor the CronJob:
+  kubectl get cronjob {{ include "dimtensor.fullname" . }}
+  kubectl get jobs --selector=job-name={{ include "dimtensor.fullname" . }}
+
+{{- end }}
+
+For more information about dimtensor deployment options, see:
+  https://github.com/marcoloco23/dimtensor/tree/main/kubernetes

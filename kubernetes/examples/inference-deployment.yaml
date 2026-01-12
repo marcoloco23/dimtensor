@@ -1,0 +1,196 @@
+---
+# Example: Inference API deployment
+# Use case: RESTful endpoint for physics predictions with dimensional validation
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dimtensor-inference
+  labels:
+    app: dimtensor
+    component: inference
+spec:
+  replicas: 3
+  revisionHistoryLimit: 3
+
+  selector:
+    matchLabels:
+      app: dimtensor
+      component: inference
+
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
+
+  template:
+    metadata:
+      labels:
+        app: dimtensor
+        component: inference
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "8080"
+        prometheus.io/path: "/metrics"
+
+    spec:
+      # Spread pods across nodes for high availability
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 100
+            podAffinityTerm:
+              labelSelector:
+                matchLabels:
+                  app: dimtensor
+                  component: inference
+              topologyKey: kubernetes.io/hostname
+
+      containers:
+      - name: dimtensor-api
+        image: dimtensor:cpu-full
+        imagePullPolicy: IfNotPresent
+
+        command: ['python', '-c']
+        args:
+        - |
+          from flask import Flask, request, jsonify
+          from dimtensor import DimArray, units
+          from dimtensor.errors import DimensionError
+          import json
+
+          app = Flask(__name__)
+
+          @app.route('/health')
+          def health():
+              """Health check endpoint"""
+              return jsonify({"status": "healthy"}), 200
+
+          @app.route('/ready')
+          def ready():
+              """Readiness check endpoint"""
+              try:
+                  # Verify dimtensor works
+                  test = DimArray([1], units.m)
+                  return jsonify({"status": "ready"}), 200
+              except Exception as e:
+                  return jsonify({"status": "not ready", "error": str(e)}), 503
+
+          @app.route('/api/v1/validate', methods=['POST'])
+          def validate_dimensions():
+              """Validate dimensional consistency of equation"""
+              try:
+                  data = request.json
+                  # Example: validate F = m * a
+                  mass = DimArray([data['mass']], units.kg)
+                  acceleration = DimArray([data['acceleration']], units.m / units.s**2)
+                  force = mass * acceleration
+
+                  return jsonify({
+                      "valid": True,
+                      "force": {
+                          "value": float(force.data[0]),
+                          "unit": str(force.unit),
+                          "dimension": str(force.dimension)
+                      }
+                  }), 200
+              except DimensionError as e:
+                  return jsonify({"valid": False, "error": str(e)}), 400
+              except Exception as e:
+                  return jsonify({"error": str(e)}), 500
+
+          @app.route('/api/v1/convert', methods=['POST'])
+          def convert_units():
+              """Convert between compatible units"""
+              try:
+                  data = request.json
+                  value = data['value']
+                  from_unit = data['from_unit']
+                  to_unit = data['to_unit']
+
+                  # Parse units
+                  from_u = getattr(units, from_unit)
+                  to_u = getattr(units, to_unit)
+
+                  # Convert
+                  arr = DimArray([value], from_u)
+                  converted = arr.to(to_u)
+
+                  return jsonify({
+                      "original": {"value": value, "unit": from_unit},
+                      "converted": {"value": float(converted.data[0]), "unit": to_unit}
+                  }), 200
+              except Exception as e:
+                  return jsonify({"error": str(e)}), 500
+
+          @app.route('/metrics')
+          def metrics():
+              """Prometheus metrics endpoint"""
+              # Simple metrics for demonstration
+              return "# HELP dimtensor_requests_total Total requests\n# TYPE dimtensor_requests_total counter\ndimtensor_requests_total 0\n", 200
+
+          if __name__ == '__main__':
+              app.run(host='0.0.0.0', port=8080)
+
+        ports:
+        - name: http
+          containerPort: 8080
+          protocol: TCP
+
+        env:
+        - name: FLASK_ENV
+          value: "production"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "2Gi"
+          limits:
+            cpu: "2000m"
+            memory: "8Gi"
+
+        # Liveness probe: check if container is alive
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 10
+          periodSeconds: 30
+          timeoutSeconds: 5
+          failureThreshold: 3
+
+        # Readiness probe: check if container is ready to serve traffic
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          timeoutSeconds: 3
+          successThreshold: 1
+          failureThreshold: 3
+
+        # Startup probe: for slow-starting containers
+        startupProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 12  # 60 seconds max startup time
+
+        # Security context
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+          readOnlyRootFilesystem: false
+
+      # Graceful shutdown
+      terminationGracePeriodSeconds: 30

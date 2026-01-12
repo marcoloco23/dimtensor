@@ -1,0 +1,5 @@
+# Dependencies for Google Cloud Run deployment
+flask==3.*
+gunicorn==21.*
+numpy>=1.24.0,<2.0.0
+dimtensor>=5.0.0

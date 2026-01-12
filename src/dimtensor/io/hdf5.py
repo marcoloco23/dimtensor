@@ -248,3 +248,107 @@ def load_multiple_hdf5(
             result[name] = DimArray(data, unit, uncertainty=uncertainty)
 
     return result
+
+
+def save_hdf5_with_card(
+    data: dict[str, DimArray],
+    path: str | Path,
+    card: "DimDatasetCard",
+    compression: str | None = "gzip",
+) -> None:
+    """Save dataset to HDF5 with dataset card metadata.
+
+    The dataset card is stored as JSON in the file's root attributes.
+
+    Args:
+        data: Dictionary mapping column names to DimArrays.
+        path: File path.
+        card: Dataset card with metadata.
+        compression: Compression algorithm.
+
+    Raises:
+        ImportError: If h5py is not installed.
+    """
+    try:
+        import h5py
+    except ImportError:
+        raise ImportError(
+            "h5py is required for HDF5 support. "
+            "Install with: pip install h5py"
+        )
+
+    import json
+
+    path = Path(path)
+
+    with h5py.File(path, "w") as f:
+        # Store dataset card as JSON in root attributes
+        f.attrs["dataset_card"] = json.dumps(card.to_dict())
+
+        # Store each array
+        for name, arr in data.items():
+            ds = f.create_dataset(
+                name,
+                data=arr._data,
+                compression=compression,
+            )
+
+            # Store unit metadata
+            ds.attrs["unit_symbol"] = arr.unit.symbol
+            ds.attrs["unit_scale"] = arr.unit.scale
+            ds.attrs["dim_length"] = float(arr.dimension.length)
+            ds.attrs["dim_mass"] = float(arr.dimension.mass)
+            ds.attrs["dim_time"] = float(arr.dimension.time)
+            ds.attrs["dim_current"] = float(arr.dimension.current)
+            ds.attrs["dim_temperature"] = float(arr.dimension.temperature)
+            ds.attrs["dim_amount"] = float(arr.dimension.amount)
+            ds.attrs["dim_luminosity"] = float(arr.dimension.luminosity)
+
+            if arr.has_uncertainty:
+                f.create_dataset(
+                    f"{name}_uncertainty",
+                    data=arr._uncertainty,
+                    compression=compression,
+                )
+
+
+def load_hdf5_with_card(
+    path: str | Path,
+) -> tuple[dict[str, DimArray], "DimDatasetCard"]:
+    """Load dataset from HDF5 with dataset card metadata.
+
+    Args:
+        path: File path.
+
+    Returns:
+        Tuple of (data dictionary, dataset card).
+
+    Raises:
+        ImportError: If h5py is not installed.
+        KeyError: If dataset card not found in file.
+    """
+    try:
+        import h5py
+    except ImportError:
+        raise ImportError(
+            "h5py is required for HDF5 support. "
+            "Install with: pip install h5py"
+        )
+
+    import json
+    from ..datasets.card import DimDatasetCard
+
+    path = Path(path)
+    data = load_multiple_hdf5(path)
+
+    with h5py.File(path, "r") as f:
+        if "dataset_card" not in f.attrs:
+            raise KeyError(
+                "No dataset card found in HDF5 file. "
+                "Use load_multiple_hdf5() for files without cards."
+            )
+
+        card_json = f.attrs["dataset_card"]
+        card = DimDatasetCard.from_dict(json.loads(card_json))
+
+    return data, card

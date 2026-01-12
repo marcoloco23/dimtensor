@@ -1,0 +1,71 @@
+# Git
+.git
+.github
+.gitignore
+.gitattributes
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info
+dist
+build
+.eggs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Testing
+.pytest_cache
+.tox
+.coverage
+.coverage.*
+htmlcov
+.mypy_cache
+.ruff_cache
+.hypothesis
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documentation
+docs
+.plans
+examples
+*.md
+!README.md
+!LICENSE
+
+# CI/CD
+.travis.yml
+.circleci
+azure-pipelines.yml
+
+# Docker
+docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Development
+.env
+.venv
+venv
+ENV
+env
+
+# Benchmarks
+.asv
+benchmarks/results
+
+# Temporary files
+*.tmp
+*.bak
+*.log

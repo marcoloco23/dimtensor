@@ -1,0 +1,115 @@
+# Preset values for ML training workloads
+# Usage: helm install dimtensor-training ./dimtensor -f values-training.yaml
+
+# Use job workload type
+workloadType: job
+
+# Use GPU-enabled image
+image:
+  variant: ml
+  pullPolicy: IfNotPresent
+
+# Job configuration
+job:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 172800  # 48 hours
+  restartPolicy: Never
+
+# Training resources with GPU
+resources:
+  requests:
+    cpu: 2000m
+    memory: 8Gi
+  limits:
+    cpu: 4000m
+    memory: 16Gi
+  gpu:
+    enabled: true
+    count: 1
+
+# GPU node selection
+nodeSelector:
+  accelerator: nvidia-gpu
+
+tolerations:
+- key: nvidia.com/gpu
+  operator: Exists
+  effect: NoSchedule
+
+# Disable service
+service:
+  enabled: false
+
+# Disable autoscaling
+autoscaling:
+  enabled: false
+
+# Optional: Enable persistent storage for checkpoints
+persistence:
+  enabled: false
+  # Uncomment to enable:
+  # enabled: true
+  # size: 50Gi
+  # mountPath: /checkpoints
+
+# Optional: MLflow tracking secret
+secret:
+  enabled: false
+  # Uncomment to enable:
+  # enabled: true
+  # data:
+  #   mlflow-uri: aHR0cDovL21sZmxvdy1zZXJ2ZXI6NTAwMA==  # base64
+
+# Example PINN training command
+container:
+  command: ['python', '-c']
+  args:
+  - |
+    import torch
+    from dimtensor.torch import DimTensor
+    from dimtensor import units
+
+    print(f"PyTorch version: {torch.__version__}")
+    print(f"CUDA available: {torch.cuda.is_available()}")
+
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    print(f"Using device: {device}")
+
+    # Define PINN model
+    class PINN(torch.nn.Module):
+        def __init__(self):
+            super().__init__()
+            self.net = torch.nn.Sequential(
+                torch.nn.Linear(1, 64),
+                torch.nn.Tanh(),
+                torch.nn.Linear(64, 64),
+                torch.nn.Tanh(),
+                torch.nn.Linear(64, 1)
+            )
+
+        def forward(self, x):
+            return self.net(x)
+
+    model = PINN().to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+    # Training loop
+    epochs = 1000
+    for epoch in range(epochs):
+        x = DimTensor(torch.randn(32, 1, device=device), units.m, requires_grad=True)
+        y = model(x.data)
+        loss = (y**2).mean()
+
+        optimizer.zero_grad()
+        loss.backward()
+        optimizer.step()
+
+        if epoch % 100 == 0:
+            print(f"Epoch {epoch}/{epochs}, Loss: {loss.item():.6f}")
+
+    print("Training complete!")
+  env:
+  - name: CUDA_VISIBLE_DEVICES
+    value: "0"
+  - name: PYTHONUNBUFFERED
+    value: "1"

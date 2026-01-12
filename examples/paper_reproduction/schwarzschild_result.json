@@ -1,0 +1,266 @@
+{
+  "paper": {
+    "title": "Schwarzschild Radius for Stellar Objects",
+    "authors": [
+      "K. Schwarzschild"
+    ],
+    "doi": "10.1002/asna.19160200402",
+    "year": 1916,
+    "journal": "Astronomische Nachrichten",
+    "abstract": "Calculation of the Schwarzschild radius for various stellar objects using the formula r_s = 2GM/c\u00b2.",
+    "equations": {},
+    "published_values": {
+      "solar_schwarzschild_radius": {
+        "data": 2.95,
+        "unit": {
+          "symbol": "km",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1000.0
+        },
+        "dtype": "float64"
+      },
+      "earth_schwarzschild_radius": {
+        "data": 0.00887,
+        "unit": {
+          "symbol": "m",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1.0
+        },
+        "dtype": "float64"
+      }
+    },
+    "units_used": {
+      "solar_schwarzschild_radius": "km",
+      "earth_schwarzschild_radius": "mm"
+    },
+    "methods": [],
+    "assumptions": [
+      "Spherical symmetry",
+      "Static metric",
+      "Non-rotating black hole"
+    ],
+    "tags": [
+      "general relativity",
+      "black holes",
+      "astrophysics"
+    ],
+    "url": "",
+    "notes": ""
+  },
+  "computed_values": {
+    "solar_schwarzschild_radius": {
+      "data": [
+        2.954126555055405
+      ],
+      "unit": {
+        "symbol": "km",
+        "dimension": {
+          "length": 1.0,
+          "mass": 0.0,
+          "time": 0.0,
+          "current": 0.0,
+          "temperature": 0.0,
+          "amount": 0.0,
+          "luminosity": 0.0
+        },
+        "scale": 1000.0
+      },
+      "dtype": "float64",
+      "uncertainty": [
+        6.63918288447194e-05
+      ]
+    },
+    "earth_schwarzschild_radius": {
+      "data": [
+        0.008869805825435334
+      ],
+      "unit": {
+        "symbol": "m",
+        "dimension": {
+          "length": 1.0,
+          "mass": 0.0,
+          "time": 0.0,
+          "current": 0.0,
+          "temperature": 0.0,
+          "amount": 0.0,
+          "luminosity": 0.0
+        },
+        "scale": 1.0
+      },
+      "dtype": "float64",
+      "uncertainty": [
+        1.993423840425663e-07
+      ]
+    }
+  },
+  "comparisons": {
+    "solar_schwarzschild_radius": {
+      "quantity_name": "solar_schwarzschild_radius",
+      "published_value": {
+        "data": 2.95,
+        "unit": {
+          "symbol": "km",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1000.0
+        },
+        "dtype": "float64"
+      },
+      "computed_value": {
+        "data": [
+          2.954126555055405
+        ],
+        "unit": {
+          "symbol": "km",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1000.0
+        },
+        "dtype": "float64",
+        "uncertainty": [
+          6.63918288447194e-05
+        ]
+      },
+      "absolute_error": {
+        "data": [
+          0.0041265550554046015
+        ],
+        "unit": {
+          "symbol": "km",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1000.0
+        },
+        "dtype": "float64",
+        "uncertainty": [
+          6.63918288447194e-05
+        ]
+      },
+      "relative_error": 0.0013988322221710513,
+      "matches": true,
+      "tolerance_used": [
+        0.01,
+        null
+      ],
+      "unit_conversion_applied": false,
+      "notes": "Comparison does not account for uncertainties. "
+    },
+    "earth_schwarzschild_radius": {
+      "quantity_name": "earth_schwarzschild_radius",
+      "published_value": {
+        "data": 0.00887,
+        "unit": {
+          "symbol": "m",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1.0
+        },
+        "dtype": "float64"
+      },
+      "computed_value": {
+        "data": [
+          0.008869805825435334
+        ],
+        "unit": {
+          "symbol": "m",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1.0
+        },
+        "dtype": "float64",
+        "uncertainty": [
+          1.993423840425663e-07
+        ]
+      },
+      "absolute_error": {
+        "data": [
+          -1.9417456466504224e-07
+        ],
+        "unit": {
+          "symbol": "m",
+          "dimension": {
+            "length": 1.0,
+            "mass": 0.0,
+            "time": 0.0,
+            "current": 0.0,
+            "temperature": 0.0,
+            "amount": 0.0,
+            "luminosity": 0.0
+          },
+          "scale": 1.0
+        },
+        "dtype": "float64",
+        "uncertainty": [
+          1.993423840425663e-07
+        ]
+      },
+      "relative_error": 2.1891157233939374e-05,
+      "matches": true,
+      "tolerance_used": [
+        0.01,
+        null
+      ],
+      "unit_conversion_applied": false,
+      "notes": "Comparison does not account for uncertainties. "
+    }
+  },
+  "status": "success",
+  "reproduction_date": "2026-01-12T15:25:31.710931",
+  "reproducer": "dimtensor example",
+  "code_repository": "https://github.com/marcoloco23/dimtensor",
+  "notes": "",
+  "discrepancies": [],
+  "computation_time": 0.0,
+  "software_versions": {}
+}

@@ -1,0 +1,178 @@
+---
+# Example: ML training job with GPU support
+# Use case: Physics-Informed Neural Network (PINN) training
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: dimtensor-training-job
+  labels:
+    app: dimtensor
+    component: training
+spec:
+  backoffLimit: 2
+  ttlSecondsAfterFinished: 172800  # Clean up after 48 hours
+
+  template:
+    metadata:
+      labels:
+        app: dimtensor
+        component: training
+    spec:
+      restartPolicy: Never
+
+      # Node selector for GPU nodes
+      nodeSelector:
+        accelerator: nvidia-gpu  # Adjust based on your cluster labels
+
+      # Tolerations for GPU node taints
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+
+      # Init container to download training data
+      initContainers:
+      - name: download-data
+        image: dimtensor:cpu-full
+        imagePullPolicy: IfNotPresent
+        command: ['sh', '-c']
+        args:
+        - |
+          echo "Downloading training data..."
+          python -c "
+          import os
+          # Simulate data download
+          os.makedirs('/data/training', exist_ok=True)
+          with open('/data/training/dataset.txt', 'w') as f:
+              f.write('# Training data placeholder\n')
+          print('Data download complete')
+          "
+        volumeMounts:
+        - name: data
+          mountPath: /data
+
+      containers:
+      - name: dimtensor-trainer
+        image: dimtensor:ml  # GPU-enabled image with PyTorch + JAX
+        imagePullPolicy: IfNotPresent
+
+        command: ['python', '-c']
+        args:
+        - |
+          import torch
+          from dimtensor.torch import DimTensor
+          from dimtensor import units
+          import os
+
+          print(f"PyTorch version: {torch.__version__}")
+          print(f"CUDA available: {torch.cuda.is_available()}")
+          if torch.cuda.is_available():
+              print(f"CUDA device: {torch.cuda.get_device_name(0)}")
+              print(f"CUDA memory: {torch.cuda.get_device_properties(0).total_memory / 1e9:.2f} GB")
+
+          # Example PINN training loop
+          device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+
+          # Create physics-informed model
+          class PINN(torch.nn.Module):
+              def __init__(self):
+                  super().__init__()
+                  self.net = torch.nn.Sequential(
+                      torch.nn.Linear(1, 64),
+                      torch.nn.Tanh(),
+                      torch.nn.Linear(64, 64),
+                      torch.nn.Tanh(),
+                      torch.nn.Linear(64, 1)
+                  )
+
+              def forward(self, x):
+                  return self.net(x)
+
+          model = PINN().to(device)
+          optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+
+          # Training loop
+          epochs = int(os.environ.get('EPOCHS', '100'))
+          for epoch in range(epochs):
+              # Generate training batch with units
+              x = DimTensor(torch.randn(32, 1, device=device), units.m, requires_grad=True)
+
+              # Forward pass
+              y = model(x.data)
+
+              # Physics loss (example: u_t + u * u_x = 0)
+              loss = (y**2).mean()
+
+              # Backward pass
+              optimizer.zero_grad()
+              loss.backward()
+              optimizer.step()
+
+              if epoch % 10 == 0:
+                  print(f"Epoch {epoch}/{epochs}, Loss: {loss.item():.6f}")
+
+          # Save checkpoint
+          checkpoint_path = '/checkpoints/model_final.pt'
+          os.makedirs(os.path.dirname(checkpoint_path), exist_ok=True)
+          torch.save({
+              'epoch': epochs,
+              'model_state_dict': model.state_dict(),
+              'optimizer_state_dict': optimizer.state_dict(),
+              'loss': loss.item(),
+          }, checkpoint_path)
+
+          print(f"Training complete. Checkpoint saved to {checkpoint_path}")
+
+        env:
+        - name: EPOCHS
+          value: "1000"
+        - name: CUDA_VISIBLE_DEVICES
+          value: "0"
+        # Optional: MLflow tracking
+        - name: MLFLOW_TRACKING_URI
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: tracking-uri
+              optional: true
+
+        resources:
+          requests:
+            cpu: "2000m"
+            memory: "8Gi"
+            nvidia.com/gpu: "1"  # Request 1 GPU
+          limits:
+            cpu: "4000m"
+            memory: "16Gi"
+            nvidia.com/gpu: "1"
+
+        volumeMounts:
+        - name: data
+          mountPath: /data
+        - name: checkpoints
+          mountPath: /checkpoints
+
+        # Security context
+        securityContext:
+          runAsNonRoot: true
+          runAsUser: 1000
+          allowPrivilegeEscalation: false
+          capabilities:
+            drop:
+            - ALL
+
+      volumes:
+      - name: data
+        emptyDir: {}
+      - name: checkpoints
+        emptyDir: {}  # Use PersistentVolumeClaim for production
+
+---
+# Optional: Secret for MLflow tracking
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mlflow-secret
+type: Opaque
+stringData:
+  tracking-uri: "http://mlflow-server:5000"

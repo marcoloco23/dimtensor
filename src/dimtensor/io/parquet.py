@@ -274,3 +274,114 @@ def load_multiple_parquet(
         result[name] = DimArray(data, unit, uncertainty=uncertainty)
 
     return result
+
+
+def save_parquet_with_card(
+    data: dict[str, DimArray],
+    path: str | Path,
+    card: "DimDatasetCard",
+    compression: str = "snappy",
+) -> None:
+    """Save dataset to Parquet with dataset card metadata.
+
+    The dataset card is stored as JSON in the schema metadata.
+
+    Args:
+        data: Dictionary mapping column names to DimArrays.
+        path: File path.
+        card: Dataset card with metadata.
+        compression: Compression codec.
+
+    Raises:
+        ImportError: If pyarrow is not installed.
+    """
+    try:
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+    except ImportError:
+        raise ImportError(
+            "pyarrow is required for Parquet support. "
+            "Install with: pip install pyarrow"
+        )
+
+    import json
+
+    path = Path(path)
+
+    # Build combined table data and metadata
+    table_data = {}
+    metadata = {
+        "dimtensor_version": "1.1",
+        "array_names": json.dumps(list(data.keys())),
+        "dataset_card": json.dumps(card.to_dict()),
+    }
+
+    for name, arr in data.items():
+        # Flatten and store data
+        table_data[f"{name}_data"] = arr._data.flatten()
+
+        if arr.has_uncertainty and arr._uncertainty is not None:
+            table_data[f"{name}_uncertainty"] = arr._uncertainty.flatten()
+
+        # Store metadata for this array
+        metadata[f"{name}_shape"] = json.dumps(list(arr.shape))
+        metadata[f"{name}_dtype"] = str(arr.dtype)
+        metadata[f"{name}_unit_symbol"] = arr.unit.symbol
+        metadata[f"{name}_unit_scale"] = str(arr.unit.scale)
+        metadata[f"{name}_dim_length"] = str(float(arr.dimension.length))
+        metadata[f"{name}_dim_mass"] = str(float(arr.dimension.mass))
+        metadata[f"{name}_dim_time"] = str(float(arr.dimension.time))
+        metadata[f"{name}_dim_current"] = str(float(arr.dimension.current))
+        metadata[f"{name}_dim_temperature"] = str(float(arr.dimension.temperature))
+        metadata[f"{name}_dim_amount"] = str(float(arr.dimension.amount))
+        metadata[f"{name}_dim_luminosity"] = str(float(arr.dimension.luminosity))
+        metadata[f"{name}_has_uncertainty"] = str(arr.has_uncertainty)
+
+    table = pa.Table.from_pydict(table_data)
+    combined_metadata = {k.encode(): v.encode() for k, v in metadata.items()}
+    table = table.replace_schema_metadata(combined_metadata)
+
+    pq.write_table(table, path, compression=compression)
+
+
+def load_parquet_with_card(
+    path: str | Path,
+) -> tuple[dict[str, DimArray], "DimDatasetCard"]:
+    """Load dataset from Parquet with dataset card metadata.
+
+    Args:
+        path: File path.
+
+    Returns:
+        Tuple of (data dictionary, dataset card).
+
+    Raises:
+        ImportError: If pyarrow is not installed.
+        KeyError: If dataset card not found in file.
+    """
+    try:
+        import pyarrow as pa
+        import pyarrow.parquet as pq
+    except ImportError:
+        raise ImportError(
+            "pyarrow is required for Parquet support. "
+            "Install with: pip install pyarrow"
+        )
+
+    import json
+    from ..datasets.card import DimDatasetCard
+
+    path = Path(path)
+    table = pq.read_table(path)
+    metadata = {k.decode(): v.decode() for k, v in table.schema.metadata.items()}
+
+    if "dataset_card" not in metadata:
+        raise KeyError(
+            "No dataset card found in Parquet file. "
+            "Use load_multiple_parquet() for files without cards."
+        )
+
+    card = DimDatasetCard.from_dict(json.loads(metadata["dataset_card"]))
+    data = load_multiple_parquet(path)
+
+    return data, card

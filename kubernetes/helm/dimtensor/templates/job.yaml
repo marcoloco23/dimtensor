@@ -1,0 +1,130 @@
+{{- if eq .Values.workloadType "job" }}
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ include "dimtensor.fullname" . }}
+  labels:
+    {{- include "dimtensor.labels" . | nindent 4 }}
+spec:
+  backoffLimit: {{ .Values.job.backoffLimit }}
+  {{- with .Values.job.ttlSecondsAfterFinished }}
+  ttlSecondsAfterFinished: {{ . }}
+  {{- end }}
+  {{- if gt (int .Values.job.parallelism) 1 }}
+  parallelism: {{ .Values.job.parallelism }}
+  {{- end }}
+  {{- if gt (int .Values.job.completions) 1 }}
+  completions: {{ .Values.job.completions }}
+  {{- end }}
+  template:
+    metadata:
+      annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum }}
+        checksum/secret: {{ include (print $.Template.BasePath "/secret.yaml") . | sha256sum }}
+        {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+      labels:
+        {{- include "dimtensor.selectorLabels" . | nindent 8 }}
+    spec:
+      restartPolicy: {{ .Values.job.restartPolicy }}
+      {{- with .Values.image.pullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "dimtensor.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      {{- with .Values.initContainers }}
+      initContainers:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: {{ include "dimtensor.image" . }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        {{- with .Values.container.command }}
+        command:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.container.args }}
+        args:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        resources:
+          requests:
+            cpu: {{ .Values.resources.requests.cpu }}
+            memory: {{ .Values.resources.requests.memory }}
+            {{- if .Values.resources.gpu.enabled }}
+            nvidia.com/gpu: {{ .Values.resources.gpu.count }}
+            {{- end }}
+          limits:
+            cpu: {{ .Values.resources.limits.cpu }}
+            memory: {{ .Values.resources.limits.memory }}
+            {{- if .Values.resources.gpu.enabled }}
+            nvidia.com/gpu: {{ .Values.resources.gpu.count }}
+            {{- end }}
+        {{- with .Values.container.env }}
+        env:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        {{- with .Values.container.envFrom }}
+        envFrom:
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+        volumeMounts:
+        {{- if .Values.persistence.enabled }}
+        - name: data
+          mountPath: {{ .Values.persistence.mountPath }}
+        {{- end }}
+        {{- if .Values.configMap.enabled }}
+        - name: config
+          mountPath: /config
+        {{- end }}
+        {{- with .Values.volumeMounts }}
+        {{- toYaml . | nindent 12 }}
+        {{- end }}
+      volumes:
+      {{- if .Values.persistence.enabled }}
+      - name: data
+        {{- if .Values.persistence.existingClaim }}
+        persistentVolumeClaim:
+          claimName: {{ .Values.persistence.existingClaim }}
+        {{- else }}
+        persistentVolumeClaim:
+          claimName: {{ include "dimtensor.fullname" . }}
+        {{- end }}
+      {{- end }}
+      {{- if .Values.configMap.enabled }}
+      - name: config
+        configMap:
+          name: {{ include "dimtensor.fullname" . }}
+      {{- end }}
+      {{- with .Values.volumes }}
+      {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.resources.gpu.enabled }}
+      nodeSelector:
+        accelerator: nvidia-gpu
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- if .Values.resources.gpu.enabled }}
+      tolerations:
+      - key: nvidia.com/gpu
+        operator: Exists
+        effect: NoSchedule
+      {{- end }}
+{{- end }}

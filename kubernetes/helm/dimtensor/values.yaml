@@ -1,0 +1,293 @@
+# Default values for dimtensor Helm chart
+# This is a YAML-formatted file
+# Declare variables to be passed into your templates
+
+# Global settings
+global:
+  # Image registry override
+  imageRegistry: ""
+
+# Workload type: deployment, job, or cronjob
+workloadType: deployment
+
+# Image configuration
+image:
+  # Image registry
+  registry: docker.io
+  # Image repository
+  repository: dimtensor
+  # Image tag (defaults to chart appVersion if not set)
+  tag: ""
+  # Image variant: latest (minimal), cpu-full, ml (gpu), jupyter
+  variant: latest
+  # Image pull policy
+  pullPolicy: IfNotPresent
+  # Image pull secrets
+  pullSecrets: []
+
+# Number of replicas (for deployment only)
+replicaCount: 3
+
+# Deployment strategy
+strategy:
+  type: RollingUpdate
+  rollingUpdate:
+    maxSurge: 1
+    maxUnavailable: 0
+
+# Container configuration
+container:
+  # Container port
+  port: 8080
+  # Command override (uses default if empty)
+  command: []
+  # Args override
+  args: []
+  # Environment variables
+  env: []
+  # Environment from ConfigMap/Secret
+  envFrom: []
+
+# Resource limits and requests
+resources:
+  requests:
+    cpu: 500m
+    memory: 2Gi
+  limits:
+    cpu: 2000m
+    memory: 8Gi
+  # GPU configuration (set to 1 or more to request GPUs)
+  gpu:
+    enabled: false
+    count: 1
+
+# Health checks
+livenessProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 10
+  periodSeconds: 30
+  timeoutSeconds: 5
+  failureThreshold: 3
+
+readinessProbe:
+  enabled: true
+  httpGet:
+    path: /ready
+    port: http
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 3
+  successThreshold: 1
+  failureThreshold: 3
+
+startupProbe:
+  enabled: true
+  httpGet:
+    path: /health
+    port: http
+  initialDelaySeconds: 0
+  periodSeconds: 5
+  timeoutSeconds: 3
+  failureThreshold: 12
+
+# Service configuration
+service:
+  enabled: true
+  type: ClusterIP
+  port: 80
+  targetPort: http
+  # NodePort (if type is NodePort)
+  nodePort: ""
+  # Annotations
+  annotations: {}
+  # Load balancer IP (if type is LoadBalancer)
+  loadBalancerIP: ""
+  # Load balancer source ranges
+  loadBalancerSourceRanges: []
+
+# Ingress configuration
+ingress:
+  enabled: false
+  className: nginx
+  annotations: {}
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    # nginx.ingress.kubernetes.io/ssl-redirect: "true"
+  hosts:
+    - host: dimtensor.example.com
+      paths:
+        - path: /
+          pathType: Prefix
+  tls: []
+  #  - secretName: dimtensor-tls
+  #    hosts:
+  #      - dimtensor.example.com
+
+# Horizontal Pod Autoscaler
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 70
+  targetMemoryUtilizationPercentage: 80
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300
+      policies:
+      - type: Percent
+        value: 50
+        periodSeconds: 60
+      - type: Pods
+        value: 2
+        periodSeconds: 60
+    scaleUp:
+      stabilizationWindowSeconds: 0
+      policies:
+      - type: Percent
+        value: 100
+        periodSeconds: 30
+      - type: Pods
+        value: 4
+        periodSeconds: 30
+
+# Job configuration (when workloadType is job)
+job:
+  # Backoff limit
+  backoffLimit: 3
+  # TTL seconds after finished
+  ttlSecondsAfterFinished: 86400
+  # Parallelism
+  parallelism: 1
+  # Completions
+  completions: 1
+  # Restart policy: Never or OnFailure
+  restartPolicy: Never
+
+# CronJob configuration (when workloadType is cronjob)
+cronjob:
+  # Schedule (cron format)
+  schedule: "0 0 * * *"
+  # Concurrency policy: Allow, Forbid, or Replace
+  concurrencyPolicy: Forbid
+  # Failed jobs history limit
+  failedJobsHistoryLimit: 1
+  # Successful jobs history limit
+  successfulJobsHistoryLimit: 3
+  # Suspend
+  suspend: false
+  # Starting deadline seconds
+  startingDeadlineSeconds: 300
+
+# ConfigMap configuration
+configMap:
+  enabled: false
+  data: {}
+  # Example:
+  # data:
+  #   physics_params.json: |
+  #     {
+  #       "gravity": 9.81,
+  #       "air_density": 1.225
+  #     }
+
+# Secret configuration
+secret:
+  enabled: false
+  data: {}
+  # Example:
+  # data:
+  #   mlflow-uri: aHR0cDovL21sZmxvdy1zZXJ2ZXI6NTAwMA==  # base64 encoded
+
+# Persistent storage
+persistence:
+  enabled: false
+  # Storage class
+  storageClass: ""
+  # Access mode
+  accessMode: ReadWriteOnce
+  # Size
+  size: 10Gi
+  # Mount path
+  mountPath: /data
+  # Existing claim
+  existingClaim: ""
+
+# Node selection
+nodeSelector: {}
+  # Example for GPU nodes:
+  # accelerator: nvidia-gpu
+
+# Tolerations
+tolerations: []
+  # Example for GPU nodes:
+  # - key: nvidia.com/gpu
+  #   operator: Exists
+  #   effect: NoSchedule
+
+# Affinity
+affinity: {}
+  # Example pod anti-affinity:
+  # podAntiAffinity:
+  #   preferredDuringSchedulingIgnoredDuringExecution:
+  #   - weight: 100
+  #     podAffinityTerm:
+  #       labelSelector:
+  #         matchLabels:
+  #           app: dimtensor
+  #       topologyKey: kubernetes.io/hostname
+
+# Pod annotations
+podAnnotations: {}
+  # prometheus.io/scrape: "true"
+  # prometheus.io/port: "8080"
+  # prometheus.io/path: "/metrics"
+
+# Pod security context
+podSecurityContext:
+  runAsNonRoot: true
+  runAsUser: 1000
+  fsGroup: 1000
+
+# Container security context
+securityContext:
+  allowPrivilegeEscalation: false
+  capabilities:
+    drop:
+    - ALL
+  readOnlyRootFilesystem: false
+
+# Service account
+serviceAccount:
+  # Create service account
+  create: true
+  # Annotations
+  annotations: {}
+  # Name (uses generated name if empty)
+  name: ""
+
+# Priority class
+priorityClassName: ""
+
+# Termination grace period
+terminationGracePeriodSeconds: 30
+
+# DNS policy
+dnsPolicy: ClusterFirst
+
+# Init containers
+initContainers: []
+  # Example:
+  # - name: download-data
+  #   image: busybox:1.36
+  #   command: ['sh', '-c', 'echo "Downloading data..."']
+
+# Sidecar containers
+sidecars: []
+
+# Volume mounts
+volumeMounts: []
+
+# Volumes
+volumes: []
