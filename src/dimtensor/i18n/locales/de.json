@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0",
+  "locale": "de",
+  "language": "Deutsch",
+  "translator": "dimtensor team",
+
+  "dimensions": {
+    "length": "Länge",
+    "mass": "Masse",
+    "time": "Zeit",
+    "current": "elektrischer Strom",
+    "temperature": "Temperatur",
+    "amount": "Stoffmenge",
+    "luminosity": "Lichtstärke"
+  },
+
+  "units": {
+    "m": {"symbol": "m", "name": "Meter", "name_plural": "Meter"},
+    "kg": {"symbol": "kg", "name": "Kilogramm", "name_plural": "Kilogramm"},
+    "s": {"symbol": "s", "name": "Sekunde", "name_plural": "Sekunden"},
+    "A": {"symbol": "A", "name": "Ampere", "name_plural": "Ampere"},
+    "K": {"symbol": "K", "name": "Kelvin", "name_plural": "Kelvin"},
+    "mol": {"symbol": "mol", "name": "Mol", "name_plural": "Mol"},
+    "cd": {"symbol": "cd", "name": "Candela", "name_plural": "Candela"},
+    "Hz": {"symbol": "Hz", "name": "Hertz", "name_plural": "Hertz"},
+    "N": {"symbol": "N", "name": "Newton", "name_plural": "Newton"},
+    "J": {"symbol": "J", "name": "Joule", "name_plural": "Joule"},
+    "W": {"symbol": "W", "name": "Watt", "name_plural": "Watt"},
+    "Pa": {"symbol": "Pa", "name": "Pascal", "name_plural": "Pascal"},
+    "C": {"symbol": "C", "name": "Coulomb", "name_plural": "Coulomb"},
+    "V": {"symbol": "V", "name": "Volt", "name_plural": "Volt"},
+    "Ω": {"symbol": "Ω", "name": "Ohm", "name_plural": "Ohm"},
+    "F": {"symbol": "F", "name": "Farad", "name_plural": "Farad"},
+    "Wb": {"symbol": "Wb", "name": "Weber", "name_plural": "Weber"},
+    "T": {"symbol": "T", "name": "Tesla", "name_plural": "Tesla"},
+    "H": {"symbol": "H", "name": "Henry", "name_plural": "Henry"},
+    "cm": {"symbol": "cm", "name": "Zentimeter", "name_plural": "Zentimeter"},
+    "mm": {"symbol": "mm", "name": "Millimeter", "name_plural": "Millimeter"},
+    "km": {"symbol": "km", "name": "Kilometer", "name_plural": "Kilometer"},
+    "g": {"symbol": "g", "name": "Gramm", "name_plural": "Gramm"},
+    "mg": {"symbol": "mg", "name": "Milligramm", "name_plural": "Milligramm"},
+    "t": {"symbol": "t", "name": "Tonne", "name_plural": "Tonnen"},
+    "min": {"symbol": "min", "name": "Minute", "name_plural": "Minuten"},
+    "h": {"symbol": "h", "name": "Stunde", "name_plural": "Stunden"},
+    "d": {"symbol": "d", "name": "Tag", "name_plural": "Tage"},
+    "ms": {"symbol": "ms", "name": "Millisekunde", "name_plural": "Millisekunden"},
+    "rad": {"symbol": "rad", "name": "Radiant", "name_plural": "Radianten"},
+    "°": {"symbol": "°", "name": "Grad", "name_plural": "Grad"},
+    "°C": {"symbol": "°C", "name": "Grad Celsius", "name_plural": "Grad Celsius"},
+    "eV": {"symbol": "eV", "name": "Elektronenvolt", "name_plural": "Elektronenvolt"},
+    "bar": {"symbol": "bar", "name": "Bar", "name_plural": "Bar"},
+    "atm": {"symbol": "atm", "name": "Atmosphäre", "name_plural": "Atmosphären"}
+  },
+
+  "errors": {
+    "dimension_incompatible": "Kann nicht {operation} Größen mit Dimensionen {left} und {right}",
+    "unit_conversion_incompatible": "Kann nicht von {from_unit} nach {to_unit} konvertieren: inkompatible Dimensionen",
+    "constraint_violated": "Einschränkung '{constraint}' verletzt",
+    "dimensionless_required": "Operation erfordert dimensionslose Größe, erhalten {dimension}",
+    "unit_not_found": "Einheit '{symbol}' nicht gefunden"
+  },
+
+  "cli": {
+    "checking_file": "Prüfe Datei: {filename}",
+    "issues_found": "{count} Probleme gefunden",
+    "no_issues": "Keine Probleme gefunden",
+    "lint_complete": "Prüfung abgeschlossen"
+  },
+
+  "messages": {
+    "conversion_warning": "Warnung: Konvertierung von {from_unit} nach {to_unit}",
+    "inference_suggestion": "Vorschlag: Variable '{name}' könnte Dimension {dimension} haben",
+    "locale_changed": "Sprache geändert zu {locale}",
+    "locale_not_found": "Sprache '{locale}' nicht gefunden, verwende {fallback}"
+  }
+}

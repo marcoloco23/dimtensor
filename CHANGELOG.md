@@ -5,6 +5,68 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.1.0] - 2026-01-13
+
+### Added
+- **Education & Accessibility** - Physics for everyone:
+
+  **Interactive Textbook** (`from dimtensor import education`):
+  - `Textbook`, `Chapter`, `Section`, `Lesson`, `Example` classes for content structure
+  - Six exercise types: `MultipleChoice`, `NumericAnswer`, `CodeExercise`, `DimensionalAnalysis`, `UnitConversion`, `WordProblem`
+  - `AnswerValidator` with dimensional correctness checking
+  - `ProgressTracker` with local JSON persistence in `~/.dimtensor/progress/`
+  - `Grader` class with weighted scoring and partial credit support
+  - JupyterBook structure with 3 introductory chapters:
+    - Chapter 1: Units (SI system, unit conversions, DimArray basics)
+    - Chapter 2: Dimensions (dimensional analysis, Buckingham Pi)
+    - Chapter 3: Operations (arithmetic, functions, broadcasting)
+  - 17+ interactive exercises with solutions
+  - Automatic grading with detailed feedback
+
+  **Internationalization (i18n)** (`from dimtensor import i18n`):
+  - 6 languages supported: English, Spanish, French, German, Chinese, Japanese
+  - `set_locale()`, `get_locale()`, `locale_context()` for locale management
+  - `translate_unit_name()`, `translate_unit_symbol()` for unit localization
+  - `Unit.localized_name()` and `Unit.localized_symbol()` methods
+  - Thread-safe locale storage for concurrent applications
+  - Lazy loading of translation files for performance
+  - Graceful fallback chain (e.g., es_MX → es → en)
+  - Error message and CLI output translation
+  - `I18nOptions` in config for global settings
+
+  **Accessibility** (`from dimtensor import accessibility`):
+  - Wong 2011 colorblind-safe 8-color palette
+  - Paul Tol palettes (bright, muted, high-contrast)
+  - CVD simulation functions (deuteranopia, protanopia, tritanopia)
+  - `ScreenReaderFormatter` for accessible text output ("3.14 meters" not "3.14m")
+  - `HighContrastFormatter` for enhanced readability
+  - `HTMLFormatter` with ARIA labels and semantic markup
+  - Matplotlib theme integration via `apply_accessible_theme()`
+  - Plotly template creation with `create_accessible_template()`
+  - WCAG 2.1 contrast ratio checking (AA and AAA levels)
+  - `suggest_palette()` for automated palette selection
+  - `AccessibilityOptions` in config:
+    - `colorblind_mode`: None/'deuteranopia'/'protanopia'/'tritanopia'
+    - `high_contrast`: bool
+    - `screen_reader_mode`: bool
+    - `color_palette`: 'default'/'colorblind_safe'/'high_contrast'/'grayscale'
+  - Integration with visualization modules (palette parameter)
+
+### Changed
+- New `education/` module for interactive textbook and exercises
+- New `i18n/` module for internationalization
+- New `accessibility/` module for accessibility features
+- Extended `config.py` with `I18nOptions` and `AccessibilityOptions`
+- Extended `core/units.py` with `localized_name()` and `localized_symbol()` methods
+- Extended `visualization/matplotlib.py` with palette parameter
+- Extended `visualization/plotly.py` with palette parameter
+
+### Tests
+- 75 new education tests (textbook, exercises, validation, progress, grading)
+- 42 new i18n tests (locale management, translation, thread safety)
+- 26 new accessibility tests (colors, formatters, integration)
+- Total: 143 new tests, 614+ core tests passing
+
 ## [5.0.0] - 2026-01-12
 
 ### Added

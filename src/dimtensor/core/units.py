@@ -146,6 +146,58 @@ class Unit:
 
         return self
 
+    def localized_name(self, locale: str | None = None, plural: bool = False) -> str:
+        """Get the localized name of this unit.
+
+        Args:
+            locale: Locale code (e.g., 'en', 'es', 'fr'). If None, uses current locale.
+            plural: If True, return plural form.
+
+        Returns:
+            Localized unit name.
+
+        Examples:
+            >>> meter.localized_name()
+            'meter'
+            >>> meter.localized_name(locale='es')
+            'metro'
+            >>> meter.localized_name(locale='es', plural=True)
+            'metros'
+        """
+        try:
+            from ..i18n import translate_unit_name
+
+            return translate_unit_name(self.symbol, locale=locale, plural=plural)
+        except ImportError:
+            # i18n not available, return symbol
+            return self.symbol
+
+    def localized_symbol(self, locale: str | None = None) -> str:
+        """Get the localized symbol of this unit.
+
+        Most units keep the same symbol across locales, but this provides
+        flexibility for exceptions.
+
+        Args:
+            locale: Locale code (e.g., 'en', 'es', 'fr'). If None, uses current locale.
+
+        Returns:
+            Localized unit symbol (usually same as self.symbol).
+
+        Examples:
+            >>> meter.localized_symbol()
+            'm'
+            >>> meter.localized_symbol(locale='es')
+            'm'
+        """
+        try:
+            from ..i18n import translate_unit_symbol
+
+            return translate_unit_symbol(self.symbol, locale=locale)
+        except ImportError:
+            # i18n not available, return original symbol
+            return self.symbol
+
 
 # =============================================================================
 # SI Base Units

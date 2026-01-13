@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0",
+  "locale": "ja",
+  "language": "日本語",
+  "translator": "dimtensor team",
+
+  "dimensions": {
+    "length": "長さ",
+    "mass": "質量",
+    "time": "時間",
+    "current": "電流",
+    "temperature": "温度",
+    "amount": "物質量",
+    "luminosity": "光度"
+  },
+
+  "units": {
+    "m": {"symbol": "m", "name": "メートル", "name_plural": "メートル"},
+    "kg": {"symbol": "kg", "name": "キログラム", "name_plural": "キログラム"},
+    "s": {"symbol": "s", "name": "秒", "name_plural": "秒"},
+    "A": {"symbol": "A", "name": "アンペア", "name_plural": "アンペア"},
+    "K": {"symbol": "K", "name": "ケルビン", "name_plural": "ケルビン"},
+    "mol": {"symbol": "mol", "name": "モル", "name_plural": "モル"},
+    "cd": {"symbol": "cd", "name": "カンデラ", "name_plural": "カンデラ"},
+    "Hz": {"symbol": "Hz", "name": "ヘルツ", "name_plural": "ヘルツ"},
+    "N": {"symbol": "N", "name": "ニュートン", "name_plural": "ニュートン"},
+    "J": {"symbol": "J", "name": "ジュール", "name_plural": "ジュール"},
+    "W": {"symbol": "W", "name": "ワット", "name_plural": "ワット"},
+    "Pa": {"symbol": "Pa", "name": "パスカル", "name_plural": "パスカル"},
+    "C": {"symbol": "C", "name": "クーロン", "name_plural": "クーロン"},
+    "V": {"symbol": "V", "name": "ボルト", "name_plural": "ボルト"},
+    "Ω": {"symbol": "Ω", "name": "オーム", "name_plural": "オーム"},
+    "F": {"symbol": "F", "name": "ファラド", "name_plural": "ファラド"},
+    "Wb": {"symbol": "Wb", "name": "ウェーバ", "name_plural": "ウェーバ"},
+    "T": {"symbol": "T", "name": "テスラ", "name_plural": "テスラ"},
+    "H": {"symbol": "H", "name": "ヘンリー", "name_plural": "ヘンリー"},
+    "cm": {"symbol": "cm", "name": "センチメートル", "name_plural": "センチメートル"},
+    "mm": {"symbol": "mm", "name": "ミリメートル", "name_plural": "ミリメートル"},
+    "km": {"symbol": "km", "name": "キロメートル", "name_plural": "キロメートル"},
+    "g": {"symbol": "g", "name": "グラム", "name_plural": "グラム"},
+    "mg": {"symbol": "mg", "name": "ミリグラム", "name_plural": "ミリグラム"},
+    "t": {"symbol": "t", "name": "トン", "name_plural": "トン"},
+    "min": {"symbol": "min", "name": "分", "name_plural": "分"},
+    "h": {"symbol": "h", "name": "時間", "name_plural": "時間"},
+    "d": {"symbol": "d", "name": "日", "name_plural": "日"},
+    "ms": {"symbol": "ms", "name": "ミリ秒", "name_plural": "ミリ秒"},
+    "rad": {"symbol": "rad", "name": "ラジアン", "name_plural": "ラジアン"},
+    "°": {"symbol": "°", "name": "度", "name_plural": "度"},
+    "°C": {"symbol": "°C", "name": "摂氏度", "name_plural": "摂氏度"},
+    "eV": {"symbol": "eV", "name": "電子ボルト", "name_plural": "電子ボルト"},
+    "bar": {"symbol": "bar", "name": "バール", "name_plural": "バール"},
+    "atm": {"symbol": "atm", "name": "気圧", "name_plural": "気圧"}
+  },
+
+  "errors": {
+    "dimension_incompatible": "次元{left}と{right}を持つ量を{operation}できません",
+    "unit_conversion_incompatible": "{from_unit}から{to_unit}への変換ができません：互換性のない次元",
+    "constraint_violated": "制約'{constraint}'が違反されました",
+    "dimensionless_required": "演算には無次元量が必要ですが、{dimension}が得られました",
+    "unit_not_found": "単位'{symbol}'が見つかりません"
+  },
+
+  "cli": {
+    "checking_file": "ファイルをチェック中：{filename}",
+    "issues_found": "{count}個の問題が見つかりました",
+    "no_issues": "問題は見つかりませんでした",
+    "lint_complete": "チェック完了"
+  },
+
+  "messages": {
+    "conversion_warning": "警告：{from_unit}から{to_unit}への変換",
+    "inference_suggestion": "提案：変数'{name}'は次元{dimension}を持つ可能性があります",
+    "locale_changed": "言語を{locale}に変更しました",
+    "locale_not_found": "言語'{locale}'が見つかりません、{fallback}にフォールバックします"
+  }
+}

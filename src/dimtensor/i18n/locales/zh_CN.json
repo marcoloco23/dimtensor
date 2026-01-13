@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0",
+  "locale": "zh_CN",
+  "language": "简体中文",
+  "translator": "dimtensor team",
+
+  "dimensions": {
+    "length": "长度",
+    "mass": "质量",
+    "time": "时间",
+    "current": "电流",
+    "temperature": "温度",
+    "amount": "物质的量",
+    "luminosity": "光强度"
+  },
+
+  "units": {
+    "m": {"symbol": "m", "name": "米", "name_plural": "米"},
+    "kg": {"symbol": "kg", "name": "千克", "name_plural": "千克"},
+    "s": {"symbol": "s", "name": "秒", "name_plural": "秒"},
+    "A": {"symbol": "A", "name": "安培", "name_plural": "安培"},
+    "K": {"symbol": "K", "name": "开尔文", "name_plural": "开尔文"},
+    "mol": {"symbol": "mol", "name": "摩尔", "name_plural": "摩尔"},
+    "cd": {"symbol": "cd", "name": "坎德拉", "name_plural": "坎德拉"},
+    "Hz": {"symbol": "Hz", "name": "赫兹", "name_plural": "赫兹"},
+    "N": {"symbol": "N", "name": "牛顿", "name_plural": "牛顿"},
+    "J": {"symbol": "J", "name": "焦耳", "name_plural": "焦耳"},
+    "W": {"symbol": "W", "name": "瓦特", "name_plural": "瓦特"},
+    "Pa": {"symbol": "Pa", "name": "帕斯卡", "name_plural": "帕斯卡"},
+    "C": {"symbol": "C", "name": "库仑", "name_plural": "库仑"},
+    "V": {"symbol": "V", "name": "伏特", "name_plural": "伏特"},
+    "Ω": {"symbol": "Ω", "name": "欧姆", "name_plural": "欧姆"},
+    "F": {"symbol": "F", "name": "法拉", "name_plural": "法拉"},
+    "Wb": {"symbol": "Wb", "name": "韦伯", "name_plural": "韦伯"},
+    "T": {"symbol": "T", "name": "特斯拉", "name_plural": "特斯拉"},
+    "H": {"symbol": "H", "name": "亨利", "name_plural": "亨利"},
+    "cm": {"symbol": "cm", "name": "厘米", "name_plural": "厘米"},
+    "mm": {"symbol": "mm", "name": "毫米", "name_plural": "毫米"},
+    "km": {"symbol": "km", "name": "千米", "name_plural": "千米"},
+    "g": {"symbol": "g", "name": "克", "name_plural": "克"},
+    "mg": {"symbol": "mg", "name": "毫克", "name_plural": "毫克"},
+    "t": {"symbol": "t", "name": "吨", "name_plural": "吨"},
+    "min": {"symbol": "min", "name": "分钟", "name_plural": "分钟"},
+    "h": {"symbol": "h", "name": "小时", "name_plural": "小时"},
+    "d": {"symbol": "d", "name": "天", "name_plural": "天"},
+    "ms": {"symbol": "ms", "name": "毫秒", "name_plural": "毫秒"},
+    "rad": {"symbol": "rad", "name": "弧度", "name_plural": "弧度"},
+    "°": {"symbol": "°", "name": "度", "name_plural": "度"},
+    "°C": {"symbol": "°C", "name": "摄氏度", "name_plural": "摄氏度"},
+    "eV": {"symbol": "eV", "name": "电子伏特", "name_plural": "电子伏特"},
+    "bar": {"symbol": "bar", "name": "巴", "name_plural": "巴"},
+    "atm": {"symbol": "atm", "name": "标准大气压", "name_plural": "标准大气压"}
+  },
+
+  "errors": {
+    "dimension_incompatible": "无法{operation}维度为{left}和{right}的量",
+    "unit_conversion_incompatible": "无法从{from_unit}转换为{to_unit}：维度不兼容",
+    "constraint_violated": "违反约束'{constraint}'",
+    "dimensionless_required": "操作需要无量纲量，得到{dimension}",
+    "unit_not_found": "未找到单位'{symbol}'"
+  },
+
+  "cli": {
+    "checking_file": "正在检查文件：{filename}",
+    "issues_found": "发现{count}个问题",
+    "no_issues": "未发现问题",
+    "lint_complete": "检查完成"
+  },
+
+  "messages": {
+    "conversion_warning": "警告：从{from_unit}转换为{to_unit}",
+    "inference_suggestion": "建议：变量'{name}'可能具有维度{dimension}",
+    "locale_changed": "语言已更改为{locale}",
+    "locale_not_found": "未找到语言'{locale}'，回退到{fallback}"
+  }
+}

@@ -1,0 +1,53 @@
+# Book settings
+title: Physics with dimtensor
+author: dimtensor team
+copyright: "2026"
+logo: ""
+
+# Force re-execution of notebooks on each build
+execute:
+  execute_notebooks: auto
+  timeout: 60
+
+# Define the name of the latex output file for PDF builds
+latex:
+  latex_documents:
+    targetname: book.tex
+
+# Add a bibtex file so that we can create citations
+bibtex_bibfiles:
+  - references.bib
+
+# Information about where the book exists on the web
+repository:
+  url: https://github.com/yourusername/dimtensor
+  path_to_book: textbook
+  branch: main
+
+# Add GitHub buttons to your book
+html:
+  use_issues_button: true
+  use_repository_button: true
+  use_edit_page_button: false
+  extra_footer: |
+    <p>Built with <a href="https://jupyterbook.org">Jupyter Book</a></p>
+
+# Parse and render settings
+parse:
+  myst_enable_extensions:
+    - amsmath
+    - colon_fence
+    - deflist
+    - dollarmath
+    - html_admonition
+    - html_image
+    - linkify
+    - replacements
+    - smartquotes
+    - substitution
+
+# Sphinx configuration
+sphinx:
+  config:
+    html_theme_options:
+      navigation_depth: 3

@@ -275,3 +275,178 @@ def reset_inference() -> None:
     inference.enabled_domains = None
     inference.infer_from_context = True
     inference.warn_on_mismatch = True
+
+
+# ==============================================================================
+# Internationalization Configuration
+# ==============================================================================
+
+
+@dataclass
+class I18nOptions:
+    """Options for internationalization (i18n).
+
+    Attributes:
+        locale: Current locale code (e.g., 'en', 'es', 'fr'). If None,
+            auto-detects from system settings.
+        use_localized_units: If True, display unit names in localized form.
+        use_localized_errors: If True, translate error messages.
+        fallback_locale: Locale to use when translation is missing.
+
+    Examples:
+        >>> from dimtensor import config
+        >>> config.i18n.locale = 'es'  # Use Spanish
+        >>> config.i18n.use_localized_units = True
+    """
+
+    locale: str | None = None  # None = auto-detect
+    use_localized_units: bool = True
+    use_localized_errors: bool = True
+    fallback_locale: str = "en"
+
+
+# Global i18n options instance
+i18n = I18nOptions()
+
+
+@contextmanager
+def locale(locale_code: str) -> Iterator[None]:
+    """Temporarily switch to a different locale.
+
+    This is a convenience wrapper around dimtensor.i18n.locale_context().
+
+    Args:
+        locale_code: Locale code to use (e.g., 'en', 'es', 'fr')
+
+    Examples:
+        >>> from dimtensor import config, units
+        >>> with config.locale('es'):
+        ...     print(units.meter.localized_name())
+        metro
+        >>> print(units.meter.localized_name())
+        meter
+    """
+    try:
+        from dimtensor.i18n import locale_context
+
+        with locale_context(locale_code):
+            yield
+    except ImportError:
+        # i18n not available, just yield without changing locale
+        yield
+
+
+# ==============================================================================
+# Accessibility Configuration
+# ==============================================================================
+
+
+@dataclass
+class AccessibilityOptions:
+    """Options for accessibility features.
+
+    Attributes:
+        colorblind_mode: Color vision deficiency mode for simulation.
+            Options: None (disabled), 'deuteranopia', 'protanopia', 'tritanopia'.
+        high_contrast: If True, use high-contrast display modes for better readability.
+        screen_reader_mode: If True, format output for screen readers (expanded units).
+        color_palette: Default color palette for visualizations.
+            Options: 'default', 'colorblind_safe', 'high_contrast', 'grayscale',
+            'tol_bright', 'tol_muted'.
+
+    Examples:
+        >>> from dimtensor import config
+        >>> config.accessibility.colorblind_mode = 'deuteranopia'
+        >>> config.accessibility.color_palette = 'colorblind_safe'
+        >>> config.accessibility.screen_reader_mode = True
+    """
+
+    colorblind_mode: str | None = None
+    high_contrast: bool = False
+    screen_reader_mode: bool = False
+    color_palette: str = "default"
+
+
+# Global accessibility options instance
+accessibility = AccessibilityOptions()
+
+
+@contextmanager
+def accessibility_options(
+    colorblind_mode: str | None = None,
+    high_contrast: bool | None = None,
+    screen_reader_mode: bool | None = None,
+    color_palette: str | None = None,
+) -> Iterator[None]:
+    """Temporarily set accessibility options.
+
+    Args:
+        colorblind_mode: CVD mode ('deuteranopia', 'protanopia', 'tritanopia', None).
+        high_contrast: Use high-contrast display modes.
+        screen_reader_mode: Format output for screen readers.
+        color_palette: Default color palette for visualizations.
+
+    Examples:
+        >>> with config.accessibility_options(colorblind_mode='deuteranopia'):
+        ...     # Visualizations will use colorblind-safe palette
+        ...     plt.plot(x, y)
+    """
+    old_colorblind_mode = accessibility.colorblind_mode
+    old_high_contrast = accessibility.high_contrast
+    old_screen_reader_mode = accessibility.screen_reader_mode
+    old_color_palette = accessibility.color_palette
+
+    if colorblind_mode is not None:
+        accessibility.colorblind_mode = colorblind_mode
+    if high_contrast is not None:
+        accessibility.high_contrast = high_contrast
+    if screen_reader_mode is not None:
+        accessibility.screen_reader_mode = screen_reader_mode
+    if color_palette is not None:
+        accessibility.color_palette = color_palette
+
+    try:
+        yield
+    finally:
+        accessibility.colorblind_mode = old_colorblind_mode
+        accessibility.high_contrast = old_high_contrast
+        accessibility.screen_reader_mode = old_screen_reader_mode
+        accessibility.color_palette = old_color_palette
+
+
+def set_accessibility(
+    colorblind_mode: str | None = None,
+    high_contrast: bool | None = None,
+    screen_reader_mode: bool | None = None,
+    color_palette: str | None = None,
+) -> None:
+    """Permanently set accessibility options.
+
+    Args:
+        colorblind_mode: CVD mode ('deuteranopia', 'protanopia', 'tritanopia', None).
+        high_contrast: Use high-contrast display modes.
+        screen_reader_mode: Format output for screen readers.
+        color_palette: Default color palette for visualizations.
+
+    Examples:
+        >>> config.set_accessibility(
+        ...     colorblind_mode='deuteranopia',
+        ...     color_palette='colorblind_safe'
+        ... )
+    """
+    if colorblind_mode is not None:
+        accessibility.colorblind_mode = colorblind_mode
+    if high_contrast is not None:
+        accessibility.high_contrast = high_contrast
+    if screen_reader_mode is not None:
+        accessibility.screen_reader_mode = screen_reader_mode
+    if color_palette is not None:
+        accessibility.color_palette = color_palette
+
+
+def reset_accessibility() -> None:
+    """Reset accessibility options to defaults."""
+    accessibility.colorblind_mode = None
+    accessibility.high_contrast = False
+    accessibility.screen_reader_mode = False
+    accessibility.color_palette = "default"

@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0",
+  "locale": "es",
+  "language": "español",
+  "translator": "dimtensor team",
+
+  "dimensions": {
+    "length": "longitud",
+    "mass": "masa",
+    "time": "tiempo",
+    "current": "corriente eléctrica",
+    "temperature": "temperatura",
+    "amount": "cantidad de sustancia",
+    "luminosity": "intensidad luminosa"
+  },
+
+  "units": {
+    "m": {"symbol": "m", "name": "metro", "name_plural": "metros"},
+    "kg": {"symbol": "kg", "name": "kilogramo", "name_plural": "kilogramos"},
+    "s": {"symbol": "s", "name": "segundo", "name_plural": "segundos"},
+    "A": {"symbol": "A", "name": "amperio", "name_plural": "amperios"},
+    "K": {"symbol": "K", "name": "kelvin", "name_plural": "kelvins"},
+    "mol": {"symbol": "mol", "name": "mol", "name_plural": "moles"},
+    "cd": {"symbol": "cd", "name": "candela", "name_plural": "candelas"},
+    "Hz": {"symbol": "Hz", "name": "hercio", "name_plural": "hercios"},
+    "N": {"symbol": "N", "name": "newton", "name_plural": "newtons"},
+    "J": {"symbol": "J", "name": "julio", "name_plural": "julios"},
+    "W": {"symbol": "W", "name": "vatio", "name_plural": "vatios"},
+    "Pa": {"symbol": "Pa", "name": "pascal", "name_plural": "pascales"},
+    "C": {"symbol": "C", "name": "culombio", "name_plural": "culombios"},
+    "V": {"symbol": "V", "name": "voltio", "name_plural": "voltios"},
+    "Ω": {"symbol": "Ω", "name": "ohmio", "name_plural": "ohmios"},
+    "F": {"symbol": "F", "name": "faradio", "name_plural": "faradios"},
+    "Wb": {"symbol": "Wb", "name": "weber", "name_plural": "webers"},
+    "T": {"symbol": "T", "name": "tesla", "name_plural": "teslas"},
+    "H": {"symbol": "H", "name": "henrio", "name_plural": "henrios"},
+    "cm": {"symbol": "cm", "name": "centímetro", "name_plural": "centímetros"},
+    "mm": {"symbol": "mm", "name": "milímetro", "name_plural": "milímetros"},
+    "km": {"symbol": "km", "name": "kilómetro", "name_plural": "kilómetros"},
+    "g": {"symbol": "g", "name": "gramo", "name_plural": "gramos"},
+    "mg": {"symbol": "mg", "name": "miligramo", "name_plural": "miligramos"},
+    "t": {"symbol": "t", "name": "tonelada", "name_plural": "toneladas"},
+    "min": {"symbol": "min", "name": "minuto", "name_plural": "minutos"},
+    "h": {"symbol": "h", "name": "hora", "name_plural": "horas"},
+    "d": {"symbol": "d", "name": "día", "name_plural": "días"},
+    "ms": {"symbol": "ms", "name": "milisegundo", "name_plural": "milisegundos"},
+    "rad": {"symbol": "rad", "name": "radián", "name_plural": "radianes"},
+    "°": {"symbol": "°", "name": "grado", "name_plural": "grados"},
+    "°C": {"symbol": "°C", "name": "grado Celsius", "name_plural": "grados Celsius"},
+    "eV": {"symbol": "eV", "name": "electronvoltio", "name_plural": "electronvoltios"},
+    "bar": {"symbol": "bar", "name": "bar", "name_plural": "bares"},
+    "atm": {"symbol": "atm", "name": "atmósfera", "name_plural": "atmósferas"}
+  },
+
+  "errors": {
+    "dimension_incompatible": "No se puede {operation} cantidades con dimensiones {left} y {right}",
+    "unit_conversion_incompatible": "No se puede convertir de {from_unit} a {to_unit}: dimensiones incompatibles",
+    "constraint_violated": "Restricción '{constraint}' violada",
+    "dimensionless_required": "La operación requiere cantidad sin dimensión, se obtuvo {dimension}",
+    "unit_not_found": "Unidad '{symbol}' no encontrada"
+  },
+
+  "cli": {
+    "checking_file": "Verificando archivo: {filename}",
+    "issues_found": "Se encontraron {count} problemas",
+    "no_issues": "No se encontraron problemas",
+    "lint_complete": "Verificación completa"
+  },
+
+  "messages": {
+    "conversion_warning": "Advertencia: convirtiendo de {from_unit} a {to_unit}",
+    "inference_suggestion": "Sugerencia: la variable '{name}' podría tener dimensión {dimension}",
+    "locale_changed": "Idioma cambiado a {locale}",
+    "locale_not_found": "Idioma '{locale}' no encontrado, usando {fallback}"
+  }
+}

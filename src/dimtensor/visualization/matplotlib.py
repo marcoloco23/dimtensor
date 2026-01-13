@@ -43,6 +43,39 @@ def _check_matplotlib() -> None:
         )
 
 
+def _apply_palette_if_needed(palette: str | None) -> None:
+    """Apply color palette if specified or configured in accessibility settings.
+
+    Args:
+        palette: Explicit palette name, or None to use config settings.
+    """
+    if not _HAS_MATPLOTLIB:
+        return
+
+    # Determine which palette to use
+    palette_to_use = palette
+    if palette_to_use is None:
+        try:
+            from .. import config
+
+            if (
+                hasattr(config, "accessibility")
+                and config.accessibility.color_palette != "default"
+            ):
+                palette_to_use = config.accessibility.color_palette
+        except ImportError:
+            pass
+
+    # Apply the palette
+    if palette_to_use and palette_to_use != "default":
+        try:
+            from ..accessibility.matplotlib_theme import apply_accessible_theme
+
+            apply_accessible_theme(palette_to_use)
+        except ImportError:
+            pass  # Accessibility module not available
+
+
 class DimArrayConverter:
     """Matplotlib unit converter for DimArray objects.
 
@@ -191,6 +224,7 @@ def plot(
     x_unit: Unit | None = None,
     y_unit: Unit | None = None,
     ax: Any = None,
+    palette: str | None = None,
     **kwargs: Any,
 ) -> Any:
     """Plot y vs x with automatic unit labels.
@@ -205,6 +239,7 @@ def plot(
         x_unit: Optional unit to convert x data to.
         y_unit: Optional unit to convert y data to.
         ax: Matplotlib axes to plot on. If None, uses current axes.
+        palette: Color palette to use. If None, uses config.accessibility.color_palette.
         **kwargs: Keyword arguments passed to plt.plot.
 
     Returns:
@@ -215,8 +250,10 @@ def plot(
         >>> distance = DimArray([0, 10, 40, 90], units.m)
         >>> plot(time, distance)  # Labels: x=[s], y=[m]
         >>> plot(time, distance, y_unit=units.km)  # y in kilometers
+        >>> plot(time, distance, palette='colorblind_safe')  # Use accessible colors
     """
     _check_matplotlib()
+    _apply_palette_if_needed(palette)
 
     if ax is None:
         ax = plt.gca()

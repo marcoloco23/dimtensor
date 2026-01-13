@@ -39,6 +39,41 @@ def _check_plotly() -> None:
         )
 
 
+def _get_colorway(palette: str | None) -> list[str] | None:
+    """Get colorway for a palette, respecting config settings.
+
+    Args:
+        palette: Explicit palette name, or None to use config settings.
+
+    Returns:
+        List of color hex codes, or None if using default.
+    """
+    # Determine which palette to use
+    palette_to_use = palette
+    if palette_to_use is None:
+        try:
+            from .. import config
+
+            if (
+                hasattr(config, "accessibility")
+                and config.accessibility.color_palette != "default"
+            ):
+                palette_to_use = config.accessibility.color_palette
+        except ImportError:
+            pass
+
+    # Get the colorway
+    if palette_to_use and palette_to_use != "default":
+        try:
+            from ..accessibility.plotly_theme import get_plotly_colorway
+
+            return get_plotly_colorway(palette_to_use)
+        except ImportError:
+            pass  # Accessibility module not available
+
+    return None
+
+
 def _extract_data_and_label(
     arr: Any, target_unit: Unit | None = None
 ) -> tuple[np.ndarray[Any, Any], str]:
@@ -70,6 +105,7 @@ def line(
     title: str | None = None,
     x_title: str | None = None,
     y_title: str | None = None,
+    palette: str | None = None,
     **kwargs: Any,
 ) -> go.Figure:
     """Create a line plot with automatic unit labels.
@@ -82,6 +118,7 @@ def line(
         title: Plot title.
         x_title: X-axis title (units appended automatically).
         y_title: Y-axis title (units appended automatically).
+        palette: Color palette to use. If None, uses config.accessibility.color_palette.
         **kwargs: Additional arguments passed to px.line.
 
     Returns:
@@ -109,11 +146,17 @@ def line(
     if y_label:
         y_axis_title = f"{y_axis_title} {y_label}".strip()
 
-    fig.update_layout(
-        title=title,
-        xaxis_title=x_axis_title if x_axis_title else None,
-        yaxis_title=y_axis_title if y_axis_title else None,
-    )
+    # Apply palette
+    colorway = _get_colorway(palette)
+    layout_update = {
+        "title": title,
+        "xaxis_title": x_axis_title if x_axis_title else None,
+        "yaxis_title": y_axis_title if y_axis_title else None,
+    }
+    if colorway:
+        layout_update["colorway"] = colorway
+
+    fig.update_layout(**layout_update)
 
     return fig
 

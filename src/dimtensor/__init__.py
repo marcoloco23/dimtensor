@@ -59,7 +59,16 @@ from . import schema
 # Serverless deployment
 from . import serverless
 
-__version__ = "5.0.0"
+# Education and interactive textbook
+from . import education
+
+# Internationalization (i18n)
+from . import i18n
+
+# Accessibility features
+from . import accessibility
+
+__version__ = "5.1.0"
 
 __all__ = [
     # Core classes
@@ -92,6 +101,9 @@ __all__ = [
     "research",
     "schema",
     "serverless",
+    "education",
+    "i18n",
+    "accessibility",
     # Version
     "__version__",
 ]
