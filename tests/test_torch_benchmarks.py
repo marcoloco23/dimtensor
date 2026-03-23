@@ -1,7 +1,8 @@
 """Tests for DimTensor CUDA benchmarks."""
 
 import pytest
-import torch
+
+torch = pytest.importorskip("torch", reason="PyTorch not installed")
 
 from dimtensor.torch.benchmarks import (
     CudaBenchmarkResult,

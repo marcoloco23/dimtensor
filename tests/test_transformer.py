@@ -5,7 +5,8 @@ physical dimension tracking and autograd support.
 """
 
 import pytest
-import torch
+
+torch = pytest.importorskip("torch", reason="PyTorch not installed")
 
 from dimtensor import Dimension, units
 from dimtensor.errors import DimensionError

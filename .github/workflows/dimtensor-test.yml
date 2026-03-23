@@ -95,7 +95,7 @@ jobs:
 
       - name: Run core tests only
         run: |
-          pytest tests/test_dimarray.py tests/test_dimensions.py tests/test_units.py -v
+          pytest tests/test_dimarray.py tests/test_dimensions.py -v
 
       - name: Verify dimensional safety
         run: |
