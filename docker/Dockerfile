@@ -26,8 +26,8 @@ WORKDIR /home/dimtensor
 COPY --chown=dimtensor:dimtensor pyproject.toml README.md LICENSE ./
 COPY --chown=dimtensor:dimtensor src/ ./src/
 
-# Install dimtensor with pinned NumPy
-RUN pip install --no-cache-dir --upgrade pip && \
+# Install dimtensor with pinned NumPy and patched pip dependencies
+RUN pip install --no-cache-dir --upgrade pip wheel setuptools && \
     pip install --no-cache-dir "numpy>=1.24.0,<2.0.0" && \
     pip install --no-cache-dir -e . && \
     # Verify NumPy version
@@ -174,12 +174,12 @@ RUN mkdir -p /home/dimtensor/notebooks && \
 # Create example notebook
 COPY --chown=dimtensor:dimtensor docker/quickstart.ipynb /home/dimtensor/notebooks/quickstart.ipynb
 
-# Configure Jupyter
+# Configure Jupyter with auto-generated token authentication
+# Set JUPYTER_TOKEN env var to override, or JUPYTER_TOKEN='' to disable auth (not recommended)
 RUN mkdir -p /home/dimtensor/.jupyter && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
-    echo "c.ServerApp.allow_root = True" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
-    echo "c.ServerApp.token = ''" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
-    echo "c.ServerApp.password = ''" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
+    echo "c.ServerApp.allow_root = False" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
+    echo "c.ServerApp.open_browser = False" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
     chown -R dimtensor:dimtensor /home/dimtensor/.jupyter
 
 # Expose Jupyter port
@@ -195,5 +195,5 @@ WORKDIR /home/dimtensor/notebooks
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD curl -f http://localhost:8888/lab || exit 1
 
-# Start JupyterLab
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--NotebookApp.token=''", "--NotebookApp.password=''"]
+# Start JupyterLab (token auto-generated; override with JUPYTER_TOKEN env var)
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser"]

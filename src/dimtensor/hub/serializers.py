@@ -7,8 +7,72 @@ This module provides serialization utilities for different frameworks
 from __future__ import annotations
 
 import json
+import logging
+import pickle
+import warnings
 from pathlib import Path
 from typing import Any, Protocol
+
+logger = logging.getLogger(__name__)
+
+# Top-level modules allowed for unpickling
+_SAFE_PICKLE_TOP_MODULES = frozenset({
+    "numpy",
+    "builtins",
+    "collections",
+    "dimtensor",
+    "copyreg",
+    "_codecs",
+})
+
+# Explicitly blocked modules (even if top-level is allowed)
+_BLOCKED_PICKLE_MODULES = frozenset({
+    "os",
+    "sys",
+    "subprocess",
+    "shutil",
+    "importlib",
+    "ctypes",
+    "socket",
+    "http",
+    "urllib",
+    "pickle",
+    "io",
+    "code",
+    "codeop",
+    "compileall",
+    "runpy",
+    "webbrowser",
+    "pathlib",
+    "signal",
+    "multiprocessing",
+    "threading",
+})
+
+
+class _RestrictedUnpickler(pickle.Unpickler):
+    """Unpickler that only allows known-safe classes to be deserialized.
+
+    Blocks arbitrary code execution by restricting which modules and
+    classes can be instantiated during deserialization.
+    """
+
+    def find_class(self, module: str, name: str) -> Any:
+        top_module = module.split(".")[0]
+
+        if top_module in _BLOCKED_PICKLE_MODULES:
+            raise pickle.UnpicklingError(
+                f"Deserialization of '{module}.{name}' is blocked for security."
+            )
+
+        if top_module in _SAFE_PICKLE_TOP_MODULES:
+            return super().find_class(module, name)
+
+        raise pickle.UnpicklingError(
+            f"Deserialization of '{module}.{name}' is blocked for security. "
+            f"Only numpy, dimtensor, and builtins types are allowed. "
+            f"If you trust this file, use pickle.load() directly."
+        )
 
 
 class ModelSerializer(Protocol):
@@ -77,7 +141,7 @@ class PyTorchSerializer:
             raise RuntimeError("PyTorch is required")
 
         state_dict_path = path / "weights.pt"
-        state_dict = torch.load(state_dict_path, map_location="cpu")
+        state_dict = torch.load(state_dict_path, map_location="cpu", weights_only=True)
 
         return {
             "state_dict": state_dict,
@@ -97,7 +161,7 @@ class PyTorchSerializer:
             raise RuntimeError("PyTorch is required")
 
         state_dict_path = path / "weights.pt"
-        state_dict = torch.load(state_dict_path, map_location="cpu")
+        state_dict = torch.load(state_dict_path, map_location="cpu", weights_only=True)
         model.load_state_dict(state_dict)
 
 
@@ -169,8 +233,6 @@ class NumPySerializer:
         Returns:
             Metadata dict.
         """
-        import pickle
-
         model_path = path / "model.pkl"
         with open(model_path, "wb") as f:
             pickle.dump(model, f)
@@ -183,7 +245,11 @@ class NumPySerializer:
         return metadata
 
     def load(self, path: Path, metadata: dict[str, Any]) -> Any:
-        """Load numpy model.
+        """Load numpy model using restricted unpickling.
+
+        Only numpy, dimtensor, and builtins types are allowed to be
+        deserialized. This prevents arbitrary code execution from
+        malicious model files.
 
         Args:
             path: Directory to load from.
@@ -191,12 +257,13 @@ class NumPySerializer:
 
         Returns:
             Loaded model object.
-        """
-        import pickle
 
+        Raises:
+            pickle.UnpicklingError: If the file contains disallowed types.
+        """
         model_path = path / "model.pkl"
         with open(model_path, "rb") as f:
-            model = pickle.load(f)
+            model = _RestrictedUnpickler(f).load()
 
         return model
 

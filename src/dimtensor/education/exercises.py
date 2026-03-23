@@ -6,6 +6,7 @@ numeric answers, code exercises, and dimensional analysis problems.
 
 from __future__ import annotations
 
+import ast
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Callable
@@ -14,6 +15,45 @@ from ..core.dimarray import DimArray
 from ..core.dimensions import Dimension
 from ..core.units import Unit
 from .validation import AnswerValidator, ValidationResult
+
+# Blocked builtins that could be used for code injection
+_BLOCKED_BUILTINS = frozenset({
+    "exec", "eval", "compile", "__import__", "breakpoint",
+    "exit", "quit", "open", "input",
+})
+
+# Blocked AST node types (attribute access to dangerous objects)
+_BLOCKED_ATTRIBUTES = frozenset({
+    "__subclasses__", "__bases__", "__mro__", "__class__",
+    "__globals__", "__code__", "__builtins__",
+})
+
+
+def _validate_code_safety(code: str) -> str | None:
+    """Validate that code does not contain dangerous constructs.
+
+    Returns None if safe, or an error message if unsafe.
+    """
+    try:
+        tree = ast.parse(code)
+    except SyntaxError as e:
+        return f"Syntax error: {e}"
+
+    for node in ast.walk(tree):
+        # Block import statements
+        if isinstance(node, (ast.Import, ast.ImportFrom)):
+            return "Import statements are not allowed in exercise code."
+
+        # Block calls to dangerous builtins
+        if isinstance(node, ast.Call):
+            if isinstance(node.func, ast.Name) and node.func.id in _BLOCKED_BUILTINS:
+                return f"Use of '{node.func.id}()' is not allowed."
+
+        # Block access to dunder attributes used for sandbox escapes
+        if isinstance(node, ast.Attribute) and node.attr in _BLOCKED_ATTRIBUTES:
+            return f"Access to '{node.attr}' is not allowed."
+
+    return None
 
 
 @dataclass
@@ -300,9 +340,26 @@ class CodeExercise(Exercise):
         for i, test in enumerate(self.test_cases):
             try:
                 if isinstance(answer, str):
-                    # Execute code string
-                    local_namespace = {}
-                    exec(answer, local_namespace)
+                    # Validate code safety before execution
+                    safety_error = _validate_code_safety(answer)
+                    if safety_error:
+                        return ExerciseResult(
+                            correct=False,
+                            message=f"Code rejected: {safety_error}",
+                            score=0.0,
+                        )
+                    # Execute in restricted namespace with limited builtins
+                    safe_builtins = {
+                        k: v for k, v in __builtins__.items()
+                        if k not in _BLOCKED_BUILTINS
+                    } if isinstance(__builtins__, dict) else {
+                        k: getattr(__builtins__, k)
+                        for k in dir(__builtins__)
+                        if k not in _BLOCKED_BUILTINS and not k.startswith("_")
+                    }
+                    restricted_globals = {"__builtins__": safe_builtins}
+                    local_namespace: dict[str, Any] = {}
+                    exec(answer, restricted_globals, local_namespace)  # noqa: S102
                     # Assume the function is named as expected by test
                     result = test(local_namespace)
                 else:

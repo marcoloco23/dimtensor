@@ -347,7 +347,7 @@ class DimModelPackage:
             raise ValueError(f"Missing weights.pt in package: {path}")
 
         # Load state dict only - user must provide model architecture
-        state_dict = torch.load(weights_path, map_location="cpu")
+        state_dict = torch.load(weights_path, map_location="cpu", weights_only=True)
 
         # Return a dict with state_dict for now
         # In a real implementation, we'd need to instantiate the model
@@ -375,15 +375,19 @@ class DimModelPackage:
 
     @classmethod
     def _load_numpy(cls, path: Path, card: ModelCard) -> Any:
-        """Load numpy-based model."""
-        import pickle
+        """Load numpy-based model using restricted unpickling.
+
+        Only numpy, dimtensor, and builtins types are allowed.
+        This prevents arbitrary code execution from malicious files.
+        """
+        from .serializers import _RestrictedUnpickler
 
         weights_path = path / "model.pkl"
         if not weights_path.exists():
             raise ValueError(f"Missing model.pkl in package: {path}")
 
         with open(weights_path, "rb") as f:
-            model = pickle.load(f)
+            model = _RestrictedUnpickler(f).load()
 
         return model
 

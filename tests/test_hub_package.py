@@ -400,17 +400,16 @@ class TestCreateValidator:
         my_model(velocity=position)
 
 
-def _numpy_model_for_test(x):
-    """Module-level model function for pickling in tests."""
-    return x * 2
-
-
 class TestNumpyPackage:
     """Tests for numpy model packages."""
 
     def test_save_load_numpy(self, model_card):
         """Test save/load with numpy model."""
-        package = DimModelPackage(_numpy_model_for_test, model_card, framework="numpy")
+        import numpy as np
+
+        # Use a numpy array as the model (safe for restricted unpickling)
+        numpy_model = {"weights": np.array([1.0, 2.0]), "bias": np.array([0.5])}
+        package = DimModelPackage(numpy_model, model_card, framework="numpy")
 
         with tempfile.TemporaryDirectory() as tmpdir:
             save_path = Path(tmpdir) / "numpy-model"
