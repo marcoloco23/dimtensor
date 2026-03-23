@@ -175,7 +175,7 @@ RUN mkdir -p /home/dimtensor/notebooks && \
 COPY --chown=dimtensor:dimtensor docker/quickstart.ipynb /home/dimtensor/notebooks/quickstart.ipynb
 
 # Configure Jupyter
-RUN jupyter lab --generate-config && \
+RUN mkdir -p /home/dimtensor/.jupyter && \
     echo "c.ServerApp.ip = '0.0.0.0'" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
     echo "c.ServerApp.allow_root = True" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
     echo "c.ServerApp.token = ''" >> /home/dimtensor/.jupyter/jupyter_lab_config.py && \
