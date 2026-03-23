@@ -43,6 +43,10 @@ dev = [
     "pytest-cov>=4.0",
     "mypy>=1.0",
     "ruff>=0.1.0",
+    "requests>=2.28.0",
+    "h5py>=3.8.0",
+    "scipy>=1.10.0",
+    "sympy>=1.12",
 ]
 benchmark = [
     "asv>=0.6.0",
