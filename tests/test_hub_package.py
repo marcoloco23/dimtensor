@@ -182,7 +182,7 @@ class TestDimModelPackage:
         """Test output validation with correct dimensions."""
         package = DimModelPackage(simple_model, model_card)
 
-        force_unit = Unit(Dimension(length=1, mass=1, time=-2), 1.0)
+        force_unit = Unit("N", Dimension(length=1, mass=1, time=-2), 1.0)
         force = DimArray([1.0], force_unit)
         outputs = {"force": force}
 
@@ -194,7 +194,7 @@ class TestDimModelPackage:
         package = DimModelPackage(simple_model, model_card)
 
         # Wrong dimension
-        energy = DimArray([1.0], Unit(Dimension(length=2, mass=1, time=-2), 1.0))
+        energy = DimArray([1.0], Unit("J", Dimension(length=2, mass=1, time=-2), 1.0))
         outputs = {"force": energy}
 
         with pytest.raises(DimensionError) as exc_info:
@@ -231,7 +231,7 @@ class TestDimModelWrapper:
 
         def mock_model(velocity):
             # Return dict with force output
-            force_unit = Unit(Dimension(length=1, mass=1, time=-2), 1.0)
+            force_unit = Unit("N", Dimension(length=1, mass=1, time=-2), 1.0)
             return {"force": DimArray([1.0], force_unit)}
 
         wrapper = DimModelWrapper(mock_model, model_card)
@@ -259,7 +259,7 @@ class TestDimModelWrapper:
         """Test forward() alias."""
 
         def mock_model(velocity):
-            force_unit = Unit(Dimension(length=1, mass=1, time=-2), 1.0)
+            force_unit = Unit("N", Dimension(length=1, mass=1, time=-2), 1.0)
             return {"force": DimArray([1.0], force_unit)}
 
         wrapper = DimModelWrapper(mock_model, model_card)
@@ -330,7 +330,7 @@ class TestValidateModelIO:
         velocity = DimArray([1.0, 2.0], meter / second)
         inputs = {"velocity": velocity}
 
-        force_unit = Unit(Dimension(length=1, mass=1, time=-2), 1.0)
+        force_unit = Unit("N", Dimension(length=1, mass=1, time=-2), 1.0)
         force = DimArray([1.0], force_unit)
         outputs = {"force": force}
 
@@ -347,7 +347,7 @@ class TestValidateModelIO:
         inputs = {"velocity": velocity}
 
         # Wrong dimension
-        energy = DimArray([1.0], Unit(Dimension(length=2, mass=1, time=-2), 1.0))
+        energy = DimArray([1.0], Unit("J", Dimension(length=2, mass=1, time=-2), 1.0))
         outputs = {"force": energy}
 
         is_valid, errors = validate_model_io(
@@ -367,7 +367,7 @@ class TestCreateValidator:
 
         @create_validator(model_card)
         def my_model(velocity):
-            force_unit = Unit(Dimension(length=1, mass=1, time=-2), 1.0)
+            force_unit = Unit("N", Dimension(length=1, mass=1, time=-2), 1.0)
             return {"force": DimArray([1.0], force_unit)}
 
         velocity = DimArray([1.0, 2.0], meter / second)
@@ -400,16 +400,17 @@ class TestCreateValidator:
         my_model(velocity=position)
 
 
+def _numpy_model_for_test(x):
+    """Module-level model function for pickling in tests."""
+    return x * 2
+
+
 class TestNumpyPackage:
     """Tests for numpy model packages."""
 
     def test_save_load_numpy(self, model_card):
         """Test save/load with numpy model."""
-
-        def numpy_model(x):
-            return x * 2
-
-        package = DimModelPackage(numpy_model, model_card, framework="numpy")
+        package = DimModelPackage(_numpy_model_for_test, model_card, framework="numpy")
 
         with tempfile.TemporaryDirectory() as tmpdir:
             save_path = Path(tmpdir) / "numpy-model"

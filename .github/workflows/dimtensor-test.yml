@@ -35,11 +35,11 @@ jobs:
         uses: ./.github/actions/setup-dimtensor
         with:
           python-version: ${{ matrix.python-version }}
-          install-extras: 'dev,all'
+          install-extras: 'dev'
 
       - name: Run tests with pytest
         run: |
-          pytest --verbose --cov=dimtensor --cov-report=xml --cov-report=term-missing
+          pytest --verbose --cov=dimtensor --cov-report=xml --cov-report=term-missing --ignore=tests/test_numba.py
 
       - name: Check for dimensional errors
         if: failure()

@@ -14,6 +14,7 @@ from dimtensor.io import (
 
 # Conditional imports for optional dependencies
 try:
+    import netCDF4  # noqa: F401
     from dimtensor.io import save_netcdf_with_card, load_netcdf_with_card
 
     HAS_NETCDF = True
@@ -21,6 +22,7 @@ except ImportError:
     HAS_NETCDF = False
 
 try:
+    import pyarrow  # noqa: F401
     from dimtensor.io import save_parquet_with_card, load_parquet_with_card
 
     HAS_PARQUET = True

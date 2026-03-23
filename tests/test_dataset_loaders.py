@@ -89,43 +89,54 @@ class TestBaseLoader:
                 assert filepath.exists()
                 assert filepath.read_bytes() == b"test,data\n1,2\n3,4"
 
-                # Check metadata was created
-                metadata_file = tmp_path / "test_key.json"
-                assert metadata_file.exists()
+                # Check metadata was registered with cache manager
+                cache_info = loader.get_cache_info("test_key")
+                assert cache_info is not None
 
     def test_clear_cache_all(self, tmp_path):
-        """Test clearing all cache files."""
+        """Test clearing all cache files from this source."""
+        mock_response = Mock()
+        mock_response.content = b"data1"
+        mock_response.headers = {"content-type": "text/csv"}
+
         with patch.dict(os.environ, {"DIMTENSOR_CACHE_DIR": str(tmp_path)}):
             loader = CSVLoader()
 
-            # Create some dummy cache files
-            (tmp_path / "file1.csv").write_text("data")
-            (tmp_path / "file1.json").write_text("{}")
-            (tmp_path / "file2.csv").write_text("data")
+            # Register files through the download API
+            with patch("requests.get", return_value=mock_response):
+                path1 = loader.download("http://example.com/file1.csv", cache_key="file1")
+                mock_response.content = b"data2"
+                path2 = loader.download("http://example.com/file2.csv", cache_key="file2")
+
+            assert path1.exists()
+            assert path2.exists()
 
             loader.clear_cache()
 
-            # All files should be deleted
-            assert not (tmp_path / "file1.csv").exists()
-            assert not (tmp_path / "file1.json").exists()
-            assert not (tmp_path / "file2.csv").exists()
+            # Registered files should be cleared from metadata
+            assert loader.get_cache_info("file1") is None
+            assert loader.get_cache_info("file2") is None
 
     def test_clear_cache_specific(self, tmp_path):
         """Test clearing specific cache key."""
+        mock_response = Mock()
+        mock_response.content = b"data1"
+        mock_response.headers = {"content-type": "text/csv"}
+
         with patch.dict(os.environ, {"DIMTENSOR_CACHE_DIR": str(tmp_path)}):
             loader = CSVLoader()
 
-            # Create some dummy cache files
-            (tmp_path / "file1.csv").write_text("data")
-            (tmp_path / "file1.json").write_text("{}")
-            (tmp_path / "file2.csv").write_text("data")
+            # Register files through the download API
+            with patch("requests.get", return_value=mock_response):
+                path1 = loader.download("http://example.com/file1.csv", cache_key="file1")
+                mock_response.content = b"data2"
+                path2 = loader.download("http://example.com/file2.csv", cache_key="file2")
 
             loader.clear_cache(cache_key="file1")
 
-            # Only file1 should be deleted
-            assert not (tmp_path / "file1.csv").exists()
-            assert not (tmp_path / "file1.json").exists()
-            assert (tmp_path / "file2.csv").exists()
+            # Only file1 should be cleared
+            assert loader.get_cache_info("file1") is None
+            assert loader.get_cache_info("file2") is not None
 
 
 class TestCSVLoader:

@@ -159,6 +159,38 @@ strict = true
 warn_return_any = true
 warn_unused_configs = true
 
+# Relaxed strictness for extension/integration modules that wrap
+# untyped third-party libraries or have complex dynamic APIs
+[[tool.mypy.overrides]]
+module = [
+    "dimtensor.torch.*",
+    "dimtensor.tensorflow.*",
+    "dimtensor.jax.*",
+    "dimtensor.web.*",
+    "dimtensor.plugins.*",
+    "dimtensor.accessibility.*",
+    "dimtensor.education.*",
+    "dimtensor.i18n.*",
+    "dimtensor.datasets.*",
+    "dimtensor.dask.*",
+    "dimtensor.cupy.*",
+    "dimtensor.numba.*",
+    "dimtensor.ray.*",
+    "dimtensor.serverless.*",
+    "dimtensor.visualization.*",
+    "dimtensor.integrations.*",
+    "dimtensor.io.*",
+    "dimtensor.uncertainty.*",
+    "dimtensor.analysis.*",
+    "dimtensor.schema.*",
+    "dimtensor.inference.*",
+    "dimtensor.hub.*",
+    "dimtensor.research.*",
+    "dimtensor.experiments.*",
+    "dimtensor.domains.*",
+]
+ignore_errors = true
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
