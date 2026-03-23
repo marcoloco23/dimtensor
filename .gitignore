@@ -82,3 +82,6 @@ Thumbs.db
 rust/target/
 *.so
 *.dylib
+
+# Claude Code
+.claude/
