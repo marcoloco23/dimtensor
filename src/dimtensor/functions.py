@@ -7,8 +7,10 @@ maintaining dimensional correctness.
 from __future__ import annotations
 
 from collections.abc import Sequence
+from typing import Any
 
 import numpy as np
+from numpy.typing import NDArray
 
 from .core.dimarray import DimArray
 from .core.units import Unit
@@ -189,7 +191,7 @@ def split(
 
 def _propagate_bilinear_uncertainty(
     a: DimArray, b: DimArray
-) -> np.ndarray | None:
+) -> NDArray[Any] | None:
     """Propagate uncertainty through a bilinear operation (dot/matmul).
 
     Assumes independent inputs. For C = A @ B:
@@ -213,7 +215,7 @@ def _propagate_bilinear_uncertainty(
 
     # General case: use matmul rules
     result_var = np.matmul(a_var, b._data**2) + np.matmul(a._data**2, b_var)
-    return np.sqrt(result_var)
+    return np.sqrt(result_var)  # type: ignore[no-any-return]
 
 
 def dot(a: DimArray, b: DimArray) -> DimArray:
@@ -369,7 +371,7 @@ def weighted_mean(
             )
 
     values = np.array([arr._data.item() for arr in converted])
-    sigmas = np.array([arr._uncertainty.item() for arr in converted])
+    sigmas = np.array([arr._uncertainty.item() for arr in converted])  # type: ignore[union-attr]
 
     # Handle zero-variance (exact) inputs: return that value
     exact_mask = sigmas == 0.0
