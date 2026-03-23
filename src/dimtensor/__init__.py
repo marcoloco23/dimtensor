@@ -39,7 +39,7 @@ from . import validation
 from . import config
 
 # Module-level array functions
-from .functions import concatenate, stack, split, dot, matmul, norm
+from .functions import concatenate, stack, split, dot, matmul, norm, weighted_mean
 
 # Profiling tools
 from . import profiling
@@ -88,6 +88,7 @@ __all__ = [
     "dot",
     "matmul",
     "norm",
+    "weighted_mean",
     # Modules
     "units",
     "constants",

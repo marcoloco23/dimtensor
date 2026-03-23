@@ -13,6 +13,7 @@ import numpy as np
 import pytest
 
 from dimtensor import DimArray, units
+from dimtensor.errors import DimensionError
 from dimtensor.constants import c, G, h
 
 
@@ -372,3 +373,121 @@ class TestUncertaintyFunctions:
 
         np.testing.assert_array_almost_equal(parts[0].uncertainty, [0.1, 0.2])
         np.testing.assert_array_almost_equal(parts[1].uncertainty, [0.3, 0.4])
+
+    def test_dot_with_uncertainty(self):
+        """Test dot product propagates uncertainty."""
+        from dimtensor import dot
+
+        a = DimArray([3.0, 4.0], units.m, uncertainty=[0.1, 0.2])
+        b = DimArray([1.0, 2.0], units.s, uncertainty=[0.05, 0.1])
+        result = dot(a, b)
+
+        # σ² = Σ(b² σ_a² + a² σ_b²)
+        #    = 1²×0.1² + 2²×0.2² + 3²×0.05² + 4²×0.1²
+        #    = 0.01 + 0.16 + 0.0225 + 0.16 = 0.3525
+        expected_unc = np.sqrt(0.3525)
+        assert result.has_uncertainty
+        np.testing.assert_almost_equal(result.uncertainty[0], expected_unc, decimal=10)
+
+    def test_dot_one_has_uncertainty(self):
+        """Test dot when only one operand has uncertainty."""
+        from dimtensor import dot
+
+        a = DimArray([3.0, 4.0], units.m, uncertainty=[0.1, 0.2])
+        b = DimArray([1.0, 2.0], units.s)
+        result = dot(a, b)
+
+        # σ² = Σ(b² σ_a²) = 1²×0.1² + 2²×0.2² = 0.01 + 0.16 = 0.17
+        expected_unc = np.sqrt(0.17)
+        assert result.has_uncertainty
+        np.testing.assert_almost_equal(result.uncertainty[0], expected_unc, decimal=10)
+
+    def test_dot_no_uncertainty(self):
+        """Test dot without uncertainty returns no uncertainty."""
+        from dimtensor import dot
+
+        a = DimArray([3.0, 4.0], units.m)
+        b = DimArray([1.0, 2.0], units.s)
+        result = dot(a, b)
+        assert not result.has_uncertainty
+
+    def test_matmul_with_uncertainty(self):
+        """Test matmul propagates uncertainty for 2D arrays."""
+        from dimtensor import matmul
+
+        A = DimArray([[1.0, 2.0], [3.0, 4.0]], units.m, uncertainty=[[0.1, 0.2], [0.3, 0.4]])
+        B = DimArray([[5.0, 6.0], [7.0, 8.0]], units.s, uncertainty=[[0.5, 0.6], [0.7, 0.8]])
+        C = matmul(A, B)
+
+        assert C.has_uncertainty
+        assert C.uncertainty.shape == (2, 2)
+
+        # Verify C[0,0]: A[0,:] @ B[:,0] = 1*5 + 2*7 = 19
+        # σ²(C[0,0]) = B[0,0]²σ²(A[0,0]) + B[1,0]²σ²(A[0,1])
+        #            + A[0,0]²σ²(B[0,0]) + A[0,1]²σ²(B[1,0])
+        #            = 25*0.01 + 49*0.04 + 1*0.25 + 4*0.49
+        #            = 0.25 + 1.96 + 0.25 + 1.96 = 4.42
+        expected_unc_00 = np.sqrt(4.42)
+        np.testing.assert_almost_equal(C.uncertainty[0, 0], expected_unc_00, decimal=10)
+
+    def test_matmul_no_uncertainty(self):
+        """Test matmul without uncertainty returns no uncertainty."""
+        from dimtensor import matmul
+
+        A = DimArray([[1.0, 2.0]], units.m)
+        B = DimArray([[3.0], [4.0]], units.s)
+        C = matmul(A, B)
+        assert not C.has_uncertainty
+
+    def test_weighted_mean_basic(self):
+        """Test inverse-variance weighted mean."""
+        from dimtensor import weighted_mean
+
+        a = DimArray([10.0], units.m, uncertainty=[1.0])
+        b = DimArray([12.0], units.m, uncertainty=[2.0])
+        result = weighted_mean([a, b])
+
+        # weights: 1/1² = 1, 1/2² = 0.25; total = 1.25
+        # mean = (1*10 + 0.25*12) / 1.25 = 13 / 1.25 = 10.4
+        # σ = 1/√1.25 ≈ 0.8944
+        np.testing.assert_almost_equal(result._data[0], 10.4)
+        np.testing.assert_almost_equal(result.uncertainty[0], 1.0 / np.sqrt(1.25))
+
+    def test_weighted_mean_equal_uncertainty(self):
+        """Test weighted mean with equal uncertainties gives arithmetic mean."""
+        from dimtensor import weighted_mean
+
+        a = DimArray([10.0], units.m, uncertainty=[1.0])
+        b = DimArray([20.0], units.m, uncertainty=[1.0])
+        result = weighted_mean([a, b])
+
+        np.testing.assert_almost_equal(result._data[0], 15.0)
+
+    def test_weighted_mean_zero_variance(self):
+        """Test weighted mean with zero variance returns exact value."""
+        from dimtensor import weighted_mean
+
+        a = DimArray([10.0], units.m, uncertainty=[0.0])  # exact
+        b = DimArray([20.0], units.m, uncertainty=[5.0])
+        result = weighted_mean([a, b])
+
+        np.testing.assert_almost_equal(result._data[0], 10.0)
+        np.testing.assert_almost_equal(result.uncertainty[0], 0.0)
+
+    def test_weighted_mean_requires_uncertainty(self):
+        """Test weighted mean raises if any input lacks uncertainty."""
+        from dimtensor import weighted_mean
+
+        a = DimArray([10.0], units.m, uncertainty=[1.0])
+        b = DimArray([20.0], units.m)  # no uncertainty
+        with pytest.raises(ValueError, match="must have uncertainty"):
+            weighted_mean([a, b])
+
+    def test_weighted_mean_dimension_check(self):
+        """Test weighted mean rejects incompatible dimensions."""
+        from dimtensor import weighted_mean
+
+        a = DimArray([10.0], units.m, uncertainty=[1.0])
+        b = DimArray([20.0], units.s, uncertainty=[1.0])
+        with pytest.raises(DimensionError):
+            weighted_mean([a, b])

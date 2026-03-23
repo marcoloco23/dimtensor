@@ -187,14 +187,43 @@ def split(
         ]
 
 
+def _propagate_bilinear_uncertainty(
+    a: DimArray, b: DimArray
+) -> np.ndarray | None:
+    """Propagate uncertainty through a bilinear operation (dot/matmul).
+
+    Assumes independent inputs. For C = A @ B:
+        σ²(C_ij) = Σ_k (B_kj² σ²(A_ik) + A_ik² σ²(B_kj))
+
+    Returns None if neither input has uncertainty.
+    """
+    if a._uncertainty is None and b._uncertainty is None:
+        return None
+
+    a_var = a._uncertainty**2 if a._uncertainty is not None else np.zeros_like(a._data)
+    b_var = b._uncertainty**2 if b._uncertainty is not None else np.zeros_like(b._data)
+
+    # variance(result) = (b²) @ (a_var) + (a²) @ (b_var)  — contracted over shared axis
+    # np.dot/matmul contract the last axis of a with the second-to-last of b,
+    # so the same contraction on squared values gives the variance.
+    if a._data.ndim == 1 and b._data.ndim == 1:
+        # 1D dot 1D -> scalar
+        result_var = np.sum(b._data**2 * a_var + a._data**2 * b_var)
+        return np.array([np.sqrt(result_var)])
+
+    # General case: use matmul rules
+    result_var = np.matmul(a_var, b._data**2) + np.matmul(a._data**2, b_var)
+    return np.sqrt(result_var)
+
+
 def dot(a: DimArray, b: DimArray) -> DimArray:
     """Dot product of two DimArrays.
 
     Dimensions multiply: if a has dimension D1 and b has dimension D2,
     the result has dimension D1 * D2.
 
-    Note: Uncertainty propagation through dot product is complex and not
-    implemented. The result will have no uncertainty information.
+    Uncertainty is propagated assuming independent inputs:
+        σ² = Σ_k (b_k² σ²(a_k) + a_k² σ²(b_k))
 
     Args:
         a: First array.
@@ -215,8 +244,11 @@ def dot(a: DimArray, b: DimArray) -> DimArray:
     if np.isscalar(result):
         result = np.array([result])
 
-    # Uncertainty propagation through dot product is complex, drop it
-    return DimArray._from_data_and_unit(result, new_unit, None)
+    # Uncertainty propagation (assumes independent inputs):
+    # For 1D·1D: σ² = Σ_k (b_k² σ_a_k² + a_k² σ_b_k²)
+    new_uncertainty = _propagate_bilinear_uncertainty(a, b)
+
+    return DimArray._from_data_and_unit(result, new_unit, new_uncertainty)
 
 
 def matmul(a: DimArray, b: DimArray) -> DimArray:
@@ -225,8 +257,8 @@ def matmul(a: DimArray, b: DimArray) -> DimArray:
     Dimensions multiply: if a has dimension D1 and b has dimension D2,
     the result has dimension D1 * D2.
 
-    Note: Uncertainty propagation through matrix multiplication is complex
-    and not implemented. The result will have no uncertainty information.
+    Uncertainty is propagated assuming independent inputs:
+        σ²(C_ij) = Σ_k (B_kj² σ²(A_ik) + A_ik² σ²(B_kj))
 
     Args:
         a: First array (must be at least 1D).
@@ -247,8 +279,11 @@ def matmul(a: DimArray, b: DimArray) -> DimArray:
     if np.isscalar(result):
         result = np.array([result])
 
-    # Uncertainty propagation through matmul is complex, drop it
-    return DimArray._from_data_and_unit(result, new_unit, None)
+    # Uncertainty propagation (assumes independent inputs):
+    # σ²(C_ij) = Σ_k (B_kj² σ_A_ik² + A_ik² σ_B_kj²)
+    new_uncertainty = _propagate_bilinear_uncertainty(a, b)
+
+    return DimArray._from_data_and_unit(result, new_unit, new_uncertainty)
 
 
 def norm(
@@ -288,3 +323,67 @@ def norm(
 
     # Uncertainty propagation through norm is complex, drop it
     return DimArray._from_data_and_unit(result_arr, array._unit, None)
+
+
+def weighted_mean(
+    arrays: Sequence[DimArray],
+) -> DimArray:
+    """Inverse-variance weighted mean of DimArrays.
+
+    Computes the optimal combination of measurements with different
+    uncertainties. Each value is weighted by 1/σ², giving more weight
+    to more precise measurements.
+
+    If any input has zero uncertainty, that value is returned directly
+    (it has infinite weight, i.e., it is exact).
+
+    All arrays must be scalar (single-element) and have the same dimension.
+    All arrays must have uncertainty.
+
+    Args:
+        arrays: Sequence of scalar DimArrays with uncertainty.
+
+    Returns:
+        Weighted mean with propagated uncertainty σ = 1/√(Σ 1/σ_i²).
+
+    Raises:
+        DimensionError: If arrays have incompatible dimensions.
+        ValueError: If arrays is empty or any array lacks uncertainty.
+
+    Examples:
+        >>> a = DimArray([10.0], units.m, uncertainty=[1.0])
+        >>> b = DimArray([12.0], units.m, uncertainty=[2.0])
+        >>> weighted_mean([a, b])  # Weighted toward a (smaller uncertainty)
+        DimArray([10.4], unit='m')  # with uncertainty ~0.894
+    """
+    unit = _check_same_dimension(arrays, "weighted_mean")
+
+    # Convert all to same unit
+    converted = [arr.to(unit) for arr in arrays]
+
+    for arr in converted:
+        if arr._uncertainty is None:
+            raise ValueError(
+                "All arrays must have uncertainty for weighted_mean. "
+                "Use mean() for unweighted averaging."
+            )
+
+    values = np.array([arr._data.item() for arr in converted])
+    sigmas = np.array([arr._uncertainty.item() for arr in converted])
+
+    # Handle zero-variance (exact) inputs: return that value
+    exact_mask = sigmas == 0.0
+    if np.any(exact_mask):
+        exact_values = values[exact_mask]
+        return DimArray._from_data_and_unit(
+            np.array([exact_values[0]]), unit, np.array([0.0])
+        )
+
+    weights = 1.0 / sigmas**2
+    total_weight = np.sum(weights)
+    result = np.sum(weights * values) / total_weight
+    result_sigma = 1.0 / np.sqrt(total_weight)
+
+    return DimArray._from_data_and_unit(
+        np.array([result]), unit, np.array([result_sigma])
+    )
