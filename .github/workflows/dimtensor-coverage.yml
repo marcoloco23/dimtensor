@@ -1,0 +1,94 @@
+name: Coverage dashboard
+
+# v5.2.0 task #274: Public coverage reports.
+# Runs the test suite with coverage, uploads to Codecov, and publishes
+# an HTML coverage report as a GitHub Pages artifact.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  coverage:
+    name: Generate coverage report
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install -e ".[dev]"
+          pip install hypothesis coverage[toml] pytest-cov
+
+      - name: Run tests with coverage
+        run: |
+          pytest \
+            --cov=dimtensor \
+            --cov-report=xml:coverage.xml \
+            --cov-report=html:htmlcov \
+            --cov-report=term-missing \
+            --cov-report=json:coverage.json \
+            --ignore=tests/test_numba.py \
+            -m "not slow" \
+            -q
+
+      - name: Generate coverage badge
+        run: |
+          python -c "
+          import json
+          with open('coverage.json') as f:
+              data = json.load(f)
+          pct = data['totals']['percent_covered']
+          color = 'red' if pct < 50 else 'orange' if pct < 70 else 'yellow' if pct < 85 else 'success'
+          badge = {
+              'schemaVersion': 1,
+              'label': 'coverage',
+              'message': f'{pct:.1f}%',
+              'color': color,
+          }
+          with open('coverage-badge.json', 'w') as f:
+              json.dump(badge, f)
+          print(f'Coverage: {pct:.1f}%')
+          "
+
+      - name: Upload coverage artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            coverage.json
+            coverage-badge.json
+            htmlcov/
+          retention-days: 30
+
+      - name: Upload to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: dimtensor-coverage
+          fail_ci_if_error: false
+
+      - name: Comment coverage on PR
+        if: github.event_name == 'pull_request'
+        uses: orgoro/coverage@v3.2
+        with:
+          coverageFile: coverage.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+        continue-on-error: true

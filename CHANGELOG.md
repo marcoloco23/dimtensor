@@ -5,6 +5,70 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [5.2.0] - 2026-04-16
+
+### Added
+- **Testing & Quality** - Production-grade reliability infrastructure:
+
+  **Property-based tests** (`tests/test_property_based.py`):
+  - 27 Hypothesis-driven tests covering algebraic invariants
+  - Verifies Dimension forms an Abelian group under multiplication
+  - Tests power laws (`a**p * a**q == a**(p+q)`, `(a**p)**q == a**(p*q)`)
+  - Round-trip checks for unit conversion factors
+  - DimArray arithmetic invariants (addition, multiplication, negation)
+  - Physics-formula invariants (F=ma, v=d/t, E=Fd produce correct dimensions)
+
+  **Fuzz tests** (`tests/test_fuzz.py`):
+  - 16 fuzz tests for malformed/random inputs
+  - JSON round-trip fuzzing (DimArray ↔ dict ↔ JSON)
+  - Adversarial JSON input fuzzing (garbage strings, missing keys)
+  - Operation sequence fuzzing (random pipelines preserve dimensions)
+  - DimArray with NaN/inf data (no crashes)
+  - Asserts only documented exception types are raised
+
+  **Chaos tests** (`tests/test_chaos.py`):
+  - 20 chaos tests for graceful degradation
+  - Filesystem failure modes (missing files, corrupt JSON, truncated input)
+  - Optional-dependency missing scenarios
+  - Pathological inputs (empty arrays, 0-d arrays, division by zero)
+  - Concurrent read safety
+  - Recovery from ill-formed serialized data
+
+  **Load tests** (`tests/test_load.py`):
+  - 9 load tests with generous time budgets
+  - Catches catastrophic O(n²) regressions on 1M+ element arrays
+  - Repeated-operation stress (1000 additions/conversions/dimension constructs)
+  - Hash distribution stress (2000 unique Dimensions in a dict)
+  - Optional `slow` marker for huge (10M element) arrays
+
+  **Mutation testing** (`.mutmut.toml`):
+  - mutmut configuration scoped to core/ modules
+  - Custom runner using property-based + unit tests
+  - Documented in `docs/guide/testing.md`
+
+  **Coverage dashboard** (`.github/workflows/dimtensor-coverage.yml`):
+  - Codecov upload on every push to main
+  - HTML coverage report as build artifact
+  - Coverage badge JSON for shields.io endpoint
+  - PR comments with coverage delta
+
+  **Security audit** (`.github/workflows/dimtensor-security.yml`):
+  - Bandit static analysis (SAST) with SARIF upload
+  - pip-audit for dependency CVEs (PyPA advisory DB)
+  - Safety scan for known vulnerabilities
+  - Trivy filesystem scan
+  - CodeQL deep semantic analysis (security & quality queries)
+  - Weekly schedule + on-PR runs
+
+  **New documentation**:
+  - `docs/guide/testing.md` - Comprehensive testing & QA guide
+
+### Changed
+- New `[test]` optional dependency group: `hypothesis`, `mutmut`, `bandit`, `safety`, `pip-audit`
+- Added pytest markers: `slow`, `network`, `load`
+- Added `[tool.coverage.*]` and `[tool.bandit]` sections to `pyproject.toml`
+- Bumped `__version__` to 5.2.0 (was mismatched in 5.1.0 release)
+
 ## [5.1.0] - 2026-01-13
 
 ### Added
