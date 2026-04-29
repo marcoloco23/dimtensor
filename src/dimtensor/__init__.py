@@ -68,7 +68,7 @@ from . import i18n
 # Accessibility features
 from . import accessibility
 
-__version__ = "5.1.0"
+__version__ = "5.2.0"
 
 __all__ = [
     # Core classes

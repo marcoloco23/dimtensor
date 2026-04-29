@@ -1,0 +1,24 @@
+# mutmut configuration for dimtensor (v5.2.0 task #271).
+#
+# Mutation testing modifies the source code in small ways and re-runs the
+# test suite to check whether tests catch the modification. A high mutation
+# score means the tests are sensitive to bugs.
+#
+# Usage:
+#   pip install mutmut
+#   mutmut run --paths-to-mutate=src/dimtensor/core
+#   mutmut results
+#   mutmut show <id>
+#
+# We focus mutmut on the *core* modules (dimensions, units, dimarray) since
+# those have the strongest invariants and the most concentrated risk.
+
+[mutmut]
+paths_to_mutate = "src/dimtensor/core/"
+backup = false
+runner = "python -m pytest tests/test_dimensions.py tests/test_dimarray.py tests/test_property_based.py -x -q --tb=no -p no:cacheprovider"
+tests_dir = "tests/"
+# Skip mutating these patterns - they are pure data definitions or generated.
+exclude = [
+    "src/dimtensor/core/__init__.py",
+]

@@ -1,0 +1,145 @@
+name: Security audit
+
+# v5.2.0 task #275: SAST/DAST scanning + dependency vulnerability checks.
+#
+# Runs on every push to main, on pull requests, and weekly to catch new
+# advisories on existing dependencies.
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  schedule:
+    # Run every Monday at 08:00 UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  security-events: write
+
+jobs:
+  bandit:
+    name: Static analysis (Bandit)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install bandit
+        run: pip install "bandit[toml]>=1.7"
+
+      - name: Run bandit
+        # Use SARIF output for the GitHub security tab. Don't fail the build
+        # on findings - they're surfaced via the security tab/PR annotations.
+        run: |
+          bandit -r src/dimtensor -c pyproject.toml -f sarif -o bandit-results.sarif || true
+          bandit -r src/dimtensor -c pyproject.toml -ll
+
+      - name: Upload SARIF to GitHub
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: bandit-results.sarif
+          category: bandit
+        continue-on-error: true
+
+  pip-audit:
+    name: Dependency vulnerabilities (pip-audit)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pip-audit
+        run: pip install "pip-audit>=2.6"
+
+      - name: Audit installed dependencies
+        run: |
+          pip install -e ".[dev]"
+          pip-audit --strict --desc || true
+
+  safety:
+    name: Dependency vulnerabilities (Safety)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install safety
+        run: pip install "safety>=3.0"
+
+      - name: Run safety check
+        run: |
+          pip install -e ".[dev]"
+          # safety scan: don't fail the build on advisories alone; the team
+          # should review them in the workflow logs.
+          safety scan --output text || true
+
+  trivy:
+    name: Filesystem scan (Trivy)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0'
+
+      - name: Upload Trivy SARIF
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: 'trivy-results.sarif'
+          category: trivy
+        continue-on-error: true
+
+  codeql:
+    name: CodeQL analysis (Python)
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: python
+          queries: security-and-quality
+
+      - name: Perform CodeQL analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: '/language:python'

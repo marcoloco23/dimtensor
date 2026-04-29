@@ -52,6 +52,19 @@ benchmark = [
     "asv>=0.6.0",
     "pytest-benchmark>=4.0.0",
 ]
+test = [
+    # Property-based and fuzz testing
+    "hypothesis>=6.80.0",
+    # Mutation testing
+    "mutmut>=2.4.0",
+    # Test coverage tooling
+    "pytest-cov>=4.0",
+    "coverage[toml]>=7.0",
+    # Security scanning (SAST)
+    "bandit>=1.7.0",
+    "safety>=3.0.0",
+    "pip-audit>=2.6.0",
+]
 docs = [
     "mkdocs>=1.5",
     "mkdocs-material>=9.0",
@@ -198,3 +211,41 @@ ignore_errors = true
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 addopts = "-v"
+markers = [
+    "slow: marks tests as slow (deselect with '-m \"not slow\"')",
+    "network: marks tests requiring network access",
+    "load: marks load/stress tests",
+]
+
+[tool.coverage.run]
+source = ["src/dimtensor"]
+branch = true
+omit = [
+    "*/tests/*",
+    "*/__main__.py",
+    "*/web/*",
+    "src/dimtensor/_rust.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+    "if __name__ == .__main__.:",
+    "@overload",
+    "\\.\\.\\.",
+]
+show_missing = true
+skip_covered = false
+precision = 1
+
+[tool.coverage.html]
+directory = "htmlcov"
+
+[tool.coverage.xml]
+output = "coverage.xml"
+
+[tool.bandit]
+exclude_dirs = ["tests", "benchmarks", "examples"]
+skips = ["B101"]  # assert_used - acceptable in non-test code for invariants
