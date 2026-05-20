@@ -47,6 +47,10 @@ dev = [
     "h5py>=3.8.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
+    # Property-based / fuzz tests in tests/ import hypothesis directly,
+    # so it has to be in the dev install or `pip install -e .[dev]` ships
+    # a setup that can't even collect the test suite.
+    "hypothesis>=6.80.0",
 ]
 benchmark = [
     "asv>=0.6.0",
@@ -215,6 +219,12 @@ markers = [
     "slow: marks tests as slow (deselect with '-m \"not slow\"')",
     "network: marks tests requiring network access",
     "load: marks load/stress tests",
+]
+# Many MC tests use small n_samples and incidentally trip the convergence
+# warning; the dedicated convergence test uses pytest.warns() which still
+# matches with this filter active.
+filterwarnings = [
+    "ignore:Monte Carlo simulation may not have converged:RuntimeWarning",
 ]
 
 [tool.coverage.run]

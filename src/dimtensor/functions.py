@@ -243,7 +243,7 @@ def dot(a: DimArray, b: DimArray) -> DimArray:
     new_unit = a._unit * b._unit
 
     # Ensure result is at least 1D for API consistency
-    if np.isscalar(result):
+    if not isinstance(result, np.ndarray):
         result = np.array([result])
 
     # Uncertainty propagation (assumes independent inputs):
@@ -278,7 +278,7 @@ def matmul(a: DimArray, b: DimArray) -> DimArray:
     new_unit = a._unit * b._unit
 
     # Ensure result is at least 1D for API consistency
-    if np.isscalar(result):
+    if not isinstance(result, np.ndarray):
         result = np.array([result])
 
     # Uncertainty propagation (assumes independent inputs):

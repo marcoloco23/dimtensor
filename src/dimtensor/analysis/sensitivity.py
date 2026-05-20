@@ -120,15 +120,18 @@ def local_sensitivity(
                 param_minus = DimArray._from_data_and_unit(param_value - perturbation, param._unit)
                 f_plus = func(param_plus, *args, **kwargs)
                 f_minus = func(param_minus, *args, **kwargs)
-                grad_data[idx] = (f_plus._data - f_minus._data) / (2 * delta_elem)
+                diff = np.asarray(f_plus._data - f_minus._data) / (2 * delta_elem)
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
             elif method == "forward":
                 param_plus = DimArray._from_data_and_unit(param_value + perturbation, param._unit)
                 f_plus = func(param_plus, *args, **kwargs)
-                grad_data[idx] = (f_plus._data - f_base._data) / delta_elem
+                diff = np.asarray(f_plus._data - f_base._data) / delta_elem
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
             else:  # backward
                 param_minus = DimArray._from_data_and_unit(param_value - perturbation, param._unit)
                 f_minus = func(param_minus, *args, **kwargs)
-                grad_data[idx] = (f_base._data - f_minus._data) / delta_elem
+                diff = np.asarray(f_base._data - f_minus._data) / delta_elem
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
 
         sensitivity_unit = f_base._unit / param._unit
         return DimArray._from_data_and_unit(grad_data, sensitivity_unit)
@@ -310,11 +313,12 @@ def sensitivity_matrix(
     sensitivities = {}
 
     for param_name, param_value in params.items():
-        # Create wrapper function that accepts param as first arg
-        def func_wrapper(p, **kwargs_with_others):
-            # Merge p back into params dict
+        # Create wrapper function that accepts param as first arg.
+        # Bind `param_name` via default argument so the closure captures the
+        # iteration's value, not a late-bound reference to the loop variable.
+        def func_wrapper(p, *, _name=param_name, **kwargs_with_others):
             all_params = params.copy()
-            all_params[param_name] = p
+            all_params[_name] = p
             return func(**all_params)
 
         # Compute sensitivity

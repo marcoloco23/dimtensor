@@ -517,6 +517,7 @@ def monte_carlo(
                 f"Relative change in mean: {rel_change:.3%}. "
                 f"Consider increasing n_samples.",
                 RuntimeWarning,
+                stacklevel=2,
             )
 
     return MCResult(

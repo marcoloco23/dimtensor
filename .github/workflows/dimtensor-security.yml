@@ -39,9 +39,10 @@ jobs:
       - name: Run bandit
         # Use SARIF output for the GitHub security tab. Don't fail the build
         # on findings - they're surfaced via the security tab/PR annotations.
+        # The console run prints findings to the log for quick triage.
         run: |
           bandit -r src/dimtensor -c pyproject.toml -f sarif -o bandit-results.sarif || true
-          bandit -r src/dimtensor -c pyproject.toml -ll
+          bandit -r src/dimtensor -c pyproject.toml -ll || true
 
       - name: Upload SARIF to GitHub
         if: always()
@@ -137,7 +138,7 @@ jobs:
         uses: github/codeql-action/init@v3
         with:
           languages: python
-          queries: security-and-quality
+          config-file: ./.github/codeql/codeql-config.yml
 
       - name: Perform CodeQL analysis
         uses: github/codeql-action/analyze@v3

@@ -283,8 +283,9 @@ def _load_from_source(
     if os.path.exists(source):
         return _load_weights(source, **kwargs)
 
-    # Remote URL - check cache
-    url_hash = hashlib.md5(source.encode()).hexdigest()[:12]
+    # Remote URL - check cache. MD5 is used as a cache filename suffix,
+    # not for security; a collision just causes a cache miss.
+    url_hash = hashlib.md5(source.encode(), usedforsecurity=False).hexdigest()[:12]
     cache_path = cache_dir / f"{info.name}-{info.version}-{url_hash}.pt"
 
     if cache_path.exists() and not force_download:

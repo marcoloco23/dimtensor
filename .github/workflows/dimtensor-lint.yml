@@ -28,8 +28,9 @@ jobs:
       - name: Run dimensional linter
         id: lint
         run: |
-          # Run linter and capture output
-          python -m dimtensor lint . --format json > lint-results.json || true
+          # Lint source only - tests and examples intentionally use
+          # dimension-mismatched ops to verify the library catches them.
+          python -m dimtensor lint src/dimtensor --format json > lint-results.json || true
 
           # Check if there are any warnings or errors
           if [ -s lint-results.json ]; then
@@ -38,7 +39,7 @@ jobs:
 
             if [ "$WARNINGS" -gt 0 ]; then
               echo "Found $WARNINGS dimensional issues"
-              python -m dimtensor lint . --format text
+              python -m dimtensor lint src/dimtensor --format text
               exit 1
             fi
           fi

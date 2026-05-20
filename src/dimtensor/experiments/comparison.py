@@ -72,7 +72,7 @@ class RunComparison:
             # Import common units
             from ..core import units
             return getattr(units, unit_str, None)
-        except:
+        except (ImportError, AttributeError):
             return None
 
     def _compare_metric(self, metric_name: str) -> dict[str, Any]:

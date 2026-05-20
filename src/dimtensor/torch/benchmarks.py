@@ -212,7 +212,10 @@ def benchmark_device_transfer(
         Benchmark result.
     """
     if not cuda_available():
-        warnings.warn("CUDA not available, skipping device transfer benchmark")
+        warnings.warn(
+            "CUDA not available, skipping device transfer benchmark",
+            stacklevel=2,
+        )
         return CudaBenchmarkResult(
             name=f"transfer_{direction}",
             pytorch_time=0.0,
@@ -636,7 +639,8 @@ def benchmark_cuda_suite(
     if not cuda_available() and device == "cuda":
         warnings.warn(
             "CUDA not available, running CPU benchmarks instead. "
-            "Results may not be representative of GPU performance."
+            "Results may not be representative of GPU performance.",
+            stacklevel=2,
         )
         device = "cpu"
 

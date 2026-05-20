@@ -335,10 +335,8 @@ class PowerLawFitter:
         # Compute predictions
         y_pred = C * x_data ** exponent
 
-        # Compute residuals and R²
+        # Residuals for diagnostic plots; R² from scipy's correlation coefficient
         residuals = y_data - y_pred
-        ss_res = np.sum(residuals ** 2)
-        ss_tot = np.sum((y_data - np.mean(y_data)) ** 2)
         r_squared = r_value ** 2
 
         # Determine coefficient unit

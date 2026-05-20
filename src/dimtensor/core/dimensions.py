@@ -12,9 +12,8 @@ Dimensions are represented as a tuple of exponents for the 7 SI base dimensions:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from fractions import Fraction
-from typing import Tuple
+from typing import Any, Tuple
 
 # Indices for each base dimension
 LENGTH = 0
@@ -38,7 +37,6 @@ _DIMENSION_NAMES = [
 ]
 
 
-@dataclass(frozen=True, slots=True)
 class Dimension:
     """Represents the physical dimension of a quantity.
 
@@ -53,7 +51,13 @@ class Dimension:
     - Power: multiplies exponents by the power
     """
 
+    # The hash slot is precomputed at construction time. Hashing 7 Fractions
+    # is ~14x more expensive than tuple hashing, and the hash is used on every
+    # cached arithmetic op, so memoizing it pays back immediately.
+    __slots__ = ("_exponents", "_hash")
+
     _exponents: Tuple[Fraction, ...]
+    _hash: int
 
     def __init__(
         self,
@@ -71,12 +75,20 @@ class Dimension:
             for x in (length, mass, time, current, temperature, amount, luminosity)
         )
         object.__setattr__(self, "_exponents", exponents)
+        object.__setattr__(self, "_hash", hash(exponents))
+
+    def __setattr__(self, name: str, value: object) -> None:
+        raise AttributeError(f"Dimension is immutable; cannot set {name!r}")
+
+    def __delattr__(self, name: str) -> None:
+        raise AttributeError(f"Dimension is immutable; cannot delete {name!r}")
 
     @classmethod
     def _from_exponents(cls, exponents: Tuple[Fraction, ...]) -> Dimension:
         """Create a dimension from a tuple of exponents (internal use)."""
         dim = object.__new__(cls)
         object.__setattr__(dim, "_exponents", exponents)
+        object.__setattr__(dim, "_hash", hash(exponents))
         return dim
 
     @property
@@ -123,25 +135,61 @@ class Dimension:
         """Multiply dimensions (add exponents)."""
         if not isinstance(other, Dimension):
             return NotImplemented
-        new_exponents = tuple(
-            a + b for a, b in zip(self._exponents, other._exponents)
+        # Key on the Dimension instances themselves so cache lookups use the
+        # precomputed _hash instead of re-hashing 7 Fractions per side.
+        cache = _DIM_MUL_CACHE
+        key = (self, other)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+        a = self._exponents
+        b = other._exponents
+        new_exponents = (
+            a[0] + b[0], a[1] + b[1], a[2] + b[2], a[3] + b[3],
+            a[4] + b[4], a[5] + b[5], a[6] + b[6],
         )
-        return Dimension._from_exponents(new_exponents)
+        result = Dimension._from_exponents(new_exponents)
+        if len(cache) < _DIM_CACHE_MAXSIZE:
+            cache[key] = result
+        return result
 
     def __truediv__(self, other: object) -> Dimension:
         """Divide dimensions (subtract exponents)."""
         if not isinstance(other, Dimension):
             return NotImplemented
-        new_exponents = tuple(
-            a - b for a, b in zip(self._exponents, other._exponents)
+        cache = _DIM_DIV_CACHE
+        key = (self, other)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+        a = self._exponents
+        b = other._exponents
+        new_exponents = (
+            a[0] - b[0], a[1] - b[1], a[2] - b[2], a[3] - b[3],
+            a[4] - b[4], a[5] - b[5], a[6] - b[6],
         )
-        return Dimension._from_exponents(new_exponents)
+        result = Dimension._from_exponents(new_exponents)
+        if len(cache) < _DIM_CACHE_MAXSIZE:
+            cache[key] = result
+        return result
 
     def __pow__(self, power: int | float | Fraction) -> Dimension:
         """Raise dimension to a power (multiply exponents)."""
+        cache = _DIM_POW_CACHE
+        key = (self, power)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
         p = Fraction(power).limit_denominator(1000)
-        new_exponents = tuple(exp * p for exp in self._exponents)
-        return Dimension._from_exponents(new_exponents)
+        a = self._exponents
+        new_exponents = (
+            a[0] * p, a[1] * p, a[2] * p, a[3] * p,
+            a[4] * p, a[5] * p, a[6] * p,
+        )
+        result = Dimension._from_exponents(new_exponents)
+        if len(cache) < _DIM_CACHE_MAXSIZE:
+            cache[key] = result
+        return result
 
     def __eq__(self, other: object) -> bool:
         """Check dimension equality."""
@@ -150,8 +198,8 @@ class Dimension:
         return self._exponents == other._exponents
 
     def __hash__(self) -> int:
-        """Hash for use in sets and dicts."""
-        return hash(self._exponents)
+        """Hash for use in sets and dicts (precomputed at construction)."""
+        return self._hash
 
     def __repr__(self) -> str:
         """Detailed string representation."""
@@ -200,3 +248,13 @@ class Dimension:
 
 # Common dimensionless constant
 DIMENSIONLESS = Dimension()
+
+# Caches for dimension arithmetic. Dimensions are frozen and hashable, so the
+# (exponents-tuple, exponents-tuple) key uniquely identifies an operation. In
+# practice physics code reuses a small set of dimensions (m, s, m/s, kg, ...),
+# so these caches make repeated operations effectively free. The max size guards
+# against unbounded growth in pathological cases (e.g., fuzz tests).
+_DIM_CACHE_MAXSIZE = 4096
+_DIM_MUL_CACHE: dict[tuple[Any, ...], Dimension] = {}
+_DIM_DIV_CACHE: dict[tuple[Any, ...], Dimension] = {}
+_DIM_POW_CACHE: dict[tuple[Any, ...], Dimension] = {}

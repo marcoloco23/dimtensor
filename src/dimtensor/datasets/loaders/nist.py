@@ -9,6 +9,8 @@ import re
 from pathlib import Path
 from typing import Any
 
+import numpy as np
+
 from ...core.dimarray import DimArray
 from ...core.dimensions import Dimension
 from ...core.units import (
@@ -121,11 +123,27 @@ class NISTCODATALoader(BaseLoader):
                 except ValueError:
                     continue
 
+                # NIST format encodes exact values as "exact", "(exact)" or
+                # "..."; everything else parses as a float.
+                uncertainty: float | None
+                if uncertainty_str in ("exact", "(exact)", "..."):
+                    uncertainty = 0.0
+                else:
+                    try:
+                        uncertainty = float(uncertainty_str)
+                    except ValueError:
+                        uncertainty = None
+
                 # Parse unit and create DimArray
                 unit = self._parse_unit(unit_str)
 
                 if unit is not None:
-                    constants[name] = DimArray([value], unit=unit)
+                    unc_arr = (
+                        np.array([uncertainty])
+                        if uncertainty is not None and uncertainty > 0
+                        else None
+                    )
+                    constants[name] = DimArray([value], unit=unit, uncertainty=unc_arr)
 
         # If parsing failed, add some hardcoded constants as fallback
         if not constants:

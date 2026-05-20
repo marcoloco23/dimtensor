@@ -178,9 +178,10 @@ class TestSobolSampler:
         sampler = SobolSampler(seed=42)
         means = np.array([0.0, 0.0])
         stds = np.array([1.0, 1.0])
-        samples = sampler.sample(100, means, stds)
+        # n must be a power of 2 for Sobol balance properties (scipy convention)
+        samples = sampler.sample(128, means, stds)
 
-        assert samples.shape == (100, 2)
+        assert samples.shape == (128, 2)
         # Sobol sequences should provide more uniform coverage than random
         # Check that means are close to target
         assert np.allclose(np.mean(samples, axis=0), means, atol=0.3)
@@ -317,7 +318,8 @@ class TestMonteCarlo:
         means = [1.0, 2.0]
         stds = [0.1, 0.2]
 
-        result = monte_carlo(f, means, stds, n_samples=1000, method="sobol", seed=42)
+        # n must be a power of 2 for Sobol balance properties (scipy convention)
+        result = monte_carlo(f, means, stds, n_samples=1024, method="sobol", seed=42)
 
         assert result.method == "sobol"
         assert np.allclose(result.mean, 3.0, atol=0.05)

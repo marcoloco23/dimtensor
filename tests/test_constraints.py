@@ -512,3 +512,22 @@ class TestConservationTrackerWithSimulation:
         tracker.record(m1.data.sum() + m2.data.sum())
 
         assert tracker.is_conserved(rtol=1e-10)
+
+    def test_record_zero_dim_dimarray(self):
+        """Recording a 0-d DimArray (scalar input) must not raise.
+
+        Regression: when both operands of an add/sub are 0-d ndarrays,
+        numpy can return a numpy.float64 scalar instead of a 0-d ndarray.
+        ConservationTracker accesses .data on the result, which set
+        flags.writeable on the view — illegal on array scalars.
+        """
+        tracker = ConservationTracker("Scalar Energy")
+
+        KE = DimArray(50.0, units.J)
+        PE = DimArray(20.0, units.J)
+        E_total = KE + PE  # 0-d + 0-d historically collapsed to numpy scalar
+
+        # Both calls must succeed and produce identical scalars
+        tracker.record(E_total)
+        tracker.record(E_total)
+        assert tracker.is_conserved(rtol=1e-12)

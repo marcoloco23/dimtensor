@@ -334,7 +334,10 @@ class TestDimArrayArithmetic:
             data_arr = np.array(data, dtype=float)
             assume(np.all(data_arr != 0))
         a = DimArray(np.array(data, dtype=float), Unit("u", dim, 1.0))
-        result = a ** p
+        # We only test the dimension invariant here, not numeric value, so
+        # silence float64 overflow that hypothesis occasionally generates.
+        with np.errstate(over="ignore"):
+            result = a ** p
         assert result.unit.dimension == dim ** p
 
     @given(array_data(), dimension_strategy())
