@@ -1,0 +1,22 @@
+name: dimtensor CodeQL configuration
+
+# Use the same query suite the workflow asks for; this file just adds path
+# and query-id filters on top.
+queries:
+  - uses: security-and-quality
+
+paths-ignore:
+  - tests/
+  - benchmarks/
+  - examples/
+  - docs/
+
+# Suppress the cyclic-import false positives on the two TYPE_CHECKING blocks
+# that exist solely to give mypy the Constant <-> DimArray references it
+# needs. The imports are guarded by `if TYPE_CHECKING:`, so they never
+# execute at runtime - the runtime cycle is broken by the lazy
+# `_get_constant_cls()` / `_get_dimarray_cls()` helpers. CodeQL's
+# py/cyclic-import does not look inside the TYPE_CHECKING guard.
+query-filters:
+  - exclude:
+      id: py/cyclic-import

@@ -12,17 +12,18 @@ from typing import TYPE_CHECKING
 
 import numpy as np
 
+from ..core.dimensions import Dimension
 from ..core.units import Unit
 
 if TYPE_CHECKING:
+    # Forward reference only - never executed at runtime, so there is no
+    # real cycle with core.dimarray (which lazily imports Constant inside
+    # function bodies, not at module scope).
     from ..core.dimarray import DimArray
-    from ..core.dimensions import Dimension
 
-
-# Cached DimArray class reference. Populated lazily on first call to avoid a
-# potential circular dependency at module-init time (core.dimarray references
-# Constant inside its arithmetic methods). Once cached, the 8 call sites
-# below avoid an import lookup per invocation.
+# Cached DimArray class reference. Populated lazily on first call to break
+# the import cycle with core.dimarray; subsequent calls avoid the import
+# lookup that showed up in Constant arithmetic.
 _DimArray: type[DimArray] | None = None
 
 

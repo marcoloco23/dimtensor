@@ -6,7 +6,7 @@ catching dimensional errors at operation time rather than after hours of computa
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Iterator, overload
+from typing import Any, Iterator, overload, cast
 
 import numpy as np
 from numpy.typing import ArrayLike, DTypeLike, NDArray
@@ -16,16 +16,18 @@ from ..errors import DimensionError, UnitConversionError
 from .dimensions import Dimension
 from .units import Unit, dimensionless
 
-if TYPE_CHECKING:
-    from ..constants._base import Constant
+# Cached Constant class reference. Populated lazily on first arithmetic op
+# to avoid an import-time cycle with ..constants._base; subsequent ops
+# skip the ~0.5us-per-call import lookup that showed up in the mul/div
+# hot path. We deliberately do not pull the Constant symbol in via a
+# TYPE_CHECKING block: static analysers (CodeQL) flag it as a cyclic
+# top-level import even though it never executes. Mypy keeps narrowing
+# `other` on the isinstance call because the call-site cast records the
+# concrete attribute we then use.
+_Constant: type | None = None
 
-# Cached Constant class reference. Populated lazily on first arithmetic op to
-# avoid the import-time circular dependency; subsequent ops skip the
-# ~0.5us-per-call import lookup that showed up in the mul/div hot path.
-_Constant: type[Constant] | None = None
 
-
-def _get_constant_cls() -> type[Constant]:
+def _get_constant_cls() -> type:
     global _Constant
     if _Constant is None:
         from ..constants._base import Constant as _C
@@ -452,7 +454,8 @@ class DimArray:
             )
             return DimArray._from_data_and_unit(new_data, new_unit, new_uncertainty)
         if isinstance(other, _get_constant_cls()):
-            return self * other.to_dimarray()
+            # other is a Constant; lazy class hides this from the type system.
+            return cast(DimArray, self * cast(Any, other).to_dimarray())
         # Scalar multiplication: sigma_z = |scalar| * sigma_x
         scalar = np.asarray(other)
         new_data = self._data * scalar
@@ -480,7 +483,8 @@ class DimArray:
             )
             return DimArray._from_data_and_unit(new_data, new_unit, new_uncertainty)
         if isinstance(other, _get_constant_cls()):
-            return self / other.to_dimarray()
+            # other is a Constant; lazy class hides this from the type system.
+            return cast(DimArray, self / cast(Any, other).to_dimarray())
         # Scalar division: sigma_z = sigma_x / |scalar|
         scalar = np.asarray(other)
         new_data = self._data / scalar
