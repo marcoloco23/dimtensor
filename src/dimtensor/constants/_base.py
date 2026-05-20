@@ -19,6 +19,21 @@ if TYPE_CHECKING:
     from ..core.dimensions import Dimension
 
 
+# Cached DimArray class reference. Populated lazily on first call to avoid a
+# potential circular dependency at module-init time (core.dimarray references
+# Constant inside its arithmetic methods). Once cached, the 8 call sites
+# below avoid an import lookup per invocation.
+_DimArray: type[DimArray] | None = None
+
+
+def _get_dimarray_cls() -> type[DimArray]:
+    global _DimArray
+    if _DimArray is None:
+        from ..core.dimarray import DimArray as _D
+        _DimArray = _D
+    return _DimArray
+
+
 @dataclass(frozen=True, slots=True)
 class Constant:
     """A physical constant with value, unit, and uncertainty.
@@ -78,8 +93,7 @@ class Constant:
         Returns:
             A DimArray containing the constant's value with its unit and uncertainty.
         """
-        # Import here to avoid circular imports
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         uncertainty = None
         if self.uncertainty > 0:
@@ -102,7 +116,7 @@ class Constant:
         Returns:
             DimArray with the result, with propagated uncertainty.
         """
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         if isinstance(other, Constant):
             new_unit = self.unit * other.unit
@@ -131,7 +145,7 @@ class Constant:
 
     def __rmul__(self, other: object) -> DimArray:
         """Right multiply (scalar * Constant or DimArray * Constant)."""
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         if isinstance(other, DimArray):
             return other * self.to_dimarray()
@@ -148,7 +162,7 @@ class Constant:
         Returns:
             DimArray with the result, with propagated uncertainty.
         """
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         if isinstance(other, Constant):
             new_unit = self.unit / other.unit
@@ -177,7 +191,7 @@ class Constant:
 
     def __rtruediv__(self, other: object) -> DimArray:
         """Right divide (scalar / Constant or DimArray / Constant)."""
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         if isinstance(other, DimArray):
             return other / self.to_dimarray()
@@ -207,7 +221,7 @@ class Constant:
         Returns:
             DimArray with the result, with propagated uncertainty.
         """
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         new_unit = self.unit ** power
         new_value = self.value ** power
@@ -222,7 +236,7 @@ class Constant:
 
     def __neg__(self) -> DimArray:
         """Negate the constant."""
-        from ..core.dimarray import DimArray
+        DimArray = _get_dimarray_cls()
 
         uncertainty = None
         if self.uncertainty > 0:
