@@ -9,13 +9,17 @@ For example:
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 from fractions import Fraction
+from typing import Any
 
 from .dimensions import Dimension, DIMENSIONLESS
 
+# Caches for Unit arithmetic. Same rationale as the Dimension caches: real
+# code reuses a small set of Units, so memoizing the f-string + dimension
+# multiplication wins materially on hot paths.
+_UNIT_CACHE_MAXSIZE = 4096
 
-@dataclass(frozen=True, slots=True)
+
 class Unit:
     """Represents a physical unit.
 
@@ -28,18 +32,57 @@ class Unit:
         >>> # 1 km = 1000 m, so scale = 1000
     """
 
+    # Manual slots + precomputed _hash: same rationale as Dimension. The
+    # frozen-dataclass equivalent would re-hash (symbol, dimension, scale) on
+    # every dict lookup in the Unit caches; storing the hash once at
+    # construction makes every subsequent lookup ~free.
+    __slots__ = ("symbol", "dimension", "scale", "_hash")
+
     symbol: str
     dimension: Dimension
     scale: float
+    _hash: int
+
+    def __init__(self, symbol: str, dimension: Dimension, scale: float) -> None:
+        object.__setattr__(self, "symbol", symbol)
+        object.__setattr__(self, "dimension", dimension)
+        object.__setattr__(self, "scale", scale)
+        object.__setattr__(self, "_hash", hash((symbol, dimension, scale)))
+
+    def __setattr__(self, name: str, value: object) -> None:
+        raise AttributeError(f"Unit is immutable; cannot set {name!r}")
+
+    def __delattr__(self, name: str) -> None:
+        raise AttributeError(f"Unit is immutable; cannot delete {name!r}")
+
+    def __eq__(self, other: object) -> bool:
+        if not isinstance(other, Unit):
+            return NotImplemented
+        return (
+            self.symbol == other.symbol
+            and self.dimension == other.dimension
+            and self.scale == other.scale
+        )
+
+    def __hash__(self) -> int:
+        return self._hash
 
     def __mul__(self, other: object) -> Unit:
         """Multiply units."""
         if isinstance(other, Unit):
-            return Unit(
+            cache = _UNIT_MUL_CACHE
+            key = (self, other)
+            cached = cache.get(key)
+            if cached is not None:
+                return cached
+            result = Unit(
                 symbol=f"{self.symbol}·{other.symbol}",
                 dimension=self.dimension * other.dimension,
                 scale=self.scale * other.scale,
             )
+            if len(cache) < _UNIT_CACHE_MAXSIZE:
+                cache[key] = result
+            return result
         elif isinstance(other, (int, float)):
             return Unit(
                 symbol=self.symbol,
@@ -57,11 +100,19 @@ class Unit:
     def __truediv__(self, other: object) -> Unit:
         """Divide units."""
         if isinstance(other, Unit):
-            return Unit(
+            cache = _UNIT_DIV_CACHE
+            key = (self, other)
+            cached = cache.get(key)
+            if cached is not None:
+                return cached
+            result = Unit(
                 symbol=f"{self.symbol}/{other.symbol}",
                 dimension=self.dimension / other.dimension,
                 scale=self.scale / other.scale,
             )
+            if len(cache) < _UNIT_CACHE_MAXSIZE:
+                cache[key] = result
+            return result
         elif isinstance(other, (int, float)):
             return Unit(
                 symbol=self.symbol,
@@ -84,7 +135,12 @@ class Unit:
         """Raise unit to a power."""
         if power == 1:
             return self
-        elif power == 2:
+        cache = _UNIT_POW_CACHE
+        key = (self, power)
+        cached = cache.get(key)
+        if cached is not None:
+            return cached
+        if power == 2:
             new_symbol = f"{self.symbol}²"
         elif power == 3:
             new_symbol = f"{self.symbol}³"
@@ -95,11 +151,14 @@ class Unit:
         else:
             new_symbol = f"{self.symbol}^{power}"
 
-        return Unit(
+        result = Unit(
             symbol=new_symbol,
             dimension=self.dimension ** power,
             scale=self.scale ** float(power),
         )
+        if len(cache) < _UNIT_CACHE_MAXSIZE:
+            cache[key] = result
+        return result
 
     def is_compatible(self, other: Unit) -> bool:
         """Check if two units have the same dimension."""
@@ -197,6 +256,11 @@ class Unit:
         except ImportError:
             # i18n not available, return original symbol
             return self.symbol
+
+
+_UNIT_MUL_CACHE: dict[tuple[Any, ...], Unit] = {}
+_UNIT_DIV_CACHE: dict[tuple[Any, ...], Unit] = {}
+_UNIT_POW_CACHE: dict[tuple[Any, ...], Unit] = {}
 
 
 # =============================================================================

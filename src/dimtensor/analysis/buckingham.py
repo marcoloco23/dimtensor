@@ -363,7 +363,7 @@ def _build_expression(exponents: dict[str, Fraction]) -> str:
 
 
 def _build_latex(exponents: dict[str, Fraction]) -> str:
-    """Build LaTeX expression from exponents.
+    r"""Build LaTeX expression from exponents.
 
     Args:
         exponents: Dictionary of variable name -> exponent

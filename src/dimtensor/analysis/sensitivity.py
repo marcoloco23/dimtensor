@@ -120,15 +120,18 @@ def local_sensitivity(
                 param_minus = DimArray._from_data_and_unit(param_value - perturbation, param._unit)
                 f_plus = func(param_plus, *args, **kwargs)
                 f_minus = func(param_minus, *args, **kwargs)
-                grad_data[idx] = (f_plus._data - f_minus._data) / (2 * delta_elem)
+                diff = np.asarray(f_plus._data - f_minus._data) / (2 * delta_elem)
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
             elif method == "forward":
                 param_plus = DimArray._from_data_and_unit(param_value + perturbation, param._unit)
                 f_plus = func(param_plus, *args, **kwargs)
-                grad_data[idx] = (f_plus._data - f_base._data) / delta_elem
+                diff = np.asarray(f_plus._data - f_base._data) / delta_elem
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
             else:  # backward
                 param_minus = DimArray._from_data_and_unit(param_value - perturbation, param._unit)
                 f_minus = func(param_minus, *args, **kwargs)
-                grad_data[idx] = (f_base._data - f_minus._data) / delta_elem
+                diff = np.asarray(f_base._data - f_minus._data) / delta_elem
+                grad_data[idx] = diff.item() if diff.size == 1 else diff
 
         sensitivity_unit = f_base._unit / param._unit
         return DimArray._from_data_and_unit(grad_data, sensitivity_unit)
