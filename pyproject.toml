@@ -216,6 +216,12 @@ markers = [
     "network: marks tests requiring network access",
     "load: marks load/stress tests",
 ]
+# Many MC tests use small n_samples and incidentally trip the convergence
+# warning; the dedicated convergence test uses pytest.warns() which still
+# matches with this filter active.
+filterwarnings = [
+    "ignore:Monte Carlo simulation may not have converged:RuntimeWarning",
+]
 
 [tool.coverage.run]
 source = ["src/dimtensor"]

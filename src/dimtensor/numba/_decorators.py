@@ -187,7 +187,7 @@ def dim_jit(
 
             # Return result wrapped in DimArray
             # For scalar results, ensure they're arrays
-            if np.isscalar(result):
+            if not isinstance(result, np.ndarray):
                 result = np.array([result])
 
             # Default: assume output has same dimension as first DimArray input

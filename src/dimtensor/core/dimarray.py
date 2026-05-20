@@ -352,17 +352,26 @@ class DimArray:
     def __add__(self, other: DimArray | ArrayLike) -> DimArray:
         """Add two DimArrays (must have same dimension)."""
         if isinstance(other, DimArray):
+            self_unit = self._unit
+            other_unit = other._unit
+            if self_unit is other_unit or self_unit == other_unit:
+                # Fast path: same unit, no conversion needed
+                new_data = self._data + other._data
+                new_uncertainty = self._propagate_add_sub(
+                    self._uncertainty, other._uncertainty
+                )
+                return DimArray._from_data_and_unit(new_data, self_unit, new_uncertainty)
             if self.dimension != other.dimension:
                 raise DimensionError.incompatible(
                     self.dimension, other.dimension, "add"
                 )
-            # Convert other to same unit for consistent result
-            other_converted = other.to(self._unit)
+            # Different unit but same dimension: convert other to self's unit
+            other_converted = other.to(self_unit)
             new_data = self._data + other_converted._data
             new_uncertainty = self._propagate_add_sub(
                 self._uncertainty, other_converted._uncertainty
             )
-            return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
+            return DimArray._from_data_and_unit(new_data, self_unit, new_uncertainty)
         else:
             # Adding a raw number - only valid if dimensionless
             if not self.is_dimensionless:
@@ -380,16 +389,25 @@ class DimArray:
     def __sub__(self, other: DimArray | ArrayLike) -> DimArray:
         """Subtract two DimArrays (must have same dimension)."""
         if isinstance(other, DimArray):
+            self_unit = self._unit
+            other_unit = other._unit
+            if self_unit is other_unit or self_unit == other_unit:
+                # Fast path: same unit, no conversion needed
+                new_data = self._data - other._data
+                new_uncertainty = self._propagate_add_sub(
+                    self._uncertainty, other._uncertainty
+                )
+                return DimArray._from_data_and_unit(new_data, self_unit, new_uncertainty)
             if self.dimension != other.dimension:
                 raise DimensionError.incompatible(
                     self.dimension, other.dimension, "subtract"
                 )
-            other_converted = other.to(self._unit)
+            other_converted = other.to(self_unit)
             new_data = self._data - other_converted._data
             new_uncertainty = self._propagate_add_sub(
                 self._uncertainty, other_converted._uncertainty
             )
-            return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
+            return DimArray._from_data_and_unit(new_data, self_unit, new_uncertainty)
         else:
             if not self.is_dimensionless:
                 raise DimensionError(
@@ -610,8 +628,11 @@ class DimArray:
         if self._uncertainty is not None:
             unc_result = self._uncertainty[key]
 
-        # Always return DimArray to maintain dimensional safety
-        if np.isscalar(result):
+        # Always return DimArray to maintain dimensional safety. Use the
+        # ndarray isinstance check instead of np.isscalar — same semantics
+        # for our inputs (numpy scalars and Python scalars both fall in the
+        # "not ndarray" branch) but ~3x faster.
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
             if unc_result is not None:
                 unc_result = np.array([unc_result])
@@ -637,7 +658,7 @@ class DimArray:
         Uncertainty propagation: sigma_sum = sqrt(sum(sigma_i^2))
         """
         result = self._data.sum(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
 
         new_uncertainty = None
@@ -645,7 +666,7 @@ class DimArray:
             # For sum: sigma = sqrt(sum(sigma_i^2))
             unc_squared_sum = (self._uncertainty**2).sum(axis=axis, keepdims=keepdims)
             new_uncertainty = np.sqrt(unc_squared_sum)
-            if np.isscalar(new_uncertainty):
+            if not isinstance(new_uncertainty, np.ndarray):
                 new_uncertainty = np.array([new_uncertainty])
 
         return DimArray._from_data_and_unit(result, self._unit, new_uncertainty)
@@ -656,7 +677,7 @@ class DimArray:
         Uncertainty propagation: sigma_mean = sqrt(sum(sigma_i^2)) / N
         """
         result = self._data.mean(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
 
         new_uncertainty = None
@@ -669,7 +690,7 @@ class DimArray:
 
             unc_squared_sum = (self._uncertainty**2).sum(axis=axis, keepdims=keepdims)
             new_uncertainty = np.sqrt(unc_squared_sum) / n
-            if np.isscalar(new_uncertainty):
+            if not isinstance(new_uncertainty, np.ndarray):
                 new_uncertainty = np.array([new_uncertainty])
 
         return DimArray._from_data_and_unit(result, self._unit, new_uncertainty)
@@ -681,7 +702,7 @@ class DimArray:
         The result will have no uncertainty information.
         """
         result = self._data.std(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
         return DimArray._from_data_and_unit(result, self._unit, None)
 
@@ -691,7 +712,7 @@ class DimArray:
         Uncertainty: takes uncertainty of the minimum element.
         """
         result = self._data.min(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
 
         new_uncertainty = None
@@ -705,7 +726,7 @@ class DimArray:
                 new_uncertainty = np.take_along_axis(self._uncertainty, indices, axis=axis)
                 if not keepdims:
                     new_uncertainty = np.squeeze(new_uncertainty, axis=axis)
-                if np.isscalar(new_uncertainty):
+                if not isinstance(new_uncertainty, np.ndarray):
                     new_uncertainty = np.array([new_uncertainty])
 
         return DimArray._from_data_and_unit(result, self._unit, new_uncertainty)
@@ -716,7 +737,7 @@ class DimArray:
         Uncertainty: takes uncertainty of the maximum element.
         """
         result = self._data.max(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
 
         new_uncertainty = None
@@ -730,7 +751,7 @@ class DimArray:
                 new_uncertainty = np.take_along_axis(self._uncertainty, indices, axis=axis)
                 if not keepdims:
                     new_uncertainty = np.squeeze(new_uncertainty, axis=axis)
-                if np.isscalar(new_uncertainty):
+                if not isinstance(new_uncertainty, np.ndarray):
                     new_uncertainty = np.array([new_uncertainty])
 
         return DimArray._from_data_and_unit(result, self._unit, new_uncertainty)
@@ -749,7 +770,7 @@ class DimArray:
             Variance with squared unit.
         """
         result = self._data.var(axis=axis, keepdims=keepdims)
-        if np.isscalar(result):
+        if not isinstance(result, np.ndarray):
             result = np.array([result])
         # Variance squares the unit: m -> m^2
         new_unit = self._unit**2
