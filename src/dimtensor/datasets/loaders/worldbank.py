@@ -318,9 +318,9 @@ class WorldBankClimateLoader(BaseLoader):
                 "Install with: pip install requests"
             )
 
-        # Check cache first (using URL as cache key)
+        # Check cache first (using URL as cache key; non-security MD5).
         import hashlib
-        cache_key = hashlib.md5(url.encode()).hexdigest()
+        cache_key = hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()
         cache_file = self.cache_dir / f"{cache_key}.json"
 
         if self.cache_enabled and not force and cache_file.exists():

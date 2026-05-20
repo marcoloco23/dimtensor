@@ -47,6 +47,10 @@ dev = [
     "h5py>=3.8.0",
     "scipy>=1.10.0",
     "sympy>=1.12",
+    # Property-based / fuzz tests in tests/ import hypothesis directly,
+    # so it has to be in the dev install or `pip install -e .[dev]` ships
+    # a setup that can't even collect the test suite.
+    "hypothesis>=6.80.0",
 ]
 benchmark = [
     "asv>=0.6.0",

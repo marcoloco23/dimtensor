@@ -115,9 +115,11 @@ class BaseLoader(ABC):
                 "Install with: pip install requests"
             )
 
-        # Generate cache key from URL if not provided
+        # Generate cache key from URL if not provided. MD5 is used as a
+        # filename hash, not for security — a collision just means a cache
+        # miss. usedforsecurity=False signals that intent to scanners.
         if cache_key is None:
-            cache_key = hashlib.md5(url.encode()).hexdigest()
+            cache_key = hashlib.md5(url.encode(), usedforsecurity=False).hexdigest()
 
         # Determine file extension from URL
         parsed = urlparse(url)

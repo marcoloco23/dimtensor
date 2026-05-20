@@ -332,6 +332,7 @@ def lint_directory(
     dirpath: str | Path,
     strict: bool = False,
     recursive: bool = True,
+    exclude: list[str] | None = None,
 ) -> Iterator[LintResult]:
     """Lint all Python files in a directory.
 
@@ -339,6 +340,8 @@ def lint_directory(
         dirpath: Path to the directory.
         strict: If True, report all potential issues.
         recursive: If True, search subdirectories.
+        exclude: Optional list of path fragments to skip. A file is excluded
+            when any fragment appears as a path component.
 
     Yields:
         Lint results for each file.
@@ -355,10 +358,13 @@ def lint_directory(
         )
         return
 
+    excluded = set(exclude or ())
     pattern = "**/*.py" if recursive else "*.py"
     for pyfile in path.glob(pattern):
-        # Skip common non-source directories
+        # Skip common non-source directories and any user-excluded fragments
         if any(part.startswith(".") or part == "__pycache__" for part in pyfile.parts):
+            continue
+        if excluded and any(part in excluded for part in pyfile.parts):
             continue
         yield from lint_file(pyfile, strict=strict)
 
@@ -418,6 +424,17 @@ def main() -> int:
         action="store_true",
         help="Don't search subdirectories",
     )
+    parser.add_argument(
+        "--exclude",
+        action="append",
+        default=[],
+        metavar="DIR",
+        help=(
+            "Skip files whose path contains this directory name. May be "
+            "repeated. Test directories typically contain intentional "
+            "dimension mismatches and should be excluded."
+        ),
+    )
 
     args = parser.parse_args()
     all_results: list[LintResult] = []
@@ -428,7 +445,12 @@ def main() -> int:
             all_results.extend(lint_file(path, strict=args.strict))
         elif path.is_dir():
             all_results.extend(
-                lint_directory(path, strict=args.strict, recursive=not args.no_recursive)
+                lint_directory(
+                    path,
+                    strict=args.strict,
+                    recursive=not args.no_recursive,
+                    exclude=args.exclude,
+                )
             )
         else:
             all_results.append(

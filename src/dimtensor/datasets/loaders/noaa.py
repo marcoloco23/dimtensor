@@ -250,9 +250,10 @@ class NOAAWeatherLoader(BaseLoader):
         Raises:
             RuntimeError: If API request fails.
         """
-        # Generate cache key
+        # Generate cache key (non-security MD5).
         cache_key = hashlib.md5(
-            f"{station_id}_{start_date}_{end_date}_{'_'.join(sorted(variables))}".encode()
+            f"{station_id}_{start_date}_{end_date}_{'_'.join(sorted(variables))}".encode(),
+            usedforsecurity=False,
         ).hexdigest()
 
         cache_file = self.cache_dir / f"{cache_key}.json"

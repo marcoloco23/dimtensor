@@ -159,8 +159,8 @@ class SDSSLoader(CSVLoader):
                 sql = sql.replace("SELECT", f"SELECT TOP {limit}", 1)
                 sql = sql.replace("select", f"SELECT TOP {limit}", 1)
 
-        # Generate cache key from SQL
-        cache_key = hashlib.md5(sql.encode()).hexdigest()[:16]
+        # Generate cache key from SQL (non-security MD5).
+        cache_key = hashlib.md5(sql.encode(), usedforsecurity=False).hexdigest()[:16]
         cache_key = f"sdss_dr{self.data_release}_{cache_key}"
 
         cache_file = self.cache_dir / f"{cache_key}.csv"
