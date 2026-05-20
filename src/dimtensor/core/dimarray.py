@@ -112,10 +112,20 @@ class DimArray:
         unit: Unit,
         uncertainty: NDArray[Any] | None = None,
     ) -> DimArray:
-        """Internal constructor that doesn't copy data."""
+        """Internal constructor that doesn't copy data.
+
+        Promotes numpy scalars (which arithmetic ops can return when both
+        operands are 0-d ndarrays) back to 0-d ndarrays so the
+        `_data is always np.ndarray` invariant downstream code relies on
+        holds.
+        """
         result = object.__new__(cls)
+        if not isinstance(data, np.ndarray):
+            data = np.asarray(data)
         result._data = data
         result._unit = unit
+        if uncertainty is not None and not isinstance(uncertainty, np.ndarray):
+            uncertainty = np.asarray(uncertainty)
         result._uncertainty = uncertainty
         return result
 
