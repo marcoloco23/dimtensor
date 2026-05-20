@@ -280,7 +280,8 @@ class GWOSCStrainLoader(BaseLoader):
             warnings.warn(
                 f"Downloading ~{data_size_mb:.1f} MB of strain data. "
                 f"This may take some time.",
-                UserWarning
+                UserWarning,
+                stacklevel=2,
             )
 
         # Fetch strain data using gwosc

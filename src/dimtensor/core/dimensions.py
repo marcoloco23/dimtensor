@@ -135,8 +135,10 @@ class Dimension:
         """Multiply dimensions (add exponents)."""
         if not isinstance(other, Dimension):
             return NotImplemented
+        # Key on the Dimension instances themselves so cache lookups use the
+        # precomputed _hash instead of re-hashing 7 Fractions per side.
         cache = _DIM_MUL_CACHE
-        key = (self._exponents, other._exponents)
+        key = (self, other)
         cached = cache.get(key)
         if cached is not None:
             return cached
@@ -156,7 +158,7 @@ class Dimension:
         if not isinstance(other, Dimension):
             return NotImplemented
         cache = _DIM_DIV_CACHE
-        key = (self._exponents, other._exponents)
+        key = (self, other)
         cached = cache.get(key)
         if cached is not None:
             return cached
@@ -174,7 +176,7 @@ class Dimension:
     def __pow__(self, power: int | float | Fraction) -> Dimension:
         """Raise dimension to a power (multiply exponents)."""
         cache = _DIM_POW_CACHE
-        key = (self._exponents, power)
+        key = (self, power)
         cached = cache.get(key)
         if cached is not None:
             return cached

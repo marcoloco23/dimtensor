@@ -429,8 +429,7 @@ class DimArray:
 
     def __mul__(self, other: DimArray | ArrayLike) -> DimArray:
         """Multiply DimArrays (dimensions multiply)."""
-        if isinstance(other, _get_constant_cls()):
-            return self * other.to_dimarray()
+        # Common case first: DimArray * DimArray
         if isinstance(other, DimArray):
             new_unit = self._unit * other._unit
             new_data = self._data * other._data
@@ -442,14 +441,15 @@ class DimArray:
                 new_data,
             )
             return DimArray._from_data_and_unit(new_data, new_unit, new_uncertainty)
-        else:
-            # Scalar multiplication: sigma_z = |scalar| * sigma_x
-            scalar = np.asarray(other)
-            new_data = self._data * scalar
-            new_uncertainty = None
-            if self._uncertainty is not None:
-                new_uncertainty = np.abs(scalar) * self._uncertainty
-            return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
+        if isinstance(other, _get_constant_cls()):
+            return self * other.to_dimarray()
+        # Scalar multiplication: sigma_z = |scalar| * sigma_x
+        scalar = np.asarray(other)
+        new_data = self._data * scalar
+        new_uncertainty = None
+        if self._uncertainty is not None:
+            new_uncertainty = np.abs(scalar) * self._uncertainty
+        return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
 
     def __rmul__(self, other: ArrayLike) -> DimArray:
         """Right multiply (for scalar * DimArray)."""
@@ -457,8 +457,7 @@ class DimArray:
 
     def __truediv__(self, other: DimArray | ArrayLike) -> DimArray:
         """Divide DimArrays (dimensions divide)."""
-        if isinstance(other, _get_constant_cls()):
-            return self / other.to_dimarray()
+        # Common case first: DimArray / DimArray
         if isinstance(other, DimArray):
             new_unit = self._unit / other._unit
             new_data = self._data / other._data
@@ -470,14 +469,15 @@ class DimArray:
                 new_data,
             )
             return DimArray._from_data_and_unit(new_data, new_unit, new_uncertainty)
-        else:
-            # Scalar division: sigma_z = sigma_x / |scalar|
-            scalar = np.asarray(other)
-            new_data = self._data / scalar
-            new_uncertainty = None
-            if self._uncertainty is not None:
-                new_uncertainty = self._uncertainty / np.abs(scalar)
-            return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
+        if isinstance(other, _get_constant_cls()):
+            return self / other.to_dimarray()
+        # Scalar division: sigma_z = sigma_x / |scalar|
+        scalar = np.asarray(other)
+        new_data = self._data / scalar
+        new_uncertainty = None
+        if self._uncertainty is not None:
+            new_uncertainty = self._uncertainty / np.abs(scalar)
+        return DimArray._from_data_and_unit(new_data, self._unit, new_uncertainty)
 
     def __rtruediv__(self, other: ArrayLike) -> DimArray:
         """Right divide (for scalar / DimArray)."""
