@@ -313,11 +313,12 @@ def sensitivity_matrix(
     sensitivities = {}
 
     for param_name, param_value in params.items():
-        # Create wrapper function that accepts param as first arg
-        def func_wrapper(p, **kwargs_with_others):
-            # Merge p back into params dict
+        # Create wrapper function that accepts param as first arg.
+        # Bind `param_name` via default argument so the closure captures the
+        # iteration's value, not a late-bound reference to the loop variable.
+        def func_wrapper(p, *, _name=param_name, **kwargs_with_others):
             all_params = params.copy()
-            all_params[param_name] = p
+            all_params[_name] = p
             return func(**all_params)
 
         # Compute sensitivity
